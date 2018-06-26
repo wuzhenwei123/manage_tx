@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.txCity.dao.TxCityDAO">
+	<resultMap id="baseResultMap" type="com.tx.txCity.model.TxCity">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="cityCode" jdbcType="VARCHAR" property="cityCode" />
+		<result column="cityName" jdbcType="VARCHAR" property="cityName" />
+		<result column="provinceCode" jdbcType="VARCHAR" property="provinceCode" />
+	</resultMap>
+
+	<!-- 查询参数 -->
+    <sql id="txCity_column_body">
+         a.id,a.cityCode,a.cityName,a.provinceCode
+    </sql>
+    <!-- 查询条件 -->
+    <sql id="txCity_select_body">
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="id != null"> and a.id = #{id,jdbcType=INTEGER} </if>
+    		<if test="cityCode != null"> and a.cityCode = #{cityCode,jdbcType=VARCHAR} </if>
+    		<if test="cityName != null"> and a.cityName = #{cityName,jdbcType=VARCHAR} </if>
+    		<if test="provinceCode != null"> and a.provinceCode = #{provinceCode,jdbcType=VARCHAR} </if>
+		</trim>
+    </sql>
+    <select id="getTxCityById" parameterType="java.lang.Integer" resultMap="baseResultMap">
+        SELECT <include refid="txCity_column_body" />
+        FROM tx_city a
+		where a.id = #{id}
+    </select>
+    <select id="getTxCityList" parameterType="com.tx.txCity.model.TxCity" resultMap="baseResultMap">
+        SELECT <include refid="txCity_column_body" />
+        FROM tx_city a
+		<include refid="txCity_select_body" />
+    </select>
+    
+    <insert id="insertTxCity" parameterType="com.tx.txCity.model.TxCity">
+        INSERT INTO tx_city
+        <trim prefix="(" suffix=")" prefixOverrides=",">
+	        	<if test="cityCode != null"> ,cityCode </if>
+	        	<if test="cityName != null"> ,cityName </if>
+	        	<if test="provinceCode != null"> ,provinceCode </if>
+        </trim>
+        <trim prefix="values (" suffix=")" prefixOverrides=",">
+	        	<if test="cityCode != null"> ,#{cityCode,jdbcType=VARCHAR} </if>
+	        	<if test="cityName != null"> ,#{cityName,jdbcType=VARCHAR} </if>
+	        	<if test="provinceCode != null"> ,#{provinceCode,jdbcType=VARCHAR} </if>
+		 </trim>
+        <selectKey keyProperty="id" resultType="int">
+			SELECT @@IDENTITY AS id 
+		</selectKey>
+    </insert>
+    <update id="updateTxCityById" parameterType="com.tx.txCity.model.TxCity">
+        UPDATE tx_city
+        <set>
+        		<if test="cityCode != null"> cityCode = #{cityCode,jdbcType=VARCHAR}, </if>
+        		<if test="cityName != null"> cityName = #{cityName,jdbcType=VARCHAR}, </if>
+        		<if test="provinceCode != null"> provinceCode = #{provinceCode,jdbcType=VARCHAR}, </if>
+        </set>
+    	where id = #{id}
+    </update>
+    <delete id="deleteTxCityById">
+        delete from tx_city where id = #{id}
+    </delete>
+</mapper>

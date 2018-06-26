@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.txRate.dao.TxRateDAO">
+	<resultMap id="baseResultMap" type="com.tx.txRate.model.TxRate">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="one_promoter_rate" jdbcType="DECIMAL" property="onePromoterRate" />
+		<result column="two_promoter_rate" jdbcType="DECIMAL" property="twoPromoterRate" />
+		<result column="dev_rate" jdbcType="DECIMAL" property="devRate" />
+	</resultMap>
+
+	<!-- 查询参数 -->
+    <sql id="txRate_column_body">
+         a.id,a.one_promoter_rate,a.two_promoter_rate,a.dev_rate
+    </sql>
+    <!-- 查询条件 -->
+    <sql id="txRate_select_body">
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="id != null"> and a.id = #{id,jdbcType=INTEGER} </if>
+    		<if test="onePromoterRate != null"> and a.one_promoter_rate = #{onePromoterRate,jdbcType=DECIMAL} </if>
+    		<if test="twoPromoterRate != null"> and a.two_promoter_rate = #{twoPromoterRate,jdbcType=DECIMAL} </if>
+    		<if test="devRate != null"> and a.dev_rate = #{devRate,jdbcType=DECIMAL} </if>
+		</trim>
+    </sql>
+    <select id="getTxRateById" parameterType="java.lang.Integer" resultMap="baseResultMap">
+        SELECT <include refid="txRate_column_body" />
+        FROM tx_rate a
+		where a.id = #{id}
+    </select>
+    <select id="getTxRateList" parameterType="com.tx.txRate.model.TxRate" resultMap="baseResultMap">
+        SELECT <include refid="txRate_column_body" />
+        FROM tx_rate a
+		<include refid="txRate_select_body" />
+    </select>
+    
+    <insert id="insertTxRate" parameterType="com.tx.txRate.model.TxRate">
+        INSERT INTO tx_rate
+        <trim prefix="(" suffix=")" prefixOverrides=",">
+	        	<if test="onePromoterRate != null"> ,one_promoter_rate </if>
+	        	<if test="twoPromoterRate != null"> ,two_promoter_rate </if>
+	        	<if test="devRate != null"> ,dev_rate </if>
+        </trim>
+        <trim prefix="values (" suffix=")" prefixOverrides=",">
+	        	<if test="onePromoterRate != null"> ,#{onePromoterRate,jdbcType=DECIMAL} </if>
+	        	<if test="twoPromoterRate != null"> ,#{twoPromoterRate,jdbcType=DECIMAL} </if>
+	        	<if test="devRate != null"> ,#{devRate,jdbcType=DECIMAL} </if>
+		 </trim>
+        <selectKey keyProperty="id" resultType="int">
+			SELECT @@IDENTITY AS id 
+		</selectKey>
+    </insert>
+    <update id="updateTxRateById" parameterType="com.tx.txRate.model.TxRate">
+        UPDATE tx_rate
+        <set>
+        		<if test="onePromoterRate != null"> one_promoter_rate = #{onePromoterRate,jdbcType=DECIMAL}, </if>
+        		<if test="twoPromoterRate != null"> two_promoter_rate = #{twoPromoterRate,jdbcType=DECIMAL}, </if>
+        		<if test="devRate != null"> dev_rate = #{devRate,jdbcType=DECIMAL}, </if>
+        </set>
+    	where id = #{id}
+    </update>
+    <delete id="deleteTxRateById">
+        delete from tx_rate where id = #{id}
+    </delete>
+</mapper>

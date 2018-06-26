@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.txBanner.dao.TxBannerDAO">
+	<resultMap id="baseResultMap" type="com.tx.txBanner.model.TxBanner">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="imgUrl" jdbcType="VARCHAR" property="imgUrl" />
+		<result column="state" jdbcType="INTEGER" property="state" />
+		<result column="targetUrl" jdbcType="VARCHAR" property="targetUrl" />
+	</resultMap>
+
+	<!-- 查询参数 -->
+    <sql id="txBanner_column_body">
+         a.id,a.imgUrl,a.state,a.targetUrl
+    </sql>
+    <!-- 查询条件 -->
+    <sql id="txBanner_select_body">
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="id != null"> and a.id = #{id,jdbcType=INTEGER} </if>
+    		<if test="imgUrl != null"> and a.imgUrl = #{imgUrl,jdbcType=VARCHAR} </if>
+    		<if test="state != null"> and a.state = #{state,jdbcType=INTEGER} </if>
+    		<if test="targetUrl != null"> and a.targetUrl = #{targetUrl,jdbcType=VARCHAR} </if>
+		</trim>
+    </sql>
+    <select id="getTxBannerById" parameterType="java.lang.Integer" resultMap="baseResultMap">
+        SELECT <include refid="txBanner_column_body" />
+        FROM tx_banner a
+		where a.id = #{id}
+    </select>
+    <select id="getTxBannerList" parameterType="com.tx.txBanner.model.TxBanner" resultMap="baseResultMap">
+        SELECT <include refid="txBanner_column_body" />
+        FROM tx_banner a
+		<include refid="txBanner_select_body" />
+    </select>
+    
+    <insert id="insertTxBanner" parameterType="com.tx.txBanner.model.TxBanner">
+        INSERT INTO tx_banner
+        <trim prefix="(" suffix=")" prefixOverrides=",">
+	        	<if test="imgUrl != null"> ,imgUrl </if>
+	        	<if test="state != null"> ,state </if>
+	        	<if test="targetUrl != null"> ,targetUrl </if>
+        </trim>
+        <trim prefix="values (" suffix=")" prefixOverrides=",">
+	        	<if test="imgUrl != null"> ,#{imgUrl,jdbcType=VARCHAR} </if>
+	        	<if test="state != null"> ,#{state,jdbcType=INTEGER} </if>
+	        	<if test="targetUrl != null"> ,#{targetUrl,jdbcType=VARCHAR} </if>
+		 </trim>
+        <selectKey keyProperty="id" resultType="int">
+			SELECT @@IDENTITY AS id 
+		</selectKey>
+    </insert>
+    <update id="updateTxBannerById" parameterType="com.tx.txBanner.model.TxBanner">
+        UPDATE tx_banner
+        <set>
+        		<if test="imgUrl != null"> imgUrl = #{imgUrl,jdbcType=VARCHAR}, </if>
+        		<if test="state != null"> state = #{state,jdbcType=INTEGER}, </if>
+        		<if test="targetUrl != null"> targetUrl = #{targetUrl,jdbcType=VARCHAR}, </if>
+        </set>
+    	where id = #{id}
+    </update>
+    <delete id="deleteTxBannerById">
+        delete from tx_banner where id = #{id}
+    </delete>
+</mapper>

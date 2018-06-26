@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.txWxUser.dao.TxWxUserDAO">
+	<resultMap id="baseResultMap" type="com.tx.txWxUser.model.TxWxUser">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="nick_name" jdbcType="VARCHAR" property="nickName" />
+		<result column="openId" jdbcType="VARCHAR" property="openId" />
+		<result column="head_url" jdbcType="VARCHAR" property="headUrl" />
+		<result column="sex" jdbcType="INTEGER" property="sex" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="real_name" jdbcType="VARCHAR" property="realName" />
+		<result column="ID_number" jdbcType="VARCHAR" property="IDNumber" />
+		<result column="card_number" jdbcType="VARCHAR" property="cardNumber" />
+		<result column="ID_url" jdbcType="VARCHAR" property="IDUrl" />
+		<result column="ID_fan_url" jdbcType="VARCHAR" property="IDFanUrl" />
+		<result column="ID_person_url" jdbcType="VARCHAR" property="IDPersonUrl" />
+		<result column="card_url" jdbcType="VARCHAR" property="cardUrl" />
+		<result column="mobile" jdbcType="VARCHAR" property="mobile" />
+		<result column="state" jdbcType="INTEGER" property="state" />
+		<result column="open_bank" jdbcType="VARCHAR" property="openBank" />
+		<result column="promoter_id" jdbcType="INTEGER" property="promoterId" />
+		<result column="mer_id" jdbcType="VARCHAR" property="merId" />
+		<result column="check_state" jdbcType="INTEGER" property="checkState" />
+		<result column="msg" jdbcType="VARCHAR" property="msg" />
+		<result column="two_promoter_id" jdbcType="INTEGER" property="twoPromoterId" />
+	</resultMap>
+
+	<!-- 查询参数 -->
+    <sql id="txWxUser_column_body">
+         a.id,a.nick_name,a.openId,a.head_url,a.sex,a.create_time,a.real_name,a.ID_number,a.card_number,a.ID_url,a.ID_fan_url,a.ID_person_url,a.card_url,a.mobile,a.state,a.open_bank,a.promoter_id,
+         a.mer_id,a.check_state,a.msg,b.realName as promoterName,a.two_promoter_id
+    </sql>
+    <sql id="txWxUser_column_body1">
+         a.id,a.nick_name,a.openId,a.head_url,a.sex,a.create_time,a.real_name,a.ID_number,a.card_number,a.ID_url,a.ID_fan_url,a.ID_person_url,a.card_url,a.mobile,a.state,a.open_bank,a.promoter_id,
+         a.mer_id,a.check_state,a.msg,b.realName as promoterName,a.two_promoter_id,c.realName as twoPromoterName
+    </sql>
+    <!-- 查询条件 -->
+    <sql id="txWxUser_select_body">
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="id != null"> and a.id = #{id,jdbcType=INTEGER} </if>
+    		<if test="nickName != null"> and a.nick_name = #{nickName,jdbcType=VARCHAR} </if>
+    		<if test="openId != null"> and a.openId = #{openId,jdbcType=VARCHAR} </if>
+    		<if test="headUrl != null"> and a.head_url = #{headUrl,jdbcType=VARCHAR} </if>
+    		<if test="sex != null"> and a.sex = #{sex,jdbcType=INTEGER} </if>
+    		<if test="createTime != null"> and a.create_time = #{createTime,jdbcType=TIMESTAMP} </if>
+    		<if test="realName != null"> and a.real_name = #{realName,jdbcType=VARCHAR} </if>
+    		<if test="IDNumber != null"> and a.ID_number = #{IDNumber,jdbcType=VARCHAR} </if>
+    		<if test="cardNumber != null"> and a.card_number = #{cardNumber,jdbcType=VARCHAR} </if>
+    		<if test="IDUrl != null"> and a.ID_url = #{IDUrl,jdbcType=VARCHAR} </if>
+    		<if test="IDFanUrl != null"> and a.ID_fan_url = #{IDFanUrl,jdbcType=VARCHAR} </if>
+    		<if test="IDPersonUrl != null"> and a.ID_person_url = #{IDPersonUrl,jdbcType=VARCHAR} </if>
+    		<if test="cardUrl != null"> and a.card_url = #{cardUrl,jdbcType=VARCHAR} </if>
+    		<if test="mobile != null"> and a.mobile = #{mobile,jdbcType=VARCHAR} </if>
+    		<if test="state != null"> and a.state = #{state,jdbcType=INTEGER} </if>
+    		<if test="openBank != null"> and a.open_bank = #{openBank,jdbcType=VARCHAR} </if>
+    		<if test="promoterId != null"> and a.promoter_id = #{promoterId,jdbcType=INTEGER} </if>
+    		<if test="merId != null"> and a.mer_id = #{merId,jdbcType=VARCHAR} </if>
+    		<if test="checkState != null"> and a.check_state = #{checkState,jdbcType=INTEGER} </if>
+    		<if test="msg != null"> and a.msg = #{msg,jdbcType=VARCHAR} </if>
+    		<if test="twoPromoterId != null"> 
+    			<if test="twoPromoterId != '-1'.toString()">  
+				    and a.two_promoter_id = #{twoPromoterId,jdbcType=INTEGER}
+				</if> 
+				<if test="twoPromoterId == '-1'.toString()">  
+				    and a.two_promoter_id is null
+				</if>   
+    		</if>
+		</trim>
+    </sql>
+    <sql id="txWxUser_select_body1">
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="id != null"> and a.id = #{id,jdbcType=INTEGER} </if>
+    		<if test="nickName != null"> and a.nick_name = #{nickName,jdbcType=VARCHAR} </if>
+    		<if test="openId != null"> and a.openId = #{openId,jdbcType=VARCHAR} </if>
+    		<if test="headUrl != null"> and a.head_url = #{headUrl,jdbcType=VARCHAR} </if>
+    		<if test="sex != null"> and a.sex = #{sex,jdbcType=INTEGER} </if>
+    		<if test="createTime != null"> and a.create_time = #{createTime,jdbcType=TIMESTAMP} </if>
+    		<if test="realName != null"> and a.real_name = #{realName,jdbcType=VARCHAR} </if>
+    		<if test="IDNumber != null"> and a.ID_number = #{IDNumber,jdbcType=VARCHAR} </if>
+    		<if test="cardNumber != null"> and a.card_number = #{cardNumber,jdbcType=VARCHAR} </if>
+    		<if test="IDUrl != null"> and a.ID_url = #{IDUrl,jdbcType=VARCHAR} </if>
+    		<if test="IDFanUrl != null"> and a.ID_fan_url = #{IDFanUrl,jdbcType=VARCHAR} </if>
+    		<if test="IDPersonUrl != null"> and a.ID_person_url = #{IDPersonUrl,jdbcType=VARCHAR} </if>
+    		<if test="cardUrl != null"> and a.card_url = #{cardUrl,jdbcType=VARCHAR} </if>
+    		<if test="mobile != null"> and a.mobile = #{mobile,jdbcType=VARCHAR} </if>
+    		<if test="state != null"> and a.state = #{state,jdbcType=INTEGER} </if>
+    		<if test="parentId != null"> and c.parent_id = #{parentId,jdbcType=INTEGER} </if>
+    		<if test="openBank != null"> and a.open_bank = #{openBank,jdbcType=VARCHAR} </if>
+    		<if test="promoterId != null"> and a.promoter_id = #{promoterId,jdbcType=INTEGER} </if>
+    		<if test="merId != null"> and a.mer_id = #{merId,jdbcType=VARCHAR} </if>
+    		<if test="checkState != null"> and a.check_state = #{checkState,jdbcType=INTEGER} </if>
+    		<if test="msg != null"> and a.msg = #{msg,jdbcType=VARCHAR} </if>
+    		<if test="twoPromoterId != null"> 
+    			<if test="twoPromoterId != '-1'.toString()">  
+				    and a.two_promoter_id = #{twoPromoterId,jdbcType=INTEGER}
+				</if> 
+				<if test="twoPromoterId == '-1'.toString()">  
+				    and a.two_promoter_id is null
+				</if>   
+    		</if>
+		</trim>
+    </sql>
+    <select id="getTxWxUserById" parameterType="java.lang.Integer" resultMap="baseResultMap">
+        SELECT <include refid="txWxUser_column_body1" />
+        FROM tx_wx_user a
+        left join manage_admin_user b on a.promoter_id = b.adminId
+        left join manage_admin_user c on a.two_promoter_id = c.adminId
+		where a.id = #{id}
+    </select>
+    <select id="getTxWxUserList" parameterType="com.tx.txWxUser.model.TxWxUser" resultMap="baseResultMap">
+        SELECT <include refid="txWxUser_column_body1" />
+        FROM tx_wx_user a
+        left join manage_admin_user b on a.promoter_id = b.adminId
+         left join manage_admin_user c on a.two_promoter_id = c.adminId
+		<include refid="txWxUser_select_body1" />
+    </select>
+    
+    <insert id="insertTxWxUser" parameterType="com.tx.txWxUser.model.TxWxUser">
+        INSERT INTO tx_wx_user
+        <trim prefix="(" suffix=")" prefixOverrides=",">
+	        	<if test="nickName != null"> ,nick_name </if>
+	        	<if test="openId != null"> ,openId </if>
+	        	<if test="headUrl != null"> ,head_url </if>
+	        	<if test="sex != null"> ,sex </if>
+	        	<if test="createTime != null"> ,create_time </if>
+	        	<if test="realName != null"> ,real_name </if>
+	        	<if test="IDNumber != null"> ,ID_number </if>
+	        	<if test="cardNumber != null"> ,card_number </if>
+	        	<if test="IDUrl != null"> ,ID_url </if>
+	        	<if test="IDFanUrl != null"> ,ID_fan_url </if>
+	        	<if test="IDPersonUrl != null"> ,ID_person_url </if>
+	        	<if test="cardUrl != null"> ,card_url </if>
+	        	<if test="mobile != null"> ,mobile </if>
+	        	<if test="state != null"> ,state </if>
+	        	<if test="openBank != null"> ,open_bank </if>
+	        	<if test="promoterId != null"> ,promoter_id </if>
+	        	<if test="merId != null"> ,mer_id </if>
+	        	<if test="checkState != null"> ,check_state </if>
+	        	<if test="msg != null"> ,msg </if>
+	        	<if test="twoPromoterId != null"> ,two_promoter_id </if>
+        </trim>
+        <trim prefix="values (" suffix=")" prefixOverrides=",">
+	        	<if test="nickName != null"> ,#{nickName,jdbcType=VARCHAR} </if>
+	        	<if test="openId != null"> ,#{openId,jdbcType=VARCHAR} </if>
+	        	<if test="headUrl != null"> ,#{headUrl,jdbcType=VARCHAR} </if>
+	        	<if test="sex != null"> ,#{sex,jdbcType=INTEGER} </if>
+	        	<if test="createTime != null"> ,#{createTime,jdbcType=TIMESTAMP} </if>
+	        	<if test="realName != null"> ,#{realName,jdbcType=VARCHAR} </if>
+	        	<if test="IDNumber != null"> ,#{IDNumber,jdbcType=VARCHAR} </if>
+	        	<if test="cardNumber != null"> ,#{cardNumber,jdbcType=VARCHAR} </if>
+	        	<if test="IDUrl != null"> ,#{IDUrl,jdbcType=VARCHAR} </if>
+	        	<if test="IDFanUrl != null"> ,#{IDFanUrl,jdbcType=VARCHAR} </if>
+	        	<if test="IDPersonUrl != null"> ,#{IDPersonUrl,jdbcType=VARCHAR} </if>
+	        	<if test="cardUrl != null"> ,#{cardUrl,jdbcType=VARCHAR} </if>
+	        	<if test="mobile != null"> ,#{mobile,jdbcType=VARCHAR} </if>
+	        	<if test="state != null"> ,#{state,jdbcType=INTEGER} </if>
+	        	<if test="openBank != null"> ,#{openBank,jdbcType=VARCHAR} </if>
+	        	<if test="promoterId != null"> ,#{promoterId,jdbcType=INTEGER} </if>
+	        	<if test="merId != null"> ,#{merId,jdbcType=VARCHAR} </if>
+	        	<if test="checkState != null"> ,#{checkState,jdbcType=INTEGER} </if>
+	        	<if test="msg != null"> ,#{msg,jdbcType=VARCHAR} </if>
+	        	<if test="twoPromoterId != null"> ,#{twoPromoterId,jdbcType=INTEGER} </if>
+		 </trim>
+        <selectKey keyProperty="id" resultType="int">
+			SELECT @@IDENTITY AS id 
+		</selectKey>
+    </insert>
+    <update id="updateTxWxUserById" parameterType="com.tx.txWxUser.model.TxWxUser">
+        UPDATE tx_wx_user
+        <set>
+        		<if test="nickName != null"> nick_name = #{nickName,jdbcType=VARCHAR}, </if>
+        		<if test="openId != null"> openId = #{openId,jdbcType=VARCHAR}, </if>
+        		<if test="headUrl != null"> head_url = #{headUrl,jdbcType=VARCHAR}, </if>
+        		<if test="sex != null"> sex = #{sex,jdbcType=INTEGER}, </if>
+        		<if test="createTime != null"> create_time = #{createTime,jdbcType=TIMESTAMP}, </if>
+        		<if test="realName != null"> real_name = #{realName,jdbcType=VARCHAR}, </if>
+        		<if test="IDNumber != null"> ID_number = #{IDNumber,jdbcType=VARCHAR}, </if>
+        		<if test="cardNumber != null"> card_number = #{cardNumber,jdbcType=VARCHAR}, </if>
+        		<if test="IDUrl != null"> ID_url = #{IDUrl,jdbcType=VARCHAR}, </if>
+        		<if test="IDFanUrl != null"> ID_fan_url = #{IDFanUrl,jdbcType=VARCHAR}, </if>
+        		<if test="IDPersonUrl != null"> ID_person_url = #{IDPersonUrl,jdbcType=VARCHAR}, </if>
+        		<if test="cardUrl != null"> card_url = #{cardUrl,jdbcType=VARCHAR}, </if>
+        		<if test="mobile != null"> mobile = #{mobile,jdbcType=VARCHAR}, </if>
+        		<if test="state != null"> state = #{state,jdbcType=INTEGER}, </if>
+        		<if test="openBank != null"> open_bank = #{openBank,jdbcType=VARCHAR}, </if>
+        		<if test="promoterId != null"> promoter_id = #{promoterId,jdbcType=INTEGER}, </if>
+        		<if test="merId != null"> mer_id = #{merId,jdbcType=VARCHAR}, </if>
+        		<if test="checkState != null"> check_state = #{checkState,jdbcType=INTEGER}, </if>
+        		<if test="msg != null"> msg = #{msg,jdbcType=VARCHAR}, </if>
+        		<if test="twoPromoterId != null"> two_promoter_id = #{twoPromoterId,jdbcType=INTEGER}, </if>
+        </set>
+    	where id = #{id}
+    </update>
+    <delete id="deleteTxWxUserById">
+        delete from tx_wx_user where id = #{id}
+    </delete>
+    
+    <!-- 分页 -->
+    <sql id="txWxUser_limit_body">
+    	<if test="offset!=null and limit!=null">
+    	limit ${offset} , ${limit} 
+    	</if>
+    </sql>
+    <!-- 排序 -->
+    <sql id="txWxUser_sort_body">
+    	<if test="sort!=null and order!=null"> order by a.${sort} ${order} </if>
+    </sql>
+    
+    <select id="getTxWxUserListByPage" parameterType="com.tx.txWxUser.model.TxWxUser" resultMap="baseResultMap">
+        SELECT <include refid="txWxUser_column_body" />
+        FROM tx_wx_user a
+        left join manage_admin_user b on a.promoter_id = b.adminId
+		<include refid="txWxUser_select_body" />
+		<include refid="txWxUser_sort_body" />
+		<include refid="txWxUser_limit_body" />
+    </select>
+    
+     <!-- 总条数-分页 -->
+    <select id="getTxWxUserListCount" resultType="int">
+         SELECT COUNT(*) FROM tx_wx_user a
+		<include refid="txWxUser_select_body" />
+    </select>
+    
+    <select id="getTxWxUserByOpenId" parameterType="java.lang.Integer" resultMap="baseResultMap">
+        SELECT <include refid="txWxUser_column_body" />
+        FROM tx_wx_user a
+        left join manage_admin_user b on a.promoter_id = b.adminId
+		where a.openId = #{openId}
+    </select>
+    
+    <update id="updateTxWxUserByOpenId" parameterType="com.tx.txWxUser.model.TxWxUser">
+        UPDATE tx_wx_user
+        <set>
+        		<if test="nickName != null"> nick_name = #{nickName,jdbcType=VARCHAR}, </if>
+        		<if test="openId != null"> openId = #{openId,jdbcType=VARCHAR}, </if>
+        		<if test="headUrl != null"> head_url = #{headUrl,jdbcType=VARCHAR}, </if>
+        		<if test="sex != null"> sex = #{sex,jdbcType=INTEGER}, </if>
+        		<if test="createTime != null"> create_time = #{createTime,jdbcType=TIMESTAMP}, </if>
+        		<if test="realName != null"> real_name = #{realName,jdbcType=VARCHAR}, </if>
+        		<if test="IDNumber != null"> ID_number = #{IDNumber,jdbcType=VARCHAR}, </if>
+        		<if test="cardNumber != null"> card_number = #{cardNumber,jdbcType=VARCHAR}, </if>
+        		<if test="IDUrl != null"> ID_url = #{IDUrl,jdbcType=VARCHAR}, </if>
+        		<if test="IDFanUrl != null"> ID_fan_url = #{IDFanUrl,jdbcType=VARCHAR}, </if>
+        		<if test="IDPersonUrl != null"> ID_person_url = #{IDPersonUrl,jdbcType=VARCHAR}, </if>
+        		<if test="cardUrl != null"> card_url = #{cardUrl,jdbcType=VARCHAR}, </if>
+        		<if test="mobile != null"> mobile = #{mobile,jdbcType=VARCHAR}, </if>
+        		<if test="state != null"> state = #{state,jdbcType=INTEGER}, </if>
+        		<if test="openBank != null"> open_bank = #{openBank,jdbcType=VARCHAR}, </if>
+        		<if test="promoterId != null"> promoter_id = #{promoterId,jdbcType=INTEGER}, </if>
+        		<if test="merId != null"> mer_id = #{merId,jdbcType=VARCHAR}, </if>
+        		<if test="checkState != null"> check_state = #{checkState,jdbcType=INTEGER}, </if>
+        		<if test="msg != null"> msg = #{msg,jdbcType=VARCHAR}, </if>
+        		<if test="twoPromoterId != null"> and a.two_promoter_id = #{twoPromoterId,jdbcType=INTEGER} </if>
+        </set>
+    	where openId = #{openId}
+    </update>
+    
+    
+    <select id="userAnalysis" parameterType="com.tx.txWxUser.model.TxWxUser" resultMap="baseResultMap">
+         select COUNT(*) as userCount from tx_wx_user where DATE_FORMAT(create_time, '%Y-%m')<![CDATA[ <= ]]>#{year_str} and DATE_FORMAT(create_time, '%Y')<![CDATA[ >=2018 ]]>
+    </select>
+    
+    <select id="userAnalysisState" parameterType="com.tx.txWxUser.model.TxWxUser" resultMap="baseResultMap">
+         select COUNT(*) as userCount from tx_wx_user where state = 1 and check_state = 1 and DATE_FORMAT(create_time, '%Y-%m')<![CDATA[ <= ]]>#{year_str} and DATE_FORMAT(create_time, '%Y')<![CDATA[ >=2018 ]]>
+    </select>
+</mapper>

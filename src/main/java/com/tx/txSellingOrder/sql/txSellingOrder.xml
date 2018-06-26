@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.txSellingOrder.dao.TxSellingOrderDAO">
+	<resultMap id="baseResultMap" type="com.tx.txSellingOrder.model.TxSellingOrder">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="code" jdbcType="VARCHAR" property="code" />
+		<result column="money" jdbcType="INTEGER" property="money" />
+		<result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="accNo" jdbcType="VARCHAR" property="accNo" />
+		<result column="endTime" jdbcType="TIMESTAMP" property="endTime" />
+		<result column="state" jdbcType="INTEGER" property="state" />
+		<result column="queryId" jdbcType="VARCHAR" property="queryId" />
+		<result column="promoterId" jdbcType="BIGINT" property="promoterId" />
+		<result column="twoPromoterId" jdbcType="BIGINT" property="twoPromoterId" />
+		<result column="wxUserName" jdbcType="VARCHAR" property="wxUserName" />
+		<result column="one_rate" jdbcType="INTEGER" property="oneRate" />
+		<result column="two_rate" jdbcType="INTEGER" property="twoRate" />
+		<result column="dev_rate" jdbcType="INTEGER" property="devRate" />
+		<result column="wxUserId" jdbcType="BIGINT" property="wxUserId" />
+		<result column="profitManey" jdbcType="INTEGER" property="profitManey" />
+		<result column="profits" jdbcType="DECIMAL" property="profits" />
+		<result column="backCard" jdbcType="INTEGER" property="backCard" />
+		<result column="refundState" jdbcType="INTEGER" property="refundState" />
+		<result column="refundQueryId" jdbcType="VARCHAR" property="refundQueryId" />
+		<result column="refundAccNo" jdbcType="VARCHAR" property="refundAccNo" />
+		<result column="refundCode" jdbcType="VARCHAR" property="refundCode" />
+		<result column="promoterName" jdbcType="VARCHAR" property="promoterName" />
+		<result column="twoPromoterName" jdbcType="VARCHAR" property="twoPromoterName" />
+		<result column="refundTime" jdbcType="TIMESTAMP" property="refundTime" />
+	</resultMap>
+
+	<!-- 查询参数 -->
+    <sql id="txSellingOrder_column_body">
+         a.id,a.code,a.money,a.createTime,a.accNo,a.endTime,a.state,a.queryId,a.promoterId,a.twoPromoterId,a.wxUserName,a.one_rate,a.two_rate,a.dev_rate,a.wxUserId,a.profitManey,a.profits,a.backCard,a.refundState,a.refundQueryId,a.refundAccNo,a.refundCode,
+         b.realName as promoterName,c.realName as twoPromoterName
+    </sql>
+    <sql id="txSellingOrder_column_body1">
+         a.id,a.code,a.money,a.createTime,a.accNo,a.endTime,a.state,a.queryId,a.promoterId,a.twoPromoterId,a.wxUserName,a.one_rate,a.two_rate,a.dev_rate,a.wxUserId,a.profitManey,a.profits,a.backCard,a.refundState,a.refundQueryId,a.refundAccNo,a.refundCode
+    </sql>
+    <!-- 查询条件 -->
+    <sql id="txSellingOrder_select_body">
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="id != null"> and a.id = #{id,jdbcType=BIGINT} </if>
+    		<if test="code != null"> and a.code = #{code,jdbcType=VARCHAR} </if>
+    		<if test="money != null"> and a.money = #{money,jdbcType=INTEGER} </if>
+    		<if test="createTime != null"> and a.createTime = #{createTime,jdbcType=TIMESTAMP} </if>
+    		<if test="accNo != null"> and a.accNo = #{accNo,jdbcType=VARCHAR} </if>
+    		<if test="endTime != null"> and a.endTime = #{endTime,jdbcType=TIMESTAMP} </if>
+    		<if test="state != null"> and a.state = #{state,jdbcType=INTEGER} </if>
+    		<if test="queryId != null"> and a.queryId = #{queryId,jdbcType=VARCHAR} </if>
+    		<if test="promoterId != null"> and a.promoterId = #{promoterId,jdbcType=BIGINT} </if>
+    		<if test="wxUserName != null"> and a.wxUserName = #{wxUserName,jdbcType=VARCHAR} </if>
+    		<if test="oneRate != null"> and a.one_rate = #{oneRate,jdbcType=INTEGER} </if>
+    		<if test="twoRate != null"> and a.two_rate = #{twoRate,jdbcType=INTEGER} </if>
+    		<if test="devRate != null"> and a.dev_rate = #{devRate,jdbcType=INTEGER} </if>
+    		<if test="wxUserId != null"> and a.wxUserId = #{wxUserId,jdbcType=BIGINT} </if>
+    		<if test="profitManey != null"> and a.profitManey = #{profitManey,jdbcType=INTEGER} </if>
+    		<if test="profits != null"> and a.profits = #{profits,jdbcType=DECIMAL} </if>
+    		<if test="backCard != null"> and a.backCard = #{backCard,jdbcType=INTEGER} </if>
+    		<if test="refundState != null"> and a.refundState = #{refundState,jdbcType=INTEGER} </if>
+    		<if test="refundQueryId != null"> and a.refundQueryId = #{refundQueryId,jdbcType=VARCHAR} </if>
+    		<if test="refundAccNo != null"> and a.refundAccNo = #{refundAccNo,jdbcType=VARCHAR} </if>
+    		<if test="refundCode != null"> and a.refundCode = #{refundCode,jdbcType=VARCHAR} </if>
+    		<if test="refundTime != null"> and a.refundTime = #{refundCode,jdbcType=TIMESTAMP} </if>
+    		<if test="twoPromoterId != null"> 
+    			<if test="twoPromoterId != '-1'.toString()">  
+				    and a.twoPromoterId = #{twoPromoterId,jdbcType=BIGINT}
+				</if> 
+				<if test="twoPromoterId == '-1'.toString()">  
+				    and a.twoPromoterId is null
+				</if>   
+    		 </if>
+		</trim>
+    </sql>
+    <!-- 查询条件 -->
+    <sql id="txSellingOrder_select_body1">
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="id != null"> and a.id = #{id,jdbcType=BIGINT} </if>
+    		<if test="code != null"> and a.code = #{code,jdbcType=VARCHAR} </if>
+    		<if test="money != null"> and a.money = #{money,jdbcType=INTEGER} </if>
+    		<if test="createTime != null"> and a.createTime = #{createTime,jdbcType=TIMESTAMP} </if>
+    		<if test="accNo != null"> and a.accNo = #{accNo,jdbcType=VARCHAR} </if>
+    		<if test="endTime != null"> and a.endTime = #{endTime,jdbcType=TIMESTAMP} </if>
+    		<if test="state != null"> and a.state = #{state,jdbcType=INTEGER} </if>
+    		<if test="queryId != null"> and a.queryId = #{queryId,jdbcType=VARCHAR} </if>
+    		<if test="promoterId != null"> and a.promoterId = #{promoterId,jdbcType=BIGINT} </if>
+    		<if test="wxUserName != null"> and a.wxUserName = #{wxUserName,jdbcType=VARCHAR} </if>
+    		<if test="oneRate != null"> and a.one_rate = #{oneRate,jdbcType=INTEGER} </if>
+    		<if test="twoRate != null"> and a.two_rate = #{twoRate,jdbcType=INTEGER} </if>
+    		<if test="mobile != null"> and b.mobile = #{mobile,jdbcType=VARCHAR} </if>
+    		<if test="realName != null"> and b.realName = #{realName,jdbcType=VARCHAR} </if>
+    		<if test="parentId != null"> and b.parent_id = #{parentId,jdbcType=INTEGER} </if>
+    		<if test="promoter_state != null"> and b.state = #{promoter_state,jdbcType=INTEGER} </if>
+    		<if test="devRate != null"> and a.dev_rate = #{devRate,jdbcType=INTEGER} </if>
+    		<if test="wxUserId != null"> and a.wxUserId = #{wxUserId,jdbcType=BIGINT} </if>
+    		<if test="profitManey != null"> and a.profitManey = #{profitManey,jdbcType=INTEGER} </if>
+    		<if test="profits != null"> and a.profits = #{profits,jdbcType=DECIMAL} </if>
+    		<if test="backCard != null"> and a.backCard = #{backCard,jdbcType=INTEGER} </if>
+    		<if test="refundState != null"> and a.refundState = #{refundState,jdbcType=INTEGER} </if>
+    		<if test="refundQueryId != null"> and a.refundQueryId = #{refundQueryId,jdbcType=VARCHAR} </if>
+    		<if test="refundAccNo != null"> and a.refundAccNo = #{refundAccNo,jdbcType=VARCHAR} </if>
+    		<if test="refundCode != null"> and a.refundCode = #{refundCode,jdbcType=VARCHAR} </if>
+    		<if test="refundTime != null"> and a.refundTime = #{refundCode,jdbcType=TIMESTAMP} </if>
+    		<if test="twoPromoterId != null"> 
+    			<if test="twoPromoterId != '-1'.toString()">  
+				    and a.twoPromoterId = #{twoPromoterId,jdbcType=BIGINT}
+				</if> 
+				<if test="twoPromoterId == '-1'.toString()">  
+				    and a.twoPromoterId is null
+				</if>   
+    		 </if>
+		</trim>
+    </sql>
+    <select id="getTxSellingOrderById" parameterType="java.lang.Long" resultMap="baseResultMap">
+        SELECT <include refid="txSellingOrder_column_body" />
+        FROM tx_selling_order a
+        left join manage_admin_user b on a.promoterId = b.adminId
+        left join manage_admin_user c on a.twoPromoterId = c.adminId
+		where a.id = #{id}
+    </select>
+    <select id="getTxSellingOrderByCode" parameterType="java.lang.String" resultMap="baseResultMap">
+        SELECT <include refid="txSellingOrder_column_body" />
+        FROM tx_selling_order a
+        left join manage_admin_user b on a.promoterId = b.adminId
+        left join manage_admin_user c on a.twoPromoterId = c.adminId
+		where a.code = #{code}
+    </select>
+    <select id="getTxSellingOrderByRefundCode" parameterType="java.lang.String" resultMap="baseResultMap">
+        SELECT <include refid="txSellingOrder_column_body1" />
+        FROM tx_selling_order a
+		where a.refundCode = #{refundCode}
+    </select>
+    <select id="getTxSellingOrderList" parameterType="com.tx.txSellingOrder.model.TxSellingOrder" resultMap="baseResultMap">
+        SELECT <include refid="txSellingOrder_column_body" />
+        FROM tx_selling_order a
+        left join manage_admin_user b on a.promoterId = b.adminId
+        left join manage_admin_user c on a.twoPromoterId = c.adminId
+		<include refid="txSellingOrder_select_body" />
+    </select>
+    
+    <insert id="insertTxSellingOrder" parameterType="com.tx.txSellingOrder.model.TxSellingOrder">
+        INSERT INTO tx_selling_order
+        <trim prefix="(" suffix=")" prefixOverrides=",">
+	        	<if test="code != null"> ,code </if>
+	        	<if test="money != null"> ,money </if>
+	        	<if test="createTime != null"> ,createTime </if>
+	        	<if test="accNo != null"> ,accNo </if>
+	        	<if test="endTime != null"> ,endTime </if>
+	        	<if test="state != null"> ,state </if>
+	        	<if test="queryId != null"> ,queryId </if>
+	        	<if test="promoterId != null"> ,promoterId </if>
+	        	<if test="twoPromoterId != null"> ,twoPromoterId </if>
+	        	<if test="wxUserName != null"> ,wxUserName </if>
+	        	<if test="oneRate != null"> ,one_rate </if>
+	        	<if test="twoRate != null"> ,two_rate </if>
+	        	<if test="devRate != null"> ,dev_rate </if>
+	        	<if test="wxUserId != null"> ,wxUserId </if>
+	        	<if test="profitManey != null"> ,profitManey </if>
+	        	<if test="profits != null"> ,profits </if>
+	        	<if test="backCard != null"> ,backCard </if>
+	        	<if test="refundState != null"> ,refundState </if>
+	        	<if test="refundQueryId != null"> ,refundQueryId </if>
+	        	<if test="refundAccNo != null"> ,refundAccNo </if>
+	        	<if test="refundCode != null"> ,refundCode </if>
+	        	<if test="refundTime != null"> ,refundTime </if>
+        </trim>
+        <trim prefix="values (" suffix=")" prefixOverrides=",">
+	        	<if test="code != null"> ,#{code,jdbcType=VARCHAR} </if>
+	        	<if test="money != null"> ,#{money,jdbcType=INTEGER} </if>
+	        	<if test="createTime != null"> ,#{createTime,jdbcType=TIMESTAMP} </if>
+	        	<if test="accNo != null"> ,#{accNo,jdbcType=VARCHAR} </if>
+	        	<if test="endTime != null"> ,#{endTime,jdbcType=TIMESTAMP} </if>
+	        	<if test="state != null"> ,#{state,jdbcType=INTEGER} </if>
+	        	<if test="queryId != null"> ,#{queryId,jdbcType=VARCHAR} </if>
+	        	<if test="promoterId != null"> ,#{promoterId,jdbcType=BIGINT} </if>
+	        	<if test="twoPromoterId != null"> ,#{twoPromoterId,jdbcType=BIGINT} </if>
+	        	<if test="wxUserName != null"> ,#{wxUserName,jdbcType=VARCHAR} </if>
+	        	<if test="oneRate != null"> ,#{oneRate,jdbcType=INTEGER} </if>
+	        	<if test="twoRate != null"> ,#{twoRate,jdbcType=INTEGER} </if>
+	        	<if test="devRate != null"> ,#{devRate,jdbcType=INTEGER} </if>
+	        	<if test="wxUserId != null"> ,#{wxUserId,jdbcType=BIGINT} </if>
+	        	<if test="profitManey != null"> ,#{profitManey,jdbcType=INTEGER} </if>
+	        	<if test="profits != null"> ,#{profits,jdbcType=DECIMAL} </if>
+	        	<if test="backCard != null"> ,#{backCard,jdbcType=INTEGER} </if>
+	        	<if test="refundState != null"> ,#{refundState,jdbcType=INTEGER} </if>
+	        	<if test="refundQueryId != null"> ,#{refundQueryId,jdbcType=VARCHAR} </if>
+	        	<if test="refundAccNo != null"> ,#{refundAccNo,jdbcType=VARCHAR} </if>
+	        	<if test="refundCode != null"> ,#{refundCode,jdbcType=VARCHAR} </if>
+	        	<if test="refundTime != null"> ,#{refundTime,jdbcType=TIMESTAMP} </if>
+		 </trim>
+        <selectKey keyProperty="id" resultType="long">
+			SELECT @@IDENTITY AS id 
+		</selectKey>
+    </insert>
+    <update id="updateTxSellingOrderById" parameterType="com.tx.txSellingOrder.model.TxSellingOrder">
+        UPDATE tx_selling_order
+        <set>
+        		<if test="code != null"> code = #{code,jdbcType=VARCHAR}, </if>
+        		<if test="money != null"> money = #{money,jdbcType=INTEGER}, </if>
+        		<if test="createTime != null"> createTime = #{createTime,jdbcType=TIMESTAMP}, </if>
+        		<if test="accNo != null"> accNo = #{accNo,jdbcType=VARCHAR}, </if>
+        		<if test="endTime != null"> endTime = #{endTime,jdbcType=TIMESTAMP}, </if>
+        		<if test="state != null"> state = #{state,jdbcType=INTEGER}, </if>
+        		<if test="queryId != null"> queryId = #{queryId,jdbcType=VARCHAR}, </if>
+        		<if test="promoterId != null"> promoterId = #{promoterId,jdbcType=BIGINT}, </if>
+        		<if test="twoPromoterId != null"> twoPromoterId = #{twoPromoterId,jdbcType=BIGINT}, </if>
+        		<if test="wxUserName != null"> wxUserName = #{wxUserName,jdbcType=VARCHAR}, </if>
+        		<if test="oneRate != null"> one_rate = #{oneRate,jdbcType=INTEGER}, </if>
+        		<if test="twoRate != null"> two_rate = #{twoRate,jdbcType=INTEGER}, </if>
+        		<if test="devRate != null"> dev_rate = #{devRate,jdbcType=INTEGER}, </if>
+        		<if test="wxUserId != null"> wxUserId = #{wxUserId,jdbcType=BIGINT}, </if>
+        		<if test="profitManey != null"> profitManey = #{profitManey,jdbcType=INTEGER}, </if>
+        		<if test="profits != null"> profits = #{profits,jdbcType=DECIMAL}, </if>
+        		<if test="backCard != null"> backCard = #{backCard,jdbcType=INTEGER}, </if>
+        		<if test="refundState != null"> refundState = #{refundState,jdbcType=INTEGER}, </if>
+        		<if test="refundQueryId != null"> refundQueryId = #{refundQueryId,jdbcType=VARCHAR}, </if>
+        		<if test="refundAccNo != null"> refundAccNo = #{refundAccNo,jdbcType=VARCHAR}, </if>
+        		<if test="refundCode != null"> refundCode = #{refundCode,jdbcType=VARCHAR}, </if>
+        		<if test="refundTime != null"> refundTime = #{refundTime,jdbcType=TIMESTAMP}, </if>
+        </set>
+    	where id = #{id}
+    </update>
+    <delete id="deleteTxSellingOrderById">
+        delete from tx_selling_order where id = #{id}
+    </delete>
+    
+    <delete id="deleteTxSellingOrderByCode">
+        delete from tx_selling_order where code = #{code}
+    </delete>
+    
+    <select id="getTxSellingOrderCount" parameterType="com.tx.txSellingOrder.model.TxSellingOrder" resultType="int">
+        SELECT count(*)
+        FROM tx_selling_order a
+		<include refid="txSellingOrder_select_body" />
+    </select>
+    
+    <select id="getTxSellingOrderMoney" parameterType="com.tx.txSellingOrder.model.TxSellingOrder" resultMap="baseResultMap">
+        SELECT if(sum(profitManey) is null,0,sum(profitManey)) as profitManey,if(sum(money) is null,0,sum(money)) as money
+        FROM tx_selling_order a
+		<include refid="txSellingOrder_select_body" />
+    </select>
+    
+    
+    <!-- 分页 -->
+    <sql id="txSellingOrder_limit_body">
+    	<if test="offset!=null and limit!=null">
+    	limit ${offset} , ${limit} 
+    	</if>
+    </sql>
+    <!-- 排序 -->
+    <sql id="txSellingOrder_sort_body">
+    	<if test="sort!=null and order!=null"> order by a.${sort} ${order} </if>
+    </sql>
+    
+    <select id="getTxSellingOrderListByPage" parameterType="com.tx.txSellingOrder.model.TxSellingOrder" resultMap="baseResultMap">
+        SELECT <include refid="txSellingOrder_column_body1" />
+        FROM tx_selling_order a
+		<include refid="txSellingOrder_select_body" />
+		<include refid="txSellingOrder_sort_body" />
+		<include refid="txSellingOrder_limit_body" />
+    </select>
+    
+    <select id="getTxSellingOrderListBySY" parameterType="com.tx.txSellingOrder.model.TxSellingOrder" resultMap="baseResultMap">
+        SELECT a.* FROM tx_selling_order a where a.state = #{state,jdbcType=INTEGER} and a.refundState = #{refundState,jdbcType=INTEGER} and a.backCard = #{backCard,jdbcType=INTEGER} and DATE_FORMAT(a.endTime, '%Y-%c-%d') <![CDATA[<=]]> DATE_FORMAT(now(), '%Y-%c-%d')
+    </select>
+    
+    
+    <select id="orderAnalysis" parameterType="com.tx.txSellingOrder.model.TxSellingOrder" resultMap="baseResultMap">
+         select if(sum(money) is null,0,sum(money)) as money from tx_selling_order where state = 1 and DATE_FORMAT(createTime, '%Y-%m')<![CDATA[ <= ]]>#{year_str} and DATE_FORMAT(createTime, '%Y')<![CDATA[ >=2018 ]]>
+    </select>
+    
+    <select id="orderAnalysisState" parameterType="com.tx.txSellingOrder.model.TxSellingOrder" resultMap="baseResultMap">
+         select if(sum(profitManey) is null,0,sum(profitManey)) as profitManey from tx_selling_order where refundState = 1 and DATE_FORMAT(createTime, '%Y-%m')<![CDATA[ <= ]]>#{year_str} and DATE_FORMAT(createTime, '%Y')<![CDATA[ >=2018 ]]>
+    </select>
+    
+    <select id="getMoneyByRate" parameterType="com.tx.txSellingOrder.model.TxSellingOrder" resultType="long">
+        SELECT if(sum(one_rate) is null,0,sum(one_rate))
+        FROM tx_selling_order a
+		<include refid="txSellingOrder_select_body" />
+    </select>
+    
+    <select id="getSellingOrderByTwoPromoter" parameterType="com.tx.txSellingOrder.model.TxSellingOrder" resultMap="baseResultMap">
+        SELECT if(sum(money) is null,0,sum(money)) as money,if(sum(one_rate) is null,0,sum(one_rate)) as oneRate,if(sum(two_rate) is null,0,sum(two_rate)) as twoRate
+        FROM tx_selling_order a
+        left join manage_admin_user b on a.twoPromoterId = b.adminId
+		<include refid="txSellingOrder_select_body1" />
+    </select>
+</mapper>

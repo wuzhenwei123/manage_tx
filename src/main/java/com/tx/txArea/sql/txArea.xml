@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.txArea.dao.TxAreaDAO">
+	<resultMap id="baseResultMap" type="com.tx.txArea.model.TxArea">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="areaCode" jdbcType="VARCHAR" property="areaCode" />
+		<result column="areaName" jdbcType="VARCHAR" property="areaName" />
+		<result column="cityCode" jdbcType="VARCHAR" property="cityCode" />
+	</resultMap>
+
+	<!-- 查询参数 -->
+    <sql id="txArea_column_body">
+         a.id,a.areaCode,a.areaName,a.cityCode
+    </sql>
+    <!-- 查询条件 -->
+    <sql id="txArea_select_body">
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="id != null"> and a.id = #{id,jdbcType=INTEGER} </if>
+    		<if test="areaCode != null"> and a.areaCode = #{areaCode,jdbcType=VARCHAR} </if>
+    		<if test="areaName != null"> and a.areaName = #{areaName,jdbcType=VARCHAR} </if>
+    		<if test="cityCode != null"> and a.cityCode = #{cityCode,jdbcType=VARCHAR} </if>
+		</trim>
+    </sql>
+    <select id="getTxAreaById" parameterType="java.lang.Integer" resultMap="baseResultMap">
+        SELECT <include refid="txArea_column_body" />
+        FROM tx_area a
+		where a.id = #{id}
+    </select>
+    <select id="getTxAreaList" parameterType="com.tx.txArea.model.TxArea" resultMap="baseResultMap">
+        SELECT <include refid="txArea_column_body" />
+        FROM tx_area a
+		<include refid="txArea_select_body" />
+    </select>
+    
+    <insert id="insertTxArea" parameterType="com.tx.txArea.model.TxArea">
+        INSERT INTO tx_area
+        <trim prefix="(" suffix=")" prefixOverrides=",">
+	        	<if test="areaCode != null"> ,areaCode </if>
+	        	<if test="areaName != null"> ,areaName </if>
+	        	<if test="cityCode != null"> ,cityCode </if>
+        </trim>
+        <trim prefix="values (" suffix=")" prefixOverrides=",">
+	        	<if test="areaCode != null"> ,#{areaCode,jdbcType=VARCHAR} </if>
+	        	<if test="areaName != null"> ,#{areaName,jdbcType=VARCHAR} </if>
+	        	<if test="cityCode != null"> ,#{cityCode,jdbcType=VARCHAR} </if>
+		 </trim>
+        <selectKey keyProperty="id" resultType="int">
+			SELECT @@IDENTITY AS id 
+		</selectKey>
+    </insert>
+    <update id="updateTxAreaById" parameterType="com.tx.txArea.model.TxArea">
+        UPDATE tx_area
+        <set>
+        		<if test="areaCode != null"> areaCode = #{areaCode,jdbcType=VARCHAR}, </if>
+        		<if test="areaName != null"> areaName = #{areaName,jdbcType=VARCHAR}, </if>
+        		<if test="cityCode != null"> cityCode = #{cityCode,jdbcType=VARCHAR}, </if>
+        </set>
+    	where id = #{id}
+    </update>
+    <delete id="deleteTxAreaById">
+        delete from tx_area where id = #{id}
+    </delete>
+</mapper>

@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.txPaynumberMsg.dao.TxPaynumberMsgDAO">
+	<resultMap id="baseResultMap" type="com.tx.txPaynumberMsg.model.TxPaynumberMsg">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="userId" jdbcType="INTEGER" property="userId" />
+		<result column="BillType" jdbcType="VARCHAR" property="BillType" />
+		<result column="payNumber" jdbcType="VARCHAR" property="payNumber" />
+		<result column="tradeName" jdbcType="VARCHAR" property="tradeName" />
+		<result column="nickName" jdbcType="VARCHAR" property="nickName" />
+		<result column="userAddress" jdbcType="VARCHAR" property="userAddress" />
+		<result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="status" jdbcType="INTEGER" property="status" />
+		<result column="remark1" jdbcType="VARCHAR" property="remark1" />
+		<result column="remark2" jdbcType="VARCHAR" property="remark2" />
+		<result column="remark3" jdbcType="VARCHAR" property="remark3" />
+	</resultMap>
+
+	<!-- 查询参数 -->
+    <sql id="txPaynumberMsg_column_body">
+         a.id,a.userId,a.BillType,a.payNumber,a.tradeName,a.nickName,a.userAddress,a.createTime,a.status,a.remark1,a.remark2,a.remark3
+    </sql>
+    <!-- 查询条件 -->
+    <sql id="txPaynumberMsg_select_body">
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="id != null"> and a.id = #{id,jdbcType=BIGINT} </if>
+    		<if test="userId != null"> and a.userId = #{userId,jdbcType=INTEGER} </if>
+    		<if test="BillType != null"> and a.BillType = #{BillType,jdbcType=VARCHAR} </if>
+    		<if test="payNumber != null"> and a.payNumber = #{payNumber,jdbcType=VARCHAR} </if>
+    		<if test="tradeName != null"> and a.tradeName = #{tradeName,jdbcType=VARCHAR} </if>
+    		<if test="nickName != null"> and a.nickName = #{nickName,jdbcType=VARCHAR} </if>
+    		<if test="userAddress != null"> and a.userAddress = #{userAddress,jdbcType=VARCHAR} </if>
+    		<if test="createTime != null"> and a.createTime = #{createTime,jdbcType=TIMESTAMP} </if>
+    		<if test="status != null"> and a.status = #{status,jdbcType=INTEGER} </if>
+    		<if test="remark1 != null"> and a.remark1 = #{remark1,jdbcType=VARCHAR} </if>
+    		<if test="remark2 != null"> and a.remark2 = #{remark2,jdbcType=VARCHAR} </if>
+    		<if test="remark3 != null"> and a.remark3 = #{remark3,jdbcType=VARCHAR} </if>
+		</trim>
+    </sql>
+    <select id="getTxPaynumberMsgById" parameterType="java.lang.Long" resultMap="baseResultMap">
+        SELECT <include refid="txPaynumberMsg_column_body" />
+        FROM tx_paynumber_msg a
+		where a.id = #{id}
+    </select>
+    <select id="getTxPaynumberMsgList" parameterType="com.tx.txPaynumberMsg.model.TxPaynumberMsg" resultMap="baseResultMap">
+        SELECT <include refid="txPaynumberMsg_column_body" />
+        FROM tx_paynumber_msg a
+		<include refid="txPaynumberMsg_select_body" />
+    </select>
+    
+    <insert id="insertTxPaynumberMsg" parameterType="com.tx.txPaynumberMsg.model.TxPaynumberMsg">
+        INSERT INTO tx_paynumber_msg
+        <trim prefix="(" suffix=")" prefixOverrides=",">
+	        	<if test="userId != null"> ,userId </if>
+	        	<if test="BillType != null"> ,BillType </if>
+	        	<if test="payNumber != null"> ,payNumber </if>
+	        	<if test="tradeName != null"> ,tradeName </if>
+	        	<if test="nickName != null"> ,nickName </if>
+	        	<if test="userAddress != null"> ,userAddress </if>
+	        	<if test="createTime != null"> ,createTime </if>
+	        	<if test="status != null"> ,status </if>
+	        	<if test="remark1 != null"> ,remark1 </if>
+	        	<if test="remark2 != null"> ,remark2 </if>
+	        	<if test="remark3 != null"> ,remark3 </if>
+        </trim>
+        <trim prefix="values (" suffix=")" prefixOverrides=",">
+	        	<if test="userId != null"> ,#{userId,jdbcType=INTEGER} </if>
+	        	<if test="BillType != null"> ,#{BillType,jdbcType=VARCHAR} </if>
+	        	<if test="payNumber != null"> ,#{payNumber,jdbcType=VARCHAR} </if>
+	        	<if test="tradeName != null"> ,#{tradeName,jdbcType=VARCHAR} </if>
+	        	<if test="nickName != null"> ,#{nickName,jdbcType=VARCHAR} </if>
+	        	<if test="userAddress != null"> ,#{userAddress,jdbcType=VARCHAR} </if>
+	        	<if test="createTime != null"> ,#{createTime,jdbcType=TIMESTAMP} </if>
+	        	<if test="status != null"> ,#{status,jdbcType=INTEGER} </if>
+	        	<if test="remark1 != null"> ,#{remark1,jdbcType=VARCHAR} </if>
+	        	<if test="remark2 != null"> ,#{remark2,jdbcType=VARCHAR} </if>
+	        	<if test="remark3 != null"> ,#{remark3,jdbcType=VARCHAR} </if>
+		 </trim>
+        <selectKey keyProperty="id" resultType="long">
+			SELECT @@IDENTITY AS id 
+		</selectKey>
+    </insert>
+    <update id="updateTxPaynumberMsgById" parameterType="com.tx.txPaynumberMsg.model.TxPaynumberMsg">
+        UPDATE tx_paynumber_msg
+        <set>
+        		<if test="userId != null"> userId = #{userId,jdbcType=INTEGER}, </if>
+        		<if test="BillType != null"> BillType = #{BillType,jdbcType=VARCHAR}, </if>
+        		<if test="payNumber != null"> payNumber = #{payNumber,jdbcType=VARCHAR}, </if>
+        		<if test="tradeName != null"> tradeName = #{tradeName,jdbcType=VARCHAR}, </if>
+        		<if test="nickName != null"> nickName = #{nickName,jdbcType=VARCHAR}, </if>
+        		<if test="userAddress != null"> userAddress = #{userAddress,jdbcType=VARCHAR}, </if>
+        		<if test="createTime != null"> createTime = #{createTime,jdbcType=TIMESTAMP}, </if>
+        		<if test="status != null"> status = #{status,jdbcType=INTEGER}, </if>
+        		<if test="remark1 != null"> remark1 = #{remark1,jdbcType=VARCHAR}, </if>
+        		<if test="remark2 != null"> remark2 = #{remark2,jdbcType=VARCHAR}, </if>
+        		<if test="remark3 != null"> remark3 = #{remark3,jdbcType=VARCHAR}, </if>
+        </set>
+    	where id = #{id}
+    </update>
+    <delete id="deleteTxPaynumberMsgById">
+        delete from tx_paynumber_msg where id = #{id}
+    </delete>
+</mapper>

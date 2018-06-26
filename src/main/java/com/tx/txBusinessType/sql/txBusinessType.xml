@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.txBusinessType.dao.TxBusinessTypeDAO">
+	<resultMap id="baseResultMap" type="com.tx.txBusinessType.model.TxBusinessType">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="billType" jdbcType="VARCHAR" property="billType" />
+		<result column="feeTypeDesc" jdbcType="VARCHAR" property="feeTypeDesc" />
+		<result column="billArea" jdbcType="VARCHAR" property="billArea" />
+		<result column="chargeUnit" jdbcType="VARCHAR" property="chargeUnit" />
+		<result column="isNeedDate" jdbcType="INTEGER" property="isNeedDate" />
+		<result column="cityCode" jdbcType="VARCHAR" property="cityCode" />
+		<result column="serviceType" jdbcType="VARCHAR" property="serviceType" />
+		<result column="addInfo" jdbcType="VARCHAR" property="addInfo" />
+		<result column="bigLetters" jdbcType="VARCHAR" property="bigLetters" />
+		<result column="state" jdbcType="INTEGER" property="state" />
+		<result column="remark1" jdbcType="VARCHAR" property="remark1" />
+		<result column="remark2" jdbcType="VARCHAR" property="remark2" />
+		<result column="remark3" jdbcType="VARCHAR" property="remark3" />
+		<result column="isNeedFee" jdbcType="INTEGER" property="isNeedFee" />
+		<result column="feeRule" jdbcType="VARCHAR" property="feeRule" />
+		<result column="isNeedPolt" jdbcType="INTEGER" property="isNeedPolt" />
+	</resultMap>
+
+	<!-- 查询参数 -->
+    <sql id="txBusinessType_column_body">
+         a.id,a.billType,a.feeTypeDesc,a.billArea,a.chargeUnit,a.isNeedDate,a.cityCode,a.serviceType,a.addInfo,a.bigLetters,a.state,a.remark1,a.remark2,a.remark3,
+         a.isNeedFee,a.feeRule,a.isNeedPolt
+    </sql>
+    <!-- 查询条件 -->
+    <sql id="txBusinessType_select_body">
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="id != null"> and a.id = #{id,jdbcType=INTEGER} </if>
+    		<if test="billType != null"> and a.billType = #{billType,jdbcType=VARCHAR} </if>
+    		<if test="feeTypeDesc != null"> and a.feeTypeDesc = #{feeTypeDesc,jdbcType=VARCHAR} </if>
+    		<if test="billArea != null"> and a.billArea = #{billArea,jdbcType=VARCHAR} </if>
+    		<if test="chargeUnit != null"> and a.chargeUnit = #{chargeUnit,jdbcType=VARCHAR} </if>
+    		<if test="isNeedDate != null"> and a.isNeedDate = #{isNeedDate,jdbcType=INTEGER} </if>
+    		<if test="cityCode != null"> and a.cityCode = #{cityCode,jdbcType=VARCHAR} </if>
+    		<if test="serviceType != null"> and a.serviceType = #{serviceType,jdbcType=VARCHAR} </if>
+    		<if test="addInfo != null"> and a.addInfo = #{addInfo,jdbcType=VARCHAR} </if>
+    		<if test="bigLetters != null"> and a.bigLetters = #{bigLetters,jdbcType=VARCHAR} </if>
+    		<if test="state != null"> and a.state = #{state,jdbcType=INTEGER} </if>
+    		<if test="remark1 != null"> and a.remark1 = #{remark1,jdbcType=VARCHAR} </if>
+    		<if test="remark2 != null"> and a.remark2 = #{remark2,jdbcType=VARCHAR} </if>
+    		<if test="remark3 != null"> and a.remark3 = #{remark3,jdbcType=VARCHAR} </if>
+    		<if test="isNeedFee != null"> and a.isNeedFee = #{isNeedFee,jdbcType=INTEGER} </if>
+    		<if test="feeRule != null"> and a.feeRule = #{feeRule,jdbcType=VARCHAR} </if>
+    		<if test="isNeedPolt != null"> and a.isNeedPolt = #{isNeedPolt,jdbcType=INTEGER} </if>
+		</trim>
+    </sql>
+    <select id="getTxBusinessTypeById" parameterType="java.lang.Integer" resultMap="baseResultMap">
+        SELECT <include refid="txBusinessType_column_body" />
+        FROM tx_business_type a
+		where a.id = #{id}
+    </select>
+    <select id="getTxBusinessType" parameterType="com.tx.txBusinessType.model.TxBusinessType" resultMap="baseResultMap">
+        SELECT <include refid="txBusinessType_column_body" />
+        FROM tx_business_type a
+		<include refid="txBusinessType_select_body" />
+    </select>
+    <select id="getTxBusinessTypeCount" parameterType="com.tx.txBusinessType.model.TxBusinessType" resultType="int">
+        SELECT COUNT(*)
+        FROM tx_business_type a
+		<include refid="txBusinessType_select_body" />
+    </select>
+    <select id="getTxBusinessTypeList" parameterType="com.tx.txBusinessType.model.TxBusinessType" resultMap="baseResultMap">
+        SELECT <include refid="txBusinessType_column_body" />
+        FROM tx_business_type a
+		<include refid="txBusinessType_select_body" />
+    </select>
+    
+    <insert id="insertTxBusinessType" parameterType="com.tx.txBusinessType.model.TxBusinessType">
+        INSERT INTO tx_business_type
+        <trim prefix="(" suffix=")" prefixOverrides=",">
+	        	<if test="billType != null"> ,billType </if>
+	        	<if test="feeTypeDesc != null"> ,feeTypeDesc </if>
+	        	<if test="billArea != null"> ,billArea </if>
+	        	<if test="chargeUnit != null"> ,chargeUnit </if>
+	        	<if test="isNeedDate != null"> ,isNeedDate </if>
+	        	<if test="cityCode != null"> ,cityCode </if>
+	        	<if test="serviceType != null"> ,serviceType </if>
+	        	<if test="addInfo != null"> ,addInfo </if>
+	        	<if test="bigLetters != null"> ,bigLetters </if>
+	        	<if test="state != null"> ,state </if>
+	        	<if test="remark1 != null"> ,remark1 </if>
+	        	<if test="remark2 != null"> ,remark2 </if>
+	        	<if test="remark3 != null"> ,remark3 </if>
+	        	<if test="isNeedFee != null"> ,isNeedFee </if>
+	        	<if test="feeRule != null"> ,feeRule </if>
+	        	<if test="isNeedPolt != null"> ,isNeedPolt </if>
+        </trim>
+        <trim prefix="values (" suffix=")" prefixOverrides=",">
+	        	<if test="billType != null"> ,#{billType,jdbcType=VARCHAR} </if>
+	        	<if test="feeTypeDesc != null"> ,#{feeTypeDesc,jdbcType=VARCHAR} </if>
+	        	<if test="billArea != null"> ,#{billArea,jdbcType=VARCHAR} </if>
+	        	<if test="chargeUnit != null"> ,#{chargeUnit,jdbcType=VARCHAR} </if>
+	        	<if test="isNeedDate != null"> ,#{isNeedDate,jdbcType=INTEGER} </if>
+	        	<if test="cityCode != null"> ,#{cityCode,jdbcType=VARCHAR} </if>
+	        	<if test="serviceType != null"> ,#{serviceType,jdbcType=VARCHAR} </if>
+	        	<if test="addInfo != null"> ,#{addInfo,jdbcType=VARCHAR} </if>
+	        	<if test="bigLetters != null"> ,#{bigLetters,jdbcType=VARCHAR} </if>
+	        	<if test="state != null"> ,#{state,jdbcType=INTEGER} </if>
+	        	<if test="remark1 != null"> ,#{remark1,jdbcType=VARCHAR} </if>
+	        	<if test="remark2 != null"> ,#{remark2,jdbcType=VARCHAR} </if>
+	        	<if test="remark3 != null"> ,#{remark3,jdbcType=VARCHAR} </if>
+	        	<if test="isNeedFee != null"> ,#{isNeedFee,jdbcType=INTEGER} </if>
+	        	<if test="feeRule != null"> ,#{feeRule,jdbcType=VARCHAR} </if>
+	        	<if test="isNeedPolt != null"> ,#{isNeedPolt,jdbcType=INTEGER} </if>
+		 </trim>
+        <selectKey keyProperty="id" resultType="int">
+			SELECT @@IDENTITY AS id 
+		</selectKey>
+    </insert>
+    <update id="updateTxBusinessTypeById" parameterType="com.tx.txBusinessType.model.TxBusinessType">
+        UPDATE tx_business_type
+        <set>
+        		<if test="billType != null"> billType = #{billType,jdbcType=VARCHAR}, </if>
+        		<if test="feeTypeDesc != null"> feeTypeDesc = #{feeTypeDesc,jdbcType=VARCHAR}, </if>
+        		<if test="billArea != null"> billArea = #{billArea,jdbcType=VARCHAR}, </if>
+        		<if test="chargeUnit != null"> chargeUnit = #{chargeUnit,jdbcType=VARCHAR}, </if>
+        		<if test="isNeedDate != null"> isNeedDate = #{isNeedDate,jdbcType=INTEGER}, </if>
+        		<if test="cityCode != null"> cityCode = #{cityCode,jdbcType=VARCHAR}, </if>
+        		<if test="serviceType != null"> serviceType = #{serviceType,jdbcType=VARCHAR}, </if>
+        		<if test="addInfo != null"> addInfo = #{addInfo,jdbcType=VARCHAR}, </if>
+        		<if test="bigLetters != null"> bigLetters = #{bigLetters,jdbcType=VARCHAR}, </if>
+        		<if test="state != null"> state = #{state,jdbcType=INTEGER}, </if>
+        		<if test="remark1 != null"> remark1 = #{remark1,jdbcType=VARCHAR}, </if>
+        		<if test="remark2 != null"> remark2 = #{remark2,jdbcType=VARCHAR}, </if>
+        		<if test="remark3 != null"> remark3 = #{remark3,jdbcType=VARCHAR}, </if>
+        		<if test="isNeedFee != null"> isNeedFee = #{isNeedFee,jdbcType=INTEGER}, </if>
+        		<if test="feeRule != null"> feeRule = #{feeRule,jdbcType=VARCHAR}, </if>
+        		<if test="isNeedPolt != null"> isNeedPolt = #{isNeedPolt,jdbcType=INTEGER}, </if>
+        </set>
+    	where id = #{id}
+    </update>
+    <delete id="deleteTxBusinessTypeById">
+        delete from tx_business_type where id = #{id}
+    </delete>
+</mapper>

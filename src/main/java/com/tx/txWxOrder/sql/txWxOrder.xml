@@ -1,0 +1,346 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.txWxOrder.dao.TxWxOrderDAO">
+	<resultMap id="baseResultMap" type="com.tx.txWxOrder.model.TxWxOrder">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="wx_user_id" jdbcType="INTEGER" property="wxUserId" />
+		<result column="money" jdbcType="BIGINT" property="money" />
+		<result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="order_code" jdbcType="VARCHAR" property="orderCode" />
+		<result column="acc_no" jdbcType="VARCHAR" property="accNo" />
+		<result column="state" jdbcType="INTEGER" property="state" />
+		<result column="style" jdbcType="INTEGER" property="style" />
+		<result column="queryId" jdbcType="VARCHAR" property="queryId" />
+		<result column="xf_settleDate" jdbcType="VARCHAR" property="xfSettleDate" />
+		<result column="xf_flg" jdbcType="VARCHAR" property="xfFlg" />
+		<result column="xf_state" jdbcType="INTEGER" property="xfState" />
+		<result column="df_state" jdbcType="INTEGER" property="dfState" />
+		<result column="counterFee" jdbcType="INTEGER" property="counterFee" />
+		<result column="df_flg" jdbcType="VARCHAR" property="dfFlg" />
+		<result column="df_settleDate" jdbcType="VARCHAR" property="dfSettleDate" />
+		<result column="traceNo" jdbcType="VARCHAR" property="traceNo" />
+		<result column="dfQueryId" jdbcType="VARCHAR" property="dfQueryId" />
+		<result column="orderAmt" jdbcType="INTEGER" property="orderAmt" />
+		<result column="txnTime" jdbcType="VARCHAR" property="txnTime" />
+		<result column="promoterId" jdbcType="INTEGER" property="promoterId" />
+		<result column="wxUserName" jdbcType="VARCHAR" property="wxUserName" />
+		<result column="twoPromoterId" jdbcType="INTEGER" property="twoPromoterId" />
+		<result column="one_rate" jdbcType="BIGINT" property="one_rate" />
+		<result column="two_rate" jdbcType="BIGINT" property="two_rate" />
+		<result column="dev_rate" jdbcType="BIGINT" property="dev_rate" />
+		<result column="msg" jdbcType="VARCHAR" property="msg" />
+		<result column="msgDf" jdbcType="VARCHAR" property="msgDf" />
+		<result column="zfOrderNo" jdbcType="VARCHAR" property="zfOrderNo" />
+		<result column="zfOrderFee" jdbcType="INTEGER" property="zfOrderFee" />
+	</resultMap>
+
+	<!-- 查询参数 -->
+    <sql id="txWxOrder_column_body">
+         a.id,a.wx_user_id,a.money,a.create_time,a.order_code,a.acc_no,a.state,a.style,a.queryId,a.xf_settleDate,a.xf_flg,a.xf_state,a.df_state,a.counterFee,a.df_flg,a.df_settleDate,a.traceNo,a.dfQueryId,a.orderAmt,a.txnTime,a.promoterId,a.wxUserName,
+         b.realName as promoterName,a.twoPromoterId,a.one_rate,a.two_rate,a.dev_rate,c.realName as twoPromoterName,a.msg,a.msgDf,a.zfOrderNo,a.zfOrderFee
+    </sql>
+    
+    <sql id="txWxOrder_column_body1">
+         a.id,a.wx_user_id,a.money,a.create_time,a.order_code,a.acc_no,a.state,a.style,a.queryId,a.xf_settleDate,a.xf_flg,a.xf_state,a.df_state,a.counterFee,a.df_flg,a.df_settleDate,a.traceNo,a.dfQueryId,a.orderAmt,a.txnTime,a.promoterId,a.wxUserName,a.twoPromoterId,a.one_rate,
+         a.two_rate,a.dev_rate,a.msg,a.msgDf,a.zfOrderNo,a.zfOrderFee
+    </sql>
+    <!-- 查询条件 -->
+    <sql id="txWxOrder_select_body">
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="id != null"> and a.id = #{id,jdbcType=INTEGER} </if>
+    		<if test="wxUserId != null"> and a.wx_user_id = #{wxUserId,jdbcType=INTEGER} </if>
+    		<if test="money != null"> and a.money = #{money,jdbcType=INTEGER} </if>
+    		<if test="createTime != null"> and a.create_time = #{createTime,jdbcType=TIMESTAMP} </if>
+    		<if test="orderCode != null"> and a.order_code = #{orderCode,jdbcType=VARCHAR} </if>
+    		<if test="accNo != null"> and a.acc_no = #{accNo,jdbcType=VARCHAR} </if>
+    		<if test="state != null"> and a.state = #{state,jdbcType=INTEGER} </if>
+    		<if test="style != null"> and a.style = #{style,jdbcType=INTEGER} </if>
+    		<if test="queryId != null"> and a.queryId = #{queryId,jdbcType=VARCHAR} </if>
+    		<if test="xfSettleDate != null"> and a.xf_settleDate = #{xfSettleDate,jdbcType=VARCHAR} </if>
+    		<if test="xfFlg != null"> and a.xf_flg = #{xfFlg,jdbcType=VARCHAR} </if>
+    		<if test="xfState != null"> and a.xf_state = #{xfState,jdbcType=INTEGER} </if>
+    		<if test="dfState != null"> and a.df_state = #{dfState,jdbcType=INTEGER} </if>
+    		<if test="counterFee != null"> and a.counterFee = #{counterFee,jdbcType=INTEGER} </if>
+    		<if test="dfFlg != null"> and a.df_flg = #{dfFlg,jdbcType=VARCHAR} </if>
+    		<if test="dfSettleDate != null"> and a.df_settleDate = #{dfSettleDate,jdbcType=VARCHAR} </if>
+    		<if test="traceNo != null"> and a.traceNo = #{traceNo,jdbcType=VARCHAR} </if>
+    		<if test="dfQueryId != null"> and a.dfQueryId = #{dfQueryId,jdbcType=VARCHAR} </if>
+    		<if test="wxUserName != null"> and a.wxUserName = #{wxUserName,jdbcType=VARCHAR} </if>
+    		<if test="orderAmt != null"> and a.orderAmt = #{orderAmt,jdbcType=INTEGER} </if>
+    		<if test="txnTime != null"> and a.orderAmt = #{txnTime,jdbcType=INTEGER} </if>
+    		<if test="promoterId != null"> and a.promoterId = #{promoterId,jdbcType=INTEGER} </if>
+    		<if test="startTime != null"> and a.create_time <![CDATA[>=]]> #{startTime,jdbcType=TIMESTAMP} </if>
+    		<if test="endTime != null"> and a.create_time <![CDATA[<=]]> #{endTime,jdbcType=TIMESTAMP} </if>
+    		<if test="mobile != null"> and b.mobile = #{mobile,jdbcType=VARCHAR} </if>
+    		<if test="realName != null"> and b.realName = #{realName,jdbcType=VARCHAR} </if>
+    		<if test="zfOrderNo != null"> and a.zfOrderNo = #{zfOrderNo,jdbcType=VARCHAR} </if>
+    		<if test="parentId != null"> and b.parent_id = #{parentId,jdbcType=INTEGER} </if>
+    		<if test="promoter_state != null"> and b.state = #{promoter_state,jdbcType=INTEGER} </if>
+    		<if test="one_rate != null"> and b.one_rate = #{one_rate,jdbcType=INTEGER} </if>
+    		<if test="dev_rate != null"> and b.dev_rate = #{dev_rate,jdbcType=INTEGER} </if>
+    		<if test="zfOrderFee != null"> and a.zfOrderFee = #{zfOrderFee,jdbcType=INTEGER} </if>
+    		<if test="twoPromoterId != null"> 
+    			<if test="twoPromoterId != '-1'.toString()">  
+				    and a.twoPromoterId = #{twoPromoterId,jdbcType=INTEGER}
+				</if> 
+				<if test="twoPromoterId == '-1'.toString()">  
+				    and a.twoPromoterId is null
+				</if>   
+    		 </if>
+		</trim>
+    </sql>
+    <!-- 查询条件 -->
+    <sql id="txWxOrder_select_body1">
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="id != null"> and a.id = #{id,jdbcType=INTEGER} </if>
+    		<if test="wxUserId != null"> and a.wx_user_id = #{wxUserId,jdbcType=INTEGER} </if>
+    		<if test="money != null"> and a.money = #{money,jdbcType=INTEGER} </if>
+    		<if test="createTime != null"> and a.create_time = #{createTime,jdbcType=TIMESTAMP} </if>
+    		<if test="orderCode != null"> and a.order_code = #{orderCode,jdbcType=VARCHAR} </if>
+    		<if test="accNo != null"> and a.acc_no = #{accNo,jdbcType=VARCHAR} </if>
+    		<if test="state != null"> and a.state = #{state,jdbcType=INTEGER} </if>
+    		<if test="style != null"> and a.style = #{style,jdbcType=INTEGER} </if>
+    		<if test="queryId != null"> and a.queryId = #{queryId,jdbcType=VARCHAR} </if>
+    		<if test="xfSettleDate != null"> and a.xf_settleDate = #{xfSettleDate,jdbcType=VARCHAR} </if>
+    		<if test="xfFlg != null"> and a.xf_flg = #{xfFlg,jdbcType=VARCHAR} </if>
+    		<if test="xfState != null"> and a.xf_state = #{xfState,jdbcType=INTEGER} </if>
+    		<if test="dfState != null"> and a.df_state = #{dfState,jdbcType=INTEGER} </if>
+    		<if test="counterFee != null"> and a.counterFee = #{counterFee,jdbcType=INTEGER} </if>
+    		<if test="dfFlg != null"> and a.df_flg = #{dfFlg,jdbcType=VARCHAR} </if>
+    		<if test="dfSettleDate != null"> and a.df_settleDate = #{dfSettleDate,jdbcType=VARCHAR} </if>
+    		<if test="traceNo != null"> and a.traceNo = #{traceNo,jdbcType=VARCHAR} </if>
+    		<if test="dfQueryId != null"> and a.dfQueryId = #{dfQueryId,jdbcType=VARCHAR} </if>
+    		<if test="wxUserName != null"> and a.wxUserName = #{wxUserName,jdbcType=VARCHAR} </if>
+    		<if test="zfOrderNo != null"> and a.zfOrderNo = #{zfOrderNo,jdbcType=VARCHAR} </if>
+    		<if test="orderAmt != null"> and a.orderAmt = #{orderAmt,jdbcType=INTEGER} </if>
+    		<if test="txnTime != null"> and a.orderAmt = #{txnTime,jdbcType=INTEGER} </if>
+    		<if test="promoterId != null"> and a.promoterId = #{promoterId,jdbcType=INTEGER} </if>
+    		<if test="startTime != null"> and a.create_time <![CDATA[>=]]> #{startTime,jdbcType=TIMESTAMP} </if>
+    		<if test="endTime != null"> and a.create_time <![CDATA[<=]]> #{endTime,jdbcType=TIMESTAMP} </if>
+    		<if test="mobile != null"> and b.mobile = #{mobile,jdbcType=VARCHAR} </if>
+    		<if test="realName != null"> and b.realName = #{realName,jdbcType=VARCHAR} </if>
+    		<if test="parentId != null"> and c.parent_id = #{parentId,jdbcType=INTEGER} </if>
+    		<if test="promoter_state != null"> and b.state = #{promoter_state,jdbcType=INTEGER} </if>
+    		<if test="one_rate != null"> and b.one_rate = #{one_rate,jdbcType=INTEGER} </if>
+    		<if test="dev_rate != null"> and b.dev_rate = #{dev_rate,jdbcType=INTEGER} </if>
+    		<if test="zfOrderFee != null"> and a.zfOrderFee = #{zfOrderFee,jdbcType=INTEGER} </if>
+    		<if test="twoPromoterId != null"> 
+    			<if test="twoPromoterId != '-1'.toString()">  
+				    and a.twoPromoterId = #{twoPromoterId,jdbcType=INTEGER}
+				</if> 
+				<if test="twoPromoterId == '-1'.toString()">  
+				    and a.twoPromoterId is null
+				</if>   
+    		 </if>
+		</trim>
+    </sql>
+    <select id="getTxWxOrderById" parameterType="java.lang.Integer" resultMap="baseResultMap">
+        SELECT <include refid="txWxOrder_column_body" />
+        FROM tx_wx_order a
+        left join manage_admin_user b on a.promoterId = b.adminId
+        left join manage_admin_user c on a.twoPromoterId = c.adminId
+		where a.id = #{id}
+    </select>
+    <select id="getTxWxOrderByCode" parameterType="java.lang.Integer" resultMap="baseResultMap">
+        SELECT <include refid="txWxOrder_column_body" />
+        FROM tx_wx_order a
+        left join manage_admin_user b on a.promoterId = b.adminId
+        left join manage_admin_user c on a.twoPromoterId = c.adminId
+		where a.order_code = #{orderCode}
+    </select>
+    <select id="getTxWxOrderList" parameterType="com.tx.txWxOrder.model.TxWxOrder" resultMap="baseResultMap">
+        SELECT <include refid="txWxOrder_column_body" />
+        FROM tx_wx_order a
+        left join manage_admin_user b on a.promoterId = b.adminId
+        left join manage_admin_user c on a.twoPromoterId = c.adminId
+		<include refid="txWxOrder_select_body1" />
+    </select>
+    
+    <insert id="insertTxWxOrder" parameterType="com.tx.txWxOrder.model.TxWxOrder">
+        INSERT INTO tx_wx_order
+        <trim prefix="(" suffix=")" prefixOverrides=",">
+	        	<if test="wxUserId != null"> ,wx_user_id </if>
+	        	<if test="money != null"> ,money </if>
+	        	<if test="createTime != null"> ,create_time </if>
+	        	<if test="orderCode != null"> ,order_code </if>
+	        	<if test="accNo != null"> ,acc_no </if>
+	        	<if test="state != null"> ,state </if>
+	        	<if test="style != null"> ,style </if>
+	        	<if test="queryId != null"> ,queryId </if>
+	        	<if test="xfSettleDate != null"> ,xf_settleDate </if>
+	        	<if test="xfFlg != null"> ,xf_flg </if>
+	        	<if test="xfState != null"> ,xf_state </if>
+	        	<if test="dfState != null"> ,df_state </if>
+	        	<if test="counterFee != null"> ,counterFee </if>
+	        	<if test="dfFlg != null"> ,df_flg </if>
+	        	<if test="dfSettleDate != null"> ,df_settleDate </if>
+	        	<if test="traceNo != null"> ,traceNo </if>
+	        	<if test="dfQueryId != null"> ,dfQueryId </if>
+	        	<if test="orderAmt != null"> ,orderAmt </if>
+	        	<if test="txnTime != null"> ,txnTime </if>
+	        	<if test="promoterId != null"> ,promoterId </if>
+	        	<if test="wxUserName != null"> ,wxUserName </if>
+	        	<if test="twoPromoterId != null"> ,twoPromoterId </if>
+	        	<if test="one_rate != null"> ,one_rate </if>
+	        	<if test="two_rate != null"> ,two_rate </if>
+	        	<if test="dev_rate != null"> ,dev_rate </if>
+	        	<if test="msg != null"> ,msg </if>
+	        	<if test="msgDf != null"> ,msgDf </if>
+	        	<if test="zfOrderNo != null"> ,zfOrderNo </if>
+	        	<if test="zfOrderFee != null"> ,zfOrderFee </if>
+        </trim>
+        <trim prefix="values (" suffix=")" prefixOverrides=",">
+	        	<if test="wxUserId != null"> ,#{wxUserId,jdbcType=INTEGER} </if>
+	        	<if test="money != null"> ,#{money,jdbcType=INTEGER} </if>
+	        	<if test="createTime != null"> ,#{createTime,jdbcType=TIMESTAMP} </if>
+	        	<if test="orderCode != null"> ,#{orderCode,jdbcType=VARCHAR} </if>
+	        	<if test="accNo != null"> ,#{accNo,jdbcType=VARCHAR} </if>
+	        	<if test="state != null"> ,#{state,jdbcType=INTEGER} </if>
+	        	<if test="style != null"> ,#{style,jdbcType=INTEGER} </if>
+	        	<if test="queryId != null"> ,#{queryId,jdbcType=VARCHAR} </if>
+	        	<if test="xfSettleDate != null"> ,#{xfSettleDate,jdbcType=VARCHAR} </if>
+	        	<if test="xfFlg != null"> ,#{xfFlg,jdbcType=VARCHAR} </if>
+	        	<if test="xfState != null"> ,#{xfState,jdbcType=INTEGER} </if>
+	        	<if test="dfState != null"> ,#{dfState,jdbcType=INTEGER} </if>
+	        	<if test="counterFee != null"> ,#{counterFee,jdbcType=INTEGER} </if>
+	        	<if test="dfFlg != null"> ,#{dfFlg,jdbcType=VARCHAR} </if>
+	        	<if test="dfSettleDate != null"> ,#{dfSettleDate,jdbcType=VARCHAR} </if>
+	        	<if test="traceNo != null"> ,#{traceNo,jdbcType=VARCHAR} </if>
+	        	<if test="dfQueryId != null"> ,#{dfQueryId,jdbcType=VARCHAR} </if>
+	        	<if test="orderAmt != null"> ,#{orderAmt,jdbcType=INTEGER} </if>
+	        	<if test="txnTime != null"> ,#{txnTime,jdbcType=VARCHAR} </if>
+	        	<if test="promoterId != null"> ,#{promoterId,jdbcType=INTEGER} </if>
+	        	<if test="wxUserName != null"> ,#{wxUserName,jdbcType=VARCHAR} </if>
+	        	<if test="twoPromoterId != null"> ,#{twoPromoterId,jdbcType=INTEGER} </if>
+	        	<if test="one_rate != null"> ,#{one_rate,jdbcType=INTEGER} </if>
+	        	<if test="two_rate != null"> ,#{two_rate,jdbcType=INTEGER} </if>
+	        	<if test="dev_rate != null"> ,#{dev_rate,jdbcType=INTEGER} </if>
+	        	<if test="msg != null"> ,#{msg,jdbcType=VARCHAR} </if>
+	        	<if test="msgDf != null"> ,#{msgDf,jdbcType=VARCHAR} </if>
+	        	<if test="zfOrderNo != null"> ,#{zfOrderNo,jdbcType=VARCHAR} </if>
+	        	<if test="zfOrderFee != null"> ,#{zfOrderFee,jdbcType=INTEGER} </if>
+		 </trim>
+        <selectKey keyProperty="id" resultType="int">
+			SELECT @@IDENTITY AS id 
+		</selectKey>
+    </insert>
+    <update id="updateTxWxOrderById" parameterType="com.tx.txWxOrder.model.TxWxOrder">
+        UPDATE tx_wx_order
+        <set>
+        		<if test="wxUserId != null"> wx_user_id = #{wxUserId,jdbcType=INTEGER}, </if>
+        		<if test="money != null"> money = #{money,jdbcType=INTEGER}, </if>
+        		<if test="createTime != null"> create_time = #{createTime,jdbcType=TIMESTAMP}, </if>
+        		<if test="orderCode != null"> order_code = #{orderCode,jdbcType=VARCHAR}, </if>
+        		<if test="accNo != null"> acc_no = #{accNo,jdbcType=VARCHAR}, </if>
+        		<if test="state != null"> state = #{state,jdbcType=INTEGER}, </if>
+        		<if test="style != null"> style = #{style,jdbcType=INTEGER}, </if>
+        		<if test="queryId != null"> queryId = #{queryId,jdbcType=VARCHAR}, </if>
+        		<if test="xfSettleDate != null"> xf_settleDate = #{xfSettleDate,jdbcType=VARCHAR}, </if>
+        		<if test="xfFlg != null"> xf_flg = #{xfFlg,jdbcType=VARCHAR}, </if>
+        		<if test="xfState != null"> xf_state = #{xfState,jdbcType=INTEGER}, </if>
+        		<if test="dfState != null"> df_state = #{dfState,jdbcType=INTEGER}, </if>
+        		<if test="counterFee != null"> counterFee = #{counterFee,jdbcType=INTEGER}, </if>
+        		<if test="dfFlg != null"> df_flg = #{dfFlg,jdbcType=VARCHAR}, </if>
+        		<if test="dfSettleDate != null"> df_settleDate = #{dfSettleDate,jdbcType=VARCHAR}, </if>
+        		<if test="traceNo != null"> traceNo = #{traceNo,jdbcType=VARCHAR}, </if>
+        		<if test="dfQueryId != null"> dfQueryId = #{dfQueryId,jdbcType=VARCHAR}, </if>
+        		<if test="orderAmt != null"> orderAmt = #{orderAmt,jdbcType=INTEGER}, </if>
+        		<if test="txnTime != null"> txnTime = #{txnTime,jdbcType=VARCHAR}, </if>
+        		<if test="promoterId != null"> promoterId = #{promoterId,jdbcType=INTEGER}, </if>
+        		<if test="wxUserName != null"> wxUserName = #{wxUserName,jdbcType=VARCHAR}, </if>
+        		<if test="twoPromoterId != null"> twoPromoterId = #{twoPromoterId,jdbcType=INTEGER}, </if>
+        		<if test="one_rate != null"> one_rate = #{one_rate,jdbcType=INTEGER}, </if>
+        		<if test="two_rate != null"> two_rate = #{two_rate,jdbcType=INTEGER}, </if>
+        		<if test="dev_rate != null"> dev_rate = #{dev_rate,jdbcType=INTEGER}, </if>
+        		<if test="msg != null"> msg = #{msg,jdbcType=VARCHAR}, </if>
+        		<if test="msgDf != null"> msgDf = #{msgDf,jdbcType=VARCHAR}, </if>
+        		<if test="zfOrderNo != null"> zfOrderNo = #{zfOrderNo,jdbcType=VARCHAR}, </if>
+        		<if test="zfOrderFee != null"> zfOrderFee = #{zfOrderFee,jdbcType=INTEGER}, </if>
+        </set>
+    	where id = #{id}
+    </update>
+    <delete id="deleteTxWxOrderById">
+        delete from tx_wx_order where id = #{id}
+    </delete>
+    <delete id="deleteTxWxOrderByOrderCode">
+        delete from tx_wx_order where order_code = #{orderCode}
+    </delete>
+    
+    
+    <!-- 分页 -->
+    <sql id="txWxOrder_limit_body">
+    	<if test="offset!=null and limit!=null">
+    	limit ${offset} , ${limit} 
+    	</if>
+    </sql>
+    <!-- 排序 -->
+    <sql id="txWxOrder_sort_body">
+    	<if test="sort!=null and order!=null"> order by a.${sort} ${order} </if>
+    </sql>
+    
+    <select id="getTxWxOrderListByPage" parameterType="com.tx.txWxOrder.model.TxWxOrder" resultMap="baseResultMap">
+        SELECT <include refid="txWxOrder_column_body1" />
+        FROM tx_wx_order a
+		<include refid="txWxOrder_select_body" />
+		<include refid="txWxOrder_sort_body" />
+		<include refid="txWxOrder_limit_body" />
+    </select>
+    
+    <select id="getTxWxOrderCount" parameterType="com.tx.txWxOrder.model.TxWxOrder" resultType="int">
+        SELECT count(*)
+        FROM tx_wx_order a
+		<include refid="txWxOrder_select_body" />
+    </select>
+    
+    <select id="getTxWxOrderMoney" parameterType="com.tx.txWxOrder.model.TxWxOrder" resultType="long">
+        SELECT if(sum(money) is null,0,sum(money))
+        FROM tx_wx_order a
+		<include refid="txWxOrder_select_body" />
+    </select>
+    <select id="getMoneyByDev" parameterType="com.tx.txWxOrder.model.TxWxOrder" resultType="long">
+        SELECT if(sum(dev_rate) is null,0,sum(dev_rate))
+        FROM tx_wx_order a
+		<include refid="txWxOrder_select_body" />
+    </select>
+    <select id="getMoneyByRate" parameterType="com.tx.txWxOrder.model.TxWxOrder" resultType="long">
+        SELECT if(sum(one_rate) is null,0,sum(one_rate))
+        FROM tx_wx_order a
+		<include refid="txWxOrder_select_body" />
+    </select>
+    <select id="getMoneyByOnePromoter" parameterType="com.tx.txWxOrder.model.TxWxOrder" resultMap="baseResultMap">
+        select a.promoterId,if(sum(a.one_rate) is null,0,sum(a.one_rate)) as money,b.bankName,b.cardNumber,b.realName,b.bankNo
+		FROM tx_wx_order a 
+		left join manage_admin_user b on a.promoterId = b.adminId
+		<include refid="txWxOrder_select_body" />
+		group by a.promoterId
+    </select>
+    <select id="getMoneyByTwoPromoter" parameterType="com.tx.txWxOrder.model.TxWxOrder" resultMap="baseResultMap">
+        select a.twoPromoterId,if(sum(a.two_rate) is null,0,sum(a.two_rate)) as money,b.bankName,b.cardNumber,b.realName,b.bankNo
+		FROM tx_wx_order a
+		left join manage_admin_user b on a.twoPromoterId = b.adminId
+		<include refid="txWxOrder_select_body" />
+		group by a.twoPromoterId
+    </select>
+    
+    <select id="getTxWxOrderMoneyByTwoPromoter" parameterType="com.tx.txWxOrder.model.TxWxOrder" resultType="long">
+        SELECT if(sum(money) is null,0,sum(money))
+        FROM tx_wx_order a
+        left join manage_admin_user b on a.twoPromoterId = b.adminId
+		<include refid="txWxOrder_select_body" />
+    </select>
+    
+    <select id="getTxWxOrderMoneyRate" parameterType="com.tx.txWxOrder.model.TxWxOrder" resultMap="baseResultMap">
+        SELECT if(sum(one_rate) is null,0,sum(one_rate)) as one_rate,if(sum(two_rate) is null,0,sum(two_rate)) as two_rate
+        FROM tx_wx_order a
+		<include refid="txWxOrder_select_body" />
+    </select>
+    
+    <select id="orderAnalysis" parameterType="com.tx.txWxOrder.model.TxWxOrder" resultMap="baseResultMap">
+         select if(sum(money) is null,0,sum(money)) as userCount from tx_wx_order where DATE_FORMAT(create_time, '%Y-%m')<![CDATA[ <= ]]>#{year_str} and DATE_FORMAT(create_time, '%Y')<![CDATA[ >=2018 ]]>
+    </select>
+    
+    <select id="orderAnalysisState" parameterType="com.tx.txWxOrder.model.TxWxOrder" resultMap="baseResultMap">
+         select if(sum(money) is null,0,sum(money)) as userCount from tx_wx_order where xf_state = 1 and df_state = 1 and DATE_FORMAT(create_time, '%Y-%m')<![CDATA[ <= ]]>#{year_str} and DATE_FORMAT(create_time, '%Y')<![CDATA[ >=2018 ]]>
+    </select>
+</mapper>

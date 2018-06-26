@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.txPayOrder.dao.TxPayOrderDAO">
+	<resultMap id="baseResultMap" type="com.tx.txPayOrder.model.TxPayOrder">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="orderType" jdbcType="VARCHAR" property="orderType" />
+		<result column="payNumber" jdbcType="VARCHAR" property="payNumber" />
+		<result column="orderNumber" jdbcType="VARCHAR" property="orderNumber" />
+		<result column="queryNumber" jdbcType="VARCHAR" property="queryNumber" />
+		<result column="state" jdbcType="INTEGER" property="state" />
+		<result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="fee" jdbcType="BIGINT" property="fee" />
+		<result column="realFee" jdbcType="BIGINT" property="realFee" />
+		<result column="userId" jdbcType="INTEGER" property="userId" />
+		<result column="userName" jdbcType="VARCHAR" property="userName" />
+		<result column="promoterId" jdbcType="INTEGER" property="promoterId" />
+		<result column="promoterName" jdbcType="VARCHAR" property="promoterName" />
+		<result column="twoPromoterId" jdbcType="INTEGER" property="twoPromoterId" />
+		<result column="twoPromoterName" jdbcType="VARCHAR" property="twoPromoterName" />
+		<result column="oneRate" jdbcType="INTEGER" property="oneRate" />
+		<result column="twoRate" jdbcType="INTEGER" property="twoRate" />
+		<result column="devRate" jdbcType="INTEGER" property="devRate" />
+		<result column="totalRate" jdbcType="INTEGER" property="totalRate" />
+		<result column="accNo" jdbcType="VARCHAR" property="accNo" />
+		<result column="payWay" jdbcType="INTEGER" property="payWay" />
+		<result column="settleDate" jdbcType="TIMESTAMP" property="settleDate" />
+	</resultMap>
+
+	<!-- 查询参数 -->
+    <sql id="txPayOrder_column_body">
+         a.id,a.orderType,a.payNumber,a.orderNumber,a.queryNumber,a.state,a.createTime,a.fee,a.realFee,a.userId,a.userName,a.promoterId,a.promoterName,a.twoPromoterId,a.twoPromoterName,a.oneRate,a.twoRate,a.devRate,a.totalRate,a.accNo,a.payWay,a.settleDate
+    </sql>
+    <!-- 查询条件 -->
+    <sql id="txPayOrder_select_body">
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="id != null"> and a.id = #{id,jdbcType=BIGINT} </if>
+    		<if test="orderType != null"> and a.orderType = #{orderType,jdbcType=VARCHAR} </if>
+    		<if test="payNumber != null"> and a.payNumber = #{payNumber,jdbcType=VARCHAR} </if>
+    		<if test="orderNumber != null"> and a.orderNumber = #{orderNumber,jdbcType=VARCHAR} </if>
+    		<if test="queryNumber != null"> and a.queryNumber = #{queryNumber,jdbcType=VARCHAR} </if>
+    		<if test="state != null"> and a.state = #{state,jdbcType=INTEGER} </if>
+    		<if test="createTime != null"> and a.createTime = #{createTime,jdbcType=TIMESTAMP} </if>
+    		<if test="fee != null"> and a.fee = #{fee,jdbcType=BIGINT} </if>
+    		<if test="realFee != null"> and a.realFee = #{realFee,jdbcType=BIGINT} </if>
+    		<if test="userId != null"> and a.userId = #{userId,jdbcType=INTEGER} </if>
+    		<if test="userName != null"> and a.userName = #{userName,jdbcType=VARCHAR} </if>
+    		<if test="promoterId != null"> and a.promoterId = #{promoterId,jdbcType=BIGINT} </if>
+    		<if test="promoterName != null"> and a.promoterName = #{promoterName,jdbcType=VARCHAR} </if>
+    		<if test="twoPromoterId != null"> and a.twoPromoterId = #{twoPromoterId,jdbcType=BIGINT} </if>
+    		<if test="twoPromoterName != null"> and a.twoPromoterName = #{twoPromoterName,jdbcType=VARCHAR} </if>
+    		<if test="oneRate != null"> and a.oneRate = #{oneRate,jdbcType=INTEGER} </if>
+    		<if test="twoRate != null"> and a.twoRate = #{twoRate,jdbcType=INTEGER} </if>
+    		<if test="devRate != null"> and a.devRate = #{devRate,jdbcType=INTEGER} </if>
+    		<if test="totalRate != null"> and a.totalRate = #{totalRate,jdbcType=INTEGER} </if>
+    		<if test="accNo != null"> and a.accNo = #{accNo,jdbcType=VARCHAR} </if>
+    		<if test="payWay != null"> and a.payWay = #{payWay,jdbcType=INTEGER} </if>
+    		<if test="settleDate != null"> and a.settleDate = #{settleDate,jdbcType=TIMESTAMP} </if>
+		</trim>
+    </sql>
+    <select id="getTxPayOrderById" parameterType="java.lang.Long" resultMap="baseResultMap">
+        SELECT <include refid="txPayOrder_column_body" />
+        FROM tx_pay_order a
+		where a.id = #{id}
+    </select>
+    <select id="getTxPayOrderByOrderNumber" parameterType="java.lang.String" resultMap="baseResultMap">
+        SELECT <include refid="txPayOrder_column_body" />
+        FROM tx_pay_order a
+		where a.orderNumber = #{orderNumber}
+    </select>
+    <select id="getTxPayOrderList" parameterType="com.tx.txPayOrder.model.TxPayOrder" resultMap="baseResultMap">
+        SELECT <include refid="txPayOrder_column_body" />
+        FROM tx_pay_order a
+		<include refid="txPayOrder_select_body" />
+    </select>
+    
+    <insert id="insertTxPayOrder" parameterType="com.tx.txPayOrder.model.TxPayOrder">
+        INSERT INTO tx_pay_order
+        <trim prefix="(" suffix=")" prefixOverrides=",">
+	        	<if test="orderType != null"> ,orderType </if>
+	        	<if test="payNumber != null"> ,payNumber </if>
+	        	<if test="orderNumber != null"> ,orderNumber </if>
+	        	<if test="queryNumber != null"> ,queryNumber </if>
+	        	<if test="state != null"> ,state </if>
+	        	<if test="createTime != null"> ,createTime </if>
+	        	<if test="fee != null"> ,fee </if>
+	        	<if test="realFee != null"> ,realFee </if>
+	        	<if test="userId != null"> ,userId </if>
+	        	<if test="userName != null"> ,userName </if>
+	        	<if test="promoterId != null"> ,promoterId </if>
+	        	<if test="promoterName != null"> ,promoterName </if>
+	        	<if test="twoPromoterId != null"> ,twoPromoterId </if>
+	        	<if test="twoPromoterName != null"> ,twoPromoterName </if>
+	        	<if test="oneRate != null"> ,oneRate </if>
+	        	<if test="twoRate != null"> ,twoRate </if>
+	        	<if test="devRate != null"> ,devRate </if>
+	        	<if test="totalRate != null"> ,totalRate </if>
+	        	<if test="accNo != null"> ,accNo </if>
+	        	<if test="payWay != null"> ,payWay </if>
+	        	<if test="settleDate != null"> ,settleDate </if>
+        </trim>
+        <trim prefix="values (" suffix=")" prefixOverrides=",">
+	        	<if test="orderType != null"> ,#{orderType,jdbcType=VARCHAR} </if>
+	        	<if test="payNumber != null"> ,#{payNumber,jdbcType=VARCHAR} </if>
+	        	<if test="orderNumber != null"> ,#{orderNumber,jdbcType=VARCHAR} </if>
+	        	<if test="queryNumber != null"> ,#{queryNumber,jdbcType=VARCHAR} </if>
+	        	<if test="state != null"> ,#{state,jdbcType=INTEGER} </if>
+	        	<if test="createTime != null"> ,#{createTime,jdbcType=TIMESTAMP} </if>
+	        	<if test="fee != null"> ,#{fee,jdbcType=BIGINT} </if>
+	        	<if test="realFee != null"> ,#{realFee,jdbcType=BIGINT} </if>
+	        	<if test="userId != null"> ,#{userId,jdbcType=INTEGER} </if>
+	        	<if test="userName != null"> ,#{userName,jdbcType=VARCHAR} </if>
+	        	<if test="promoterId != null"> ,#{promoterId,jdbcType=BIGINT} </if>
+	        	<if test="promoterName != null"> ,#{promoterName,jdbcType=VARCHAR} </if>
+	        	<if test="twoPromoterId != null"> ,#{twoPromoterId,jdbcType=BIGINT} </if>
+	        	<if test="twoPromoterName != null"> ,#{twoPromoterName,jdbcType=VARCHAR} </if>
+	        	<if test="oneRate != null"> ,#{oneRate,jdbcType=INTEGER} </if>
+	        	<if test="twoRate != null"> ,#{twoRate,jdbcType=INTEGER} </if>
+	        	<if test="devRate != null"> ,#{devRate,jdbcType=INTEGER} </if>
+	        	<if test="totalRate != null"> ,#{totalRate,jdbcType=INTEGER} </if>
+	        	<if test="accNo != null"> ,#{accNo,jdbcType=VARCHAR} </if>
+	        	<if test="payWay != null"> ,#{payWay,jdbcType=INTEGER} </if>
+	        	<if test="settleDate != null"> ,#{settleDate,jdbcType=TIMESTAMP} </if>
+		 </trim>
+        <selectKey keyProperty="id" resultType="long">
+			SELECT @@IDENTITY AS id 
+		</selectKey>
+    </insert>
+    <update id="updateTxPayOrderById" parameterType="com.tx.txPayOrder.model.TxPayOrder">
+        UPDATE tx_pay_order
+        <set>
+        		<if test="orderType != null"> orderType = #{orderType,jdbcType=VARCHAR}, </if>
+        		<if test="payNumber != null"> payNumber = #{payNumber,jdbcType=VARCHAR}, </if>
+        		<if test="orderNumber != null"> orderNumber = #{orderNumber,jdbcType=VARCHAR}, </if>
+        		<if test="queryNumber != null"> queryNumber = #{queryNumber,jdbcType=VARCHAR}, </if>
+        		<if test="state != null"> state = #{state,jdbcType=INTEGER}, </if>
+        		<if test="createTime != null"> createTime = #{createTime,jdbcType=TIMESTAMP}, </if>
+        		<if test="fee != null"> fee = #{fee,jdbcType=BIGINT}, </if>
+        		<if test="realFee != null"> realFee = #{realFee,jdbcType=BIGINT}, </if>
+        		<if test="userId != null"> userId = #{userId,jdbcType=INTEGER}, </if>
+        		<if test="userName != null"> userName = #{userName,jdbcType=VARCHAR}, </if>
+        		<if test="promoterId != null"> promoterId = #{promoterId,jdbcType=BIGINT}, </if>
+        		<if test="promoterName != null"> promoterName = #{promoterName,jdbcType=VARCHAR}, </if>
+        		<if test="twoPromoterId != null"> twoPromoterId = #{twoPromoterId,jdbcType=BIGINT}, </if>
+        		<if test="twoPromoterName != null"> twoPromoterName = #{twoPromoterName,jdbcType=VARCHAR}, </if>
+        		<if test="oneRate != null"> oneRate = #{oneRate,jdbcType=INTEGER}, </if>
+        		<if test="twoRate != null"> twoRate = #{twoRate,jdbcType=INTEGER}, </if>
+        		<if test="devRate != null"> devRate = #{devRate,jdbcType=INTEGER}, </if>
+        		<if test="totalRate != null"> totalRate = #{totalRate,jdbcType=INTEGER}, </if>
+        		<if test="accNo != null"> accNo = #{accNo,jdbcType=VARCHAR}, </if>
+        		<if test="payWay != null"> payWay = #{payWay,jdbcType=INTEGER}, </if>
+        		<if test="settleDate != null"> settleDate = #{settleDate,jdbcType=TIMESTAMP}, </if>
+        </set>
+    	where id = #{id}
+    </update>
+    <delete id="deleteTxPayOrderById">
+        delete from tx_pay_order where id = #{id}
+    </delete>
+</mapper>

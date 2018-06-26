@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.txBank.dao.TxBankDAO">
+	<resultMap id="baseResultMap" type="com.tx.txBank.model.TxBank">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="bank_number" jdbcType="VARCHAR" property="bankNumber" />
+		<result column="verify_code" jdbcType="VARCHAR" property="verifyCode" />
+		<result column="verify_length" jdbcType="INTEGER" property="verifyLength" />
+		<result column="short_name" jdbcType="VARCHAR" property="shortName" />
+	</resultMap>
+
+	<!-- 查询参数 -->
+    <sql id="txBank_column_body">
+         a.id,a.name,a.bank_number,a.verify_code,a.verify_length,a.short_name
+    </sql>
+    <!-- 查询条件 -->
+    <sql id="txBank_select_body">
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="id != null"> and a.id = #{id,jdbcType=INTEGER} </if>
+    		<if test="name != null"> and a.name = #{name,jdbcType=VARCHAR} </if>
+    		<if test="bankNumber != null"> and a.bank_number = #{bankNumber,jdbcType=VARCHAR} </if>
+    		<if test="verifyCode != null"> and a.verify_code = #{verifyCode,jdbcType=VARCHAR} </if>
+    		<if test="verifyLength != null"> and a.verify_length = #{verifyLength,jdbcType=INTEGER} </if>
+    		<if test="shortName != null"> and a.short_name = #{shortName,jdbcType=VARCHAR} </if>
+		</trim>
+    </sql>
+    <select id="getTxBankById" parameterType="java.lang.Integer" resultMap="baseResultMap">
+        SELECT <include refid="txBank_column_body" />
+        FROM tx_bank a
+		where a.id = #{id}
+    </select>
+    <select id="getTxBankByBankNumber" parameterType="java.lang.String" resultMap="baseResultMap">
+        SELECT <include refid="txBank_column_body" />
+        FROM tx_bank a
+		where a.bank_number = #{bankNumber}
+    </select>
+    <select id="getTxBankList" parameterType="com.tx.txBank.model.TxBank" resultMap="baseResultMap">
+        SELECT <include refid="txBank_column_body" />
+        FROM tx_bank a
+		<include refid="txBank_select_body" />
+    </select>
+    
+    <insert id="insertTxBank" parameterType="com.tx.txBank.model.TxBank">
+        INSERT INTO tx_bank
+        <trim prefix="(" suffix=")" prefixOverrides=",">
+	        	<if test="name != null"> ,name </if>
+	        	<if test="bankNumber != null"> ,bank_number </if>
+	        	<if test="verifyCode != null"> ,verify_code </if>
+	        	<if test="verifyLength != null"> ,verify_length </if>
+	        	<if test="shortName != null"> ,short_name </if>
+        </trim>
+        <trim prefix="values (" suffix=")" prefixOverrides=",">
+	        	<if test="name != null"> ,#{name,jdbcType=VARCHAR} </if>
+	        	<if test="bankNumber != null"> ,#{bankNumber,jdbcType=VARCHAR} </if>
+	        	<if test="verifyCode != null"> ,#{verifyCode,jdbcType=VARCHAR} </if>
+	        	<if test="verifyLength != null"> ,#{verifyLength,jdbcType=INTEGER} </if>
+	        	<if test="shortName != null"> ,#{shortName,jdbcType=VARCHAR} </if>
+		 </trim>
+        <selectKey keyProperty="id" resultType="int">
+			SELECT @@IDENTITY AS id 
+		</selectKey>
+    </insert>
+    <update id="updateTxBankById" parameterType="com.tx.txBank.model.TxBank">
+        UPDATE tx_bank
+        <set>
+        		<if test="name != null"> name = #{name,jdbcType=VARCHAR}, </if>
+        		<if test="bankNumber != null"> bank_number = #{bankNumber,jdbcType=VARCHAR}, </if>
+        		<if test="verifyCode != null"> verify_code = #{verifyCode,jdbcType=VARCHAR}, </if>
+        		<if test="verifyLength != null"> verify_length = #{verifyLength,jdbcType=INTEGER}, </if>
+        		<if test="shortName != null"> short_name = #{shortName,jdbcType=VARCHAR}, </if>
+        </set>
+    	where id = #{id}
+    </update>
+    <delete id="deleteTxBankById">
+        delete from tx_bank where id = #{id}
+    </delete>
+</mapper>

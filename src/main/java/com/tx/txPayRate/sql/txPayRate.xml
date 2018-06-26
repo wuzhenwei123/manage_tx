@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.txPayRate.dao.TxPayRateDAO">
+	<resultMap id="baseResultMap" type="com.tx.txPayRate.model.TxPayRate">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="one_rate" jdbcType="DECIMAL" property="oneRate" />
+		<result column="two_rate" jdbcType="DECIMAL" property="twoRate" />
+		<result column="dev_rate" jdbcType="DECIMAL" property="devRate" />
+	</resultMap>
+
+	<!-- 查询参数 -->
+    <sql id="txPayRate_column_body">
+         a.id,a.one_rate,a.two_rate,a.dev_rate
+    </sql>
+    <!-- 查询条件 -->
+    <sql id="txPayRate_select_body">
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="id != null"> and a.id = #{id,jdbcType=INTEGER} </if>
+    		<if test="oneRate != null"> and a.one_rate = #{oneRate,jdbcType=DECIMAL} </if>
+    		<if test="twoRate != null"> and a.two_rate = #{twoRate,jdbcType=DECIMAL} </if>
+    		<if test="devRate != null"> and a.dev_rate = #{devRate,jdbcType=DECIMAL} </if>
+		</trim>
+    </sql>
+    <select id="getTxPayRateById" parameterType="java.lang.Integer" resultMap="baseResultMap">
+        SELECT <include refid="txPayRate_column_body" />
+        FROM tx_pay_rate a
+		where a.id = #{id}
+    </select>
+    <select id="getTxPayRateList" parameterType="com.tx.txPayRate.model.TxPayRate" resultMap="baseResultMap">
+        SELECT <include refid="txPayRate_column_body" />
+        FROM tx_pay_rate a
+		<include refid="txPayRate_select_body" />
+    </select>
+    
+    <insert id="insertTxPayRate" parameterType="com.tx.txPayRate.model.TxPayRate">
+        INSERT INTO tx_pay_rate
+        <trim prefix="(" suffix=")" prefixOverrides=",">
+	        	<if test="oneRate != null"> ,one_rate </if>
+	        	<if test="twoRate != null"> ,two_rate </if>
+	        	<if test="devRate != null"> ,dev_rate </if>
+        </trim>
+        <trim prefix="values (" suffix=")" prefixOverrides=",">
+	        	<if test="oneRate != null"> ,#{oneRate,jdbcType=DECIMAL} </if>
+	        	<if test="twoRate != null"> ,#{twoRate,jdbcType=DECIMAL} </if>
+	        	<if test="devRate != null"> ,#{devRate,jdbcType=DECIMAL} </if>
+		 </trim>
+        <selectKey keyProperty="id" resultType="int">
+			SELECT @@IDENTITY AS id 
+		</selectKey>
+    </insert>
+    <update id="updateTxPayRateById" parameterType="com.tx.txPayRate.model.TxPayRate">
+        UPDATE tx_pay_rate
+        <set>
+        		<if test="oneRate != null"> one_rate = #{oneRate,jdbcType=DECIMAL}, </if>
+        		<if test="twoRate != null"> two_rate = #{twoRate,jdbcType=DECIMAL}, </if>
+        		<if test="devRate != null"> dev_rate = #{devRate,jdbcType=DECIMAL}, </if>
+        </set>
+    	where id = #{id}
+    </update>
+    <delete id="deleteTxPayRateById">
+        delete from tx_pay_rate where id = #{id}
+    </delete>
+</mapper>
