@@ -28,4 +28,6 @@ public interface TxWxUserService {
     public int getTxWxUserListCount(TxWxUser txWxUser);
     
     public TxWxUser getTxWxUserByOpenId(String openId);
+    
+    public int unBindWx(String openId);
 }

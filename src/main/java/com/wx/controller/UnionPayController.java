@@ -141,13 +141,14 @@ public class UnionPayController extends BaseController{
 	@RequestMapping(value = "/toSellOrder", method = RequestMethod.GET)
 	public String toSellOrder(HttpServletRequest request, HttpServletResponse response, Model model){
 		super.getJsticket(request);
+		Integer sel_time = RequestHandler.getInteger(request, "sel_time");
 		Integer backCard = RequestHandler.getInteger(request, "backCard");
 		Integer money = RequestHandler.getInteger(request, "money");
 		try{
 			TxWxUser wxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 			Calendar calendar = Calendar.getInstance();
 			calendar.setTime(new Date());
-			calendar.add(Calendar.MONTH, 1);
+			calendar.add(Calendar.MONTH, sel_time);
 			model.addAttribute("endTime", calendar.getTime());
 			TxWxUserBankNo txWxUserBankNo = new TxWxUserBankNo();
 			txWxUserBankNo.setWxUserId(wxUser.getId());
@@ -157,6 +158,7 @@ public class UnionPayController extends BaseController{
 			e.printStackTrace();
 		}
 		model.addAttribute("backCard", backCard);
+		model.addAttribute("sel_time", sel_time);
 		model.addAttribute("money", money);
 		return "/wx/tx/order";
 	}
@@ -168,6 +170,7 @@ public class UnionPayController extends BaseController{
 		String accNo =  RequestHandler.getString(request, "accNo");
 		Integer money =  RequestHandler.getInteger(request, "money");
 		Integer backCard =  RequestHandler.getInteger(request, "backCard");
+		Integer sel_time =  RequestHandler.getInteger(request, "sel_time");
 		try{
 			TxWxUser wxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 			TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(accNo);
@@ -180,7 +183,7 @@ public class UnionPayController extends BaseController{
 				
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(new Date());
-				calendar.add(Calendar.MONTH, 1);
+				calendar.add(Calendar.MONTH, sel_time);
 				model.addAttribute("endTime", calendar.getTime());
 				TxSellingOrder txSellingOrder = new TxSellingOrder();
 				txSellingOrder.setBackCard(backCard);

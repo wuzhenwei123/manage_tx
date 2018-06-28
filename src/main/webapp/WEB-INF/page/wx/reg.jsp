@@ -30,6 +30,8 @@
 					<li><label>手机号</label> <input type="text" placeholder="请输入手机号" id="mobile" value=""></li>
 					<li><label>身份证号</label> <input type="text" placeholder="请输入身份证号" id="IDNumber" value=""></li>
 					<li><label>结算卡号</label> <input type="text" placeholder="请输入名下借记卡号" id="cardNumber" value=""></li>
+					<li><label>设置密码</label> <input type="password" placeholder="请输入密码" id="password" value=""></li>
+					<li><label>确认密码</label> <input type="password" placeholder="请再次输入密码" id="repassword" value=""></li>
 				</ul>
 			</div>
 			<div class="certi_box">
@@ -152,6 +154,23 @@
 			return false;
 		}
 		
+		var password = $("#password").val();
+		if(password==""){
+			layer.msg("请输入密码");
+			return false;
+		}
+		
+		var repassword = $("#repassword").val();
+		if(repassword==""){
+			layer.msg("请输入确认密码");
+			return false;
+		}
+		
+		if(password!=repassword){
+			layer.msg("密码和确认密码不一致");
+			return false;
+		}
+		
 		var IDUrl = $("#IDUrl").val();
 		if(IDUrl==""){
 			layer.msg("请上传身份证正面照片");
@@ -191,6 +210,7 @@
 				IDFanUrl : IDFanUrl,
 				IDPersonUrl : IDPersonUrl,
 				cardUrl : cardUrl,
+				password : password,
 				openId : '${openId}',
 				 _t:Math.random()},
 		       	function(data){

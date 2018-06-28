@@ -65,7 +65,21 @@ public class TxWxUser extends BaseModel implements java.io.Serializable{
 	private Integer userCount;
 	private String mouthA;
 	private String year_str;
+	private String password;
+	private String scanTicket;
 	
+	public String getScanTicket() {
+		return scanTicket;
+	}
+	public void setScanTicket(String scanTicket) {
+		this.scanTicket = scanTicket;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
 	public String getYear_str() {
 		return year_str;
 	}

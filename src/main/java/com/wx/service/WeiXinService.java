@@ -429,25 +429,15 @@ public class WeiXinService {
     public void bindMchAndBD(String openId,String ticket,String loginIP){
     	try{
     		//获取拓展员信息
-    		ManageAdminUser userBD = new ManageAdminUser();
-    		userBD.setScan_ticket(ticket);
-    		List<ManageAdminUser> listBD = manageAdminUserDao.getManageAdminUserBaseList(userBD);
+    		TxWxUser userBD = new TxWxUser();
+    		userBD.setScanTicket(ticket);
+    		List<TxWxUser> listBD = txWxUserDAO.getTxWxUserList(userBD);
     		if(listBD!=null&&listBD.size()>0){
-    			for(ManageAdminUser bd:listBD){
+    			for(TxWxUser bd:listBD){
     				if(bd.getState().intValue()==1){
     					userBD = bd;
     				}
     			}
-    		}
-    		boolean b = false;
-    		if(userBD!=null&&userBD.getAdminId()>0){//如果拓展员存在，并且状态正常
-    			b = true;
-    		}
-    		if(!b){
-    			//获取系统指定的拓展员
-    			userBD = new ManageAdminUser();
-    			userBD.setIs_default_db(1);
-    			userBD = manageAdminUserDao.getManageAdminUser(userBD);
     		}
     		//判断用书是否存在
     		TxWxUser txWxUser = new TxWxUser();
@@ -456,11 +446,8 @@ public class WeiXinService {
     		if(count==0){
     			txWxUser.setState(0);
     			txWxUser.setCreateTime(new Date());
-    			if(userBD.getParent_id()!=null){
-    				txWxUser.setPromoterId(userBD.getParent_id());//拓展员
-    				txWxUser.setTwoPromoterId(userBD.getAdminId());
-    			}else{
-    				txWxUser.setPromoterId(userBD.getAdminId());//拓展员
+    			if(userBD!=null&&userBD.getId()!=null){
+    				txWxUser.setPromoterId(userBD.getId());//拓展员
     			}
     			int id = txWxUserDAO.insertTxWxUser(txWxUser);
     			//获取微信头像和昵称
@@ -473,7 +460,9 @@ public class WeiXinService {
     			//判断是否有拓展员
     			txWxUser = txWxUserDAO.getTxWxUserByOpenId(openId);
     			if(txWxUser.getPromoterId()==null){
-    				txWxUser.setPromoterId(userBD.getAdminId());//拓展员
+    				if(userBD!=null&&userBD.getId()!=null){
+        				txWxUser.setPromoterId(userBD.getId());//拓展员
+        			}
     			}
     			ThreadWxMsgExtends th = new ThreadWxMsgExtends(txWxUser,this.getAccessToken(ConfigConstants.APPID, ConfigConstants.APPSECRET));
     			th.start();
@@ -486,53 +475,44 @@ public class WeiXinService {
     	}
     }
     /**
-     * 将业二级务拓展员和拓展员绑定
+     * 将业务拓展员和注册的商户绑定
      * @param openId
      * @param ticket
      */
-    public void bindTwoAndBD(String openId,String eventKey,String loginIP){
+    public void bind(String openId,String loginIP){
     	try{
-    		
-    		//获取二级拓展员
-    		ManageAdminUser userBD_2 = new ManageAdminUser();
-    		userBD_2.setOpenId(openId);
-    		userBD_2 = manageAdminUserDao.getManageAdminUser(userBD_2);
-    		if(userBD_2!=null){
-    			if(userBD_2.getParent_id()==null&&userBD_2.getRole_id().intValue()==Integer.valueOf(ConfigConstants.TWO_DB_ROLE_ID).intValue()){
-    				//获取一级拓展员信息
-        			String one_openId = eventKey.substring(eventKey.indexOf("_")+1, eventKey.length());
-        			System.out.println("-----------------------one_openId---------->"+one_openId);
-            		ManageAdminUser userBD = new ManageAdminUser();
-            		userBD.setOpenId(one_openId);
-            		userBD = manageAdminUserDao.getManageAdminUser(userBD);
-            		if(userBD!=null){
-            			userBD_2.setParent_id(userBD.getAdminId());
-            			manageAdminUserDao.updateManageAdminUser(userBD_2);
-            		}
-            		ThreadManageUserTwoDB th = new ThreadManageUserTwoDB(userBD_2.getAdminId(),this.getAccessToken(ConfigConstants.APPID, ConfigConstants.APPSECRET),openId);
-        			th.start();
+    		//判断用书是否存在
+    		TxWxUser txWxUser = new TxWxUser();
+    		txWxUser.setOpenId(openId);
+    		int count = txWxUserDAO.getTxWxUserListCount(txWxUser);
+    		if(count==0){
+    			txWxUser.setState(0);
+    			txWxUser.setCreateTime(new Date());
+    			int id = txWxUserDAO.insertTxWxUser(txWxUser);
+    			//获取微信头像和昵称
+    			if(id>0){
+    				ThreadWxMsgExtends th = new ThreadWxMsgExtends(txWxUser,this.getAccessToken(ConfigConstants.APPID, ConfigConstants.APPSECRET));
+    				th.start();
     			}
-    		}else{
-    			userBD_2 = new ManageAdminUser();
-    			userBD_2.setOpenId(openId);
-    			userBD_2.setAdminName("二级拓展员");
-    			userBD_2.setCreateTime(new Date());
-    			userBD_2.setLoginIP(loginIP);
-    			userBD_2.setState(0);
-    			userBD_2.setRole_id(Integer.valueOf(ConfigConstants.TWO_DB_ROLE_ID));
-    			//获取一级拓展员信息
-    			String one_openId = eventKey.substring(eventKey.indexOf("_")+1, eventKey.length());
-    			System.out.println("-----------------------one_openId---------->"+one_openId);
-        		ManageAdminUser userBD = new ManageAdminUser();
-        		userBD.setOpenId(one_openId);
-        		userBD = manageAdminUserDao.getManageAdminUser(userBD);
-        		if(userBD!=null){
-        			userBD_2.setParent_id(userBD.getAdminId());
-        		}
-    			manageAdminUserDao.insertManageAdminUser(userBD_2);
-    			ThreadManageUserTwoDB th = new ThreadManageUserTwoDB(userBD_2.getAdminId(),this.getAccessToken(ConfigConstants.APPID, ConfigConstants.APPSECRET),openId);
+    			
+    		}else if(count==1){
+    			//判断是否有拓展员
+    			txWxUser = txWxUserDAO.getTxWxUserByOpenId(openId);
+    			ThreadWxMsgExtends th = new ThreadWxMsgExtends(txWxUser,this.getAccessToken(ConfigConstants.APPID, ConfigConstants.APPSECRET));
     			th.start();
     		}
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    }
+    /**
+     * 将业务拓展员和注册的商户绑定
+     * @param openId
+     * @param ticket
+     */
+    public void unBindWx(String openId){
+    	try{
+    		txWxUserDAO.unBindWx(openId);
     	}catch(Exception e){
     		e.printStackTrace();
     	}

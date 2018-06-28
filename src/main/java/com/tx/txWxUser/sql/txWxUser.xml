@@ -24,16 +24,18 @@
 		<result column="check_state" jdbcType="INTEGER" property="checkState" />
 		<result column="msg" jdbcType="VARCHAR" property="msg" />
 		<result column="two_promoter_id" jdbcType="INTEGER" property="twoPromoterId" />
+		<result column="password" jdbcType="VARCHAR" property="password" />
+		<result column="scanTicket" jdbcType="VARCHAR" property="scanTicket" />
 	</resultMap>
 
 	<!-- 查询参数 -->
     <sql id="txWxUser_column_body">
          a.id,a.nick_name,a.openId,a.head_url,a.sex,a.create_time,a.real_name,a.ID_number,a.card_number,a.ID_url,a.ID_fan_url,a.ID_person_url,a.card_url,a.mobile,a.state,a.open_bank,a.promoter_id,
-         a.mer_id,a.check_state,a.msg,b.realName as promoterName,a.two_promoter_id
+         a.mer_id,a.check_state,a.msg,b.realName as promoterName,a.two_promoter_id,a.password,a.scanTicket
     </sql>
     <sql id="txWxUser_column_body1">
          a.id,a.nick_name,a.openId,a.head_url,a.sex,a.create_time,a.real_name,a.ID_number,a.card_number,a.ID_url,a.ID_fan_url,a.ID_person_url,a.card_url,a.mobile,a.state,a.open_bank,a.promoter_id,
-         a.mer_id,a.check_state,a.msg,b.realName as promoterName,a.two_promoter_id,c.realName as twoPromoterName
+         a.mer_id,a.check_state,a.msg,b.realName as promoterName,a.two_promoter_id,c.realName as twoPromoterName,a.password,a.scanTicket
     </sql>
     <!-- 查询条件 -->
     <sql id="txWxUser_select_body">
@@ -58,6 +60,8 @@
     		<if test="merId != null"> and a.mer_id = #{merId,jdbcType=VARCHAR} </if>
     		<if test="checkState != null"> and a.check_state = #{checkState,jdbcType=INTEGER} </if>
     		<if test="msg != null"> and a.msg = #{msg,jdbcType=VARCHAR} </if>
+    		<if test="password != null"> and a.password = #{password,jdbcType=VARCHAR} </if>
+    		<if test="scanTicket != null"> and a.scanTicket = #{scanTicket,jdbcType=VARCHAR} </if>
     		<if test="twoPromoterId != null"> 
     			<if test="twoPromoterId != '-1'.toString()">  
 				    and a.two_promoter_id = #{twoPromoterId,jdbcType=INTEGER}
@@ -91,6 +95,8 @@
     		<if test="merId != null"> and a.mer_id = #{merId,jdbcType=VARCHAR} </if>
     		<if test="checkState != null"> and a.check_state = #{checkState,jdbcType=INTEGER} </if>
     		<if test="msg != null"> and a.msg = #{msg,jdbcType=VARCHAR} </if>
+    		<if test="password != null"> and a.password = #{password,jdbcType=VARCHAR} </if>
+    		<if test="scanTicket != null"> and a.scanTicket = #{scanTicket,jdbcType=VARCHAR} </if>
     		<if test="twoPromoterId != null"> 
     			<if test="twoPromoterId != '-1'.toString()">  
 				    and a.two_promoter_id = #{twoPromoterId,jdbcType=INTEGER}
@@ -139,6 +145,8 @@
 	        	<if test="checkState != null"> ,check_state </if>
 	        	<if test="msg != null"> ,msg </if>
 	        	<if test="twoPromoterId != null"> ,two_promoter_id </if>
+	        	<if test="password != null"> ,password </if>
+	        	<if test="scanTicket != null"> ,scanTicket </if>
         </trim>
         <trim prefix="values (" suffix=")" prefixOverrides=",">
 	        	<if test="nickName != null"> ,#{nickName,jdbcType=VARCHAR} </if>
@@ -161,6 +169,8 @@
 	        	<if test="checkState != null"> ,#{checkState,jdbcType=INTEGER} </if>
 	        	<if test="msg != null"> ,#{msg,jdbcType=VARCHAR} </if>
 	        	<if test="twoPromoterId != null"> ,#{twoPromoterId,jdbcType=INTEGER} </if>
+	        	<if test="password != null"> ,#{password,jdbcType=VARCHAR} </if>
+	        	<if test="scanTicket != null"> ,#{scanTicket,jdbcType=VARCHAR} </if>
 		 </trim>
         <selectKey keyProperty="id" resultType="int">
 			SELECT @@IDENTITY AS id 
@@ -189,6 +199,8 @@
         		<if test="checkState != null"> check_state = #{checkState,jdbcType=INTEGER}, </if>
         		<if test="msg != null"> msg = #{msg,jdbcType=VARCHAR}, </if>
         		<if test="twoPromoterId != null"> two_promoter_id = #{twoPromoterId,jdbcType=INTEGER}, </if>
+        		<if test="password != null"> password = #{password,jdbcType=VARCHAR}, </if>
+        		<if test="scanTicket != null"> scanTicket = #{scanTicket,jdbcType=VARCHAR}, </if>
         </set>
     	where id = #{id}
     </update>
@@ -222,7 +234,7 @@
 		<include refid="txWxUser_select_body" />
     </select>
     
-    <select id="getTxWxUserByOpenId" parameterType="java.lang.Integer" resultMap="baseResultMap">
+    <select id="getTxWxUserByOpenId" parameterType="java.lang.String" resultMap="baseResultMap">
         SELECT <include refid="txWxUser_column_body" />
         FROM tx_wx_user a
         left join manage_admin_user b on a.promoter_id = b.adminId
@@ -252,8 +264,14 @@
         		<if test="checkState != null"> check_state = #{checkState,jdbcType=INTEGER}, </if>
         		<if test="msg != null"> msg = #{msg,jdbcType=VARCHAR}, </if>
         		<if test="twoPromoterId != null"> and a.two_promoter_id = #{twoPromoterId,jdbcType=INTEGER} </if>
+        		<if test="password != null"> and a.password = #{password,jdbcType=VARCHAR} </if>
+        		<if test="scanTicket != null"> and a.scanTicket = #{scanTicket,jdbcType=VARCHAR} </if>
         </set>
     	where openId = #{openId}
+    </update>
+    
+    <update id="unBindWx" parameterType="java.lang.String">
+        UPDATE tx_wx_user set  openId = null,state = 0 where openId = #{openId}
     </update>
     
     

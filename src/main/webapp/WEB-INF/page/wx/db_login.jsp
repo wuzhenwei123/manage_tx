@@ -29,7 +29,7 @@
         </div>
         <div class="yzBox">
         	<div class="items">
-            	<input class="input" type="text" placeholder="请输入账号/手机号" id="phone"/>
+            	<input class="input" type="text" placeholder="请输入手机号" id="phone"/>
             </div>
             <div class="items">
             	<input class="input" type="text" placeholder="请输入密码" id="pwd"/>
@@ -95,7 +95,7 @@
    	function verify(){
    		var phone = $.trim($("#phone").val());
    		if(phone==""){
-   			$("#msg").html("请输入账号/手机号");
+   			$("#msg").html("请输入手机号");
    			$(".weui_dialog_alert").show();
    			return false;
    		}

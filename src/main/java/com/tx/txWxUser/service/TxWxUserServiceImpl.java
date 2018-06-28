@@ -24,6 +24,10 @@ public class TxWxUserServiceImpl implements TxWxUserService{
         return txWxUserDAO.getTxWxUserList(txWxUser);
     }
     
+    public int unBindWx(String openId){
+    	return txWxUserDAO.unBindWx(openId);
+    }
+    
     public List<TxWxUser> getTxWxUserListByPage(TxWxUser txWxUser) {
     	return txWxUserDAO.getTxWxUserListByPage(txWxUser);
     }

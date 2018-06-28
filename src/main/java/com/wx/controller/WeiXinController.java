@@ -214,26 +214,18 @@ public class WeiXinController extends BaseController{
 						WxRecvEventMsg m = (WxRecvEventMsg) msg;
 						String event = m.getEvent();
 						if ("subscribe".equals(event)) {
+							String content = "欢迎关注";
+							sendMsg = new WxSendTextMsg(sendMsg, content);
 							if(StringUtils.isNotBlank(m.getTicket())){
-								if(m.getEventKey().indexOf("Friend_")!=-1){
-									String content = "恭喜您已经成为生活购电业务员，请输入【合作】，完善资料";
-									sendMsg = new WxSendTextMsg(sendMsg, content);
-									//将业二级务拓展员和拓展员绑定
-									weiXinService.bindTwoAndBD(openId,m.getEventKey(),super.getIp(request));
-								}else{
-									String content = "请点击开通服务：<a href='"+ConfigConstants.URL_PATH+"/weixin/toReg?openId="+openId+"'>开通服务</a>";
-									sendMsg = new WxSendTextMsg(sendMsg, content);
-									String ticket = m.getTicket();
-									//将推荐人和被推荐人绑定。
-									weiXinService.bindMchAndBD(openId,ticket,super.getIp(request));
-								}
+								String ticket = m.getTicket();
+								//将推荐人和被推荐人绑定。
+								weiXinService.bindMchAndBD(openId,ticket,super.getIp(request));
 							}else{
-								String content = "欢迎关注";
-								sendMsg = new WxSendTextMsg(sendMsg, content);
+								weiXinService.bind(openId,super.getIp(request));
 							}
 						}else if("unsubscribe".equals(event)){//取消关注
 							//解除绑定
-//							weiXinService.unBindWx(openId);
+							weiXinService.unBindWx(openId);
 						}else if("CLICK".equals(event)){
 							System.out.println("---------------"+m.getEventKey());
 							if("BM".equals(m.getEventKey())){
@@ -244,19 +236,8 @@ public class WeiXinController extends BaseController{
 								sendMsg = new WxSendTextMsg(sendMsg, content);
 							}
 						}else if("SCAN".equals(event)){
-							if(m.getEventKey().indexOf("Friend_")!=-1){
-								String content = "恭喜您已经成为生活购电业务员，请输入【合作】，完善资料";
-								sendMsg = new WxSendTextMsg(sendMsg, content);
-								//将业二级务拓展员和拓展员绑定
-								weiXinService.bindTwoAndBD(openId,m.getEventKey(),super.getIp(request));
-							}else{
-								String ticket = m.getTicket();
-								String content = "请点击开通服务：<a href='"+ConfigConstants.URL_PATH+"/weixin/toReg?openId="+openId+"'>开通服务</a>";
-								sendMsg = new WxSendTextMsg(sendMsg, content);
-								//将业务拓展员和注册的商户绑定
-								weiXinService.bindMchAndBD(openId,ticket,super.getIp(request));
-							}
-							
+							String ticket = m.getTicket();
+							weiXinService.bindMchAndBD(openId,ticket,super.getIp(request));
 						}else if("LOCATION".equals(event)){
 							String str = weiXinService.getBaiDuLocationXY(m.getLatitude(),m.getLongitude());
 							System.out.println(str);
@@ -340,25 +321,27 @@ public class WeiXinController extends BaseController{
 				writeSuccessMsg("-3", null, response);
 				return null;
 			}
-			ManageAdminUser manageAdminUser = new ManageAdminUser();
-			manageAdminUser.setAdminName(phone);
-			manageAdminUser.setPasswd(MD5.getMD5ofStr(pwd));
-			int count = manageadminuserService.getManageAdminUserListCount(manageAdminUser);
+			
+			TxWxUser txWxUser = new TxWxUser();
+			txWxUser.setMobile(phone);
+			txWxUser.setPassword(MD5.getMD5ofStr(pwd));
+			int count = txWxUserService.getTxWxUserListCount(txWxUser);
 			if(count ==0){
 				writeSuccessMsg("-4", null, response);
 				return null;
 			}else if(count==1){
-				manageAdminUser = manageadminuserService.getManageAdminUser(manageAdminUser);
-				if(manageAdminUser.getState()==1){
-					if(StringUtils.isNotBlank(manageAdminUser.getOpenId())){
+				List<TxWxUser> list = txWxUserService.getTxWxUserList(txWxUser);
+				txWxUser = list.get(0);
+				if(txWxUser.getState()==1){
+					if(StringUtils.isNotBlank(txWxUser.getOpenId())){
 						writeSuccessMsg("-7", null, response);
 					}else{
-						manageAdminUser.setOpenId(openId);
-						manageadminuserService.updateManageAdminUser(manageAdminUser);
+						txWxUser.setOpenId(openId);
+						txWxUserService.updateTxWxUserById(txWxUser);
 						
-						request.getSession().setAttribute(SessionName.ADMIN_USER, manageAdminUser);
-						request.getSession().setAttribute(SessionName.ADMIN_USER_ID, manageAdminUser.getAdminId());
-						request.getSession().setAttribute(SessionName.ADMIN_USER_NAME, manageAdminUser.getAdminName());
+						request.getSession().setAttribute(SessionName.ADMIN_USER, txWxUser);
+						request.getSession().setAttribute(SessionName.ADMIN_USER_ID, txWxUser.getId());
+						request.getSession().setAttribute(SessionName.ADMIN_USER_NAME, txWxUser.getNickName());
 						writeSuccessMsg("1", null, response);
 					}
 				}else{
@@ -471,30 +454,21 @@ public class WeiXinController extends BaseController{
 		model.addAttribute("openId", openId);
 		try{
 			//判断是否已经验证
-			ManageAdminUser manageAdminUser = new ManageAdminUser();
-			manageAdminUser.setOpenId(openId);
-			int count = manageadminuserService.getManageAdminUserListCount(manageAdminUser);
+			TxWxUser txWxUser = new TxWxUser();
+			txWxUser.setOpenId(openId);
+			int count = txWxUserService.getTxWxUserListCount(txWxUser);
 			if(count==0){//未绑定
 				return  "/wx/db_login";
 			}else{
 				if(count==1){
-					manageAdminUser = manageadminuserService.getManageAdminUser(manageAdminUser);
-					if(manageAdminUser.getRole_id()!=null&&(manageAdminUser.getRole_id().intValue()==Integer.valueOf(ConfigConstants.DB_ROLE_ID)||
-							manageAdminUser.getRole_id().intValue()==Integer.valueOf(ConfigConstants.TWO_DB_ROLE_ID))){
-						request.getSession().setAttribute(SessionName.ADMIN_USER, manageAdminUser);
-						request.getSession().setAttribute(SessionName.ADMIN_USER_ID, manageAdminUser.getAdminId());
-						request.getSession().setAttribute(SessionName.ADMIN_USER_NAME, manageAdminUser.getAdminName());
-						if(manageAdminUser.getRole_id().intValue()==Integer.valueOf(ConfigConstants.TWO_DB_ROLE_ID)&&
-								!StringUtils.isNotBlank(manageAdminUser.getPasswd())){
-							return  "/wx/ws";
-						}
-						if(manageAdminUser.getState()==1){
-							return  "/wx/myInfo";
-						}else{//状态异常
-							return  "/wx/tip";
-						}
-					}else{//角色错误
-						return  "/wx/tip";
+					txWxUser = txWxUserService.getTxWxUserByOpenId(openId);
+					request.getSession().setAttribute(SessionName.ADMIN_USER, txWxUser);
+					request.getSession().setAttribute(SessionName.ADMIN_USER_ID, txWxUser.getId());
+					request.getSession().setAttribute(SessionName.ADMIN_USER_NAME, txWxUser.getNickName());
+					if(txWxUser.getState()==1){
+						return  "/wx/myInfo";
+					}else{
+						return  "/wx/reg";
 					}
 				}else{
 					//账号异常
@@ -837,8 +811,26 @@ public class WeiXinController extends BaseController{
 	@RequestMapping(value = "/reg", method = RequestMethod.POST)
 	public String reg(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
 		TxWxUser txWxUser = requst2Bean(request,TxWxUser.class);
+		String repassword = RequestHandler.getString(request, "repassword");
 		JSONObject json = new JSONObject();
 		try{
+			
+			if(!StringUtils.isNotBlank(txWxUser.getPassword())||!StringUtils.isNotBlank(repassword)){
+				json.put("c", -1);
+				json.put("m", "注册失败,密码不能为空");
+				response.setContentType("text/html;charset=utf-8");
+				response.setHeader("Cache-Control","no-cache");
+				response.getWriter().write(json.toString());
+				return  null;
+			}
+			if(!txWxUser.getPassword().equals(repassword)){
+				json.put("c", -1);
+				json.put("m", "注册失败,两次密码不一致");
+				response.setContentType("text/html;charset=utf-8");
+				response.setHeader("Cache-Control","no-cache");
+				response.getWriter().write(json.toString());
+				return  null;
+			}
 			
 			String saveFilePath = ConfigConstants.UPLOAD_FILE_ROOT;
 			
@@ -930,6 +922,8 @@ public class WeiXinController extends BaseController{
 //			}
 			
 			if(b){
+				com.base.utils.MD5 md5 = new com.base.utils.MD5();
+				txWxUser.setPassword(md5.getMD5ofStr(repassword));
 				JSONObject json1 = weiXinService.regHxt(txWxUser);
 				if("1000".equals(json1.getString("respCode"))){
 					txWxUser.setState(1);

@@ -739,4 +739,17 @@ public class IndexController extends BaseController{
 		indexService.union_backurl(request);
 		return  null;
 	}
+	
+	/**
+	 * 去充值
+	 * 
+	 * @param response
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/toRecharge")
+	public String toRecharge(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
+		return  "/wx/index/recharge";
+	}
 }
