@@ -172,31 +172,17 @@ public class WeiXinController extends BaseController{
 				if(b){
 					if("index".equals(states[0])){//缴费
 						return  "redirect:/index/index";
-					}else if("jb".equals(states[0])){//基本信息
-						return  "redirect:/weixin/toUpdateInfo?openId="+ openId;
-					}else if("order".equals(states[0])){//我的订单
-						return  "redirect:/unionpay/toMyOrder?openId="+ openId;
-					}else if("card".equals(states[0])){//银行卡
-						return  "redirect:/weixin/myCardList?openId="+ openId;
-					}else if("qcode".equals(states[0])){//银行卡
-						return  "redirect:/unionpay/toMyEwm";
+					}else if("jb".equals(states[0])){//赚点钱
+						return  "redirect:/weixin/dbIndex?openId="+ openId;
 					}
 				}else{
 					request.getSession().removeAttribute(SessionName.ADMIN_USER_NAME);
 					request.getSession().removeAttribute(SessionName.ADMIN_USER_ID);
 					request.getSession().removeAttribute(SessionName.ADMIN_USER);
 					if("index".equals(states[0])){//缴费
-						return  "redirect:/weixin/toPay";
+						return  "redirect:/index/index";
 					}else if("jb".equals(states[0])){//基本信息
-						return  "redirect:/unionpay/toRegInfo";
-					}
-					boolean b1 = weiXinService.loginWxCust1(openId, request);
-					if(b1){
-						if("updateinfo".equals(states[0])){//个人中心
-							return  "redirect:/weixin/toUpdateInfo?openId="+ openId;
-						}
-					}else{
-						return  "/weixin/toReg?openId="+ openId;
+						return  "redirect:/weixin/dbIndex?openId="+ openId;
 					}
 				}
 			} catch (Exception e) {
@@ -247,12 +233,6 @@ public class WeiXinController extends BaseController{
 						WxRecvTextMsg m = (WxRecvTextMsg) msg;
 						String content =  m.getContent();
 						if(content.contains("合作")){//机构验证
-							sendMsg = new WxSendNewsMsg(sendMsg).addItem(
-									"合作",
-									"感谢您关注微信公众服务号，点击此消息进入",
-									ConfigConstants.URL_PATH + "/images/subscribe.png",
-									ConfigConstants.URL_PATH + "/weixin/dbIndex?openId=" + openId);
-							WeiXin.send(sendMsg, response.getOutputStream());
 						}
 					}
 				} catch (Exception e) {
@@ -468,7 +448,7 @@ public class WeiXinController extends BaseController{
 					if(txWxUser.getState()==1){
 						return  "/wx/myInfo";
 					}else{
-						return  "/wx/reg";
+						return  "/wx/tx/regInfo";
 					}
 				}else{
 					//账号异常
@@ -814,7 +794,8 @@ public class WeiXinController extends BaseController{
 		String repassword = RequestHandler.getString(request, "repassword");
 		JSONObject json = new JSONObject();
 		try{
-			
+			TxWxUser user1 = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+			txWxUser.setOpenId(user1.getOpenId());
 			if(!StringUtils.isNotBlank(txWxUser.getPassword())||!StringUtils.isNotBlank(repassword)){
 				json.put("c", -1);
 				json.put("m", "注册失败,密码不能为空");

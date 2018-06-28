@@ -211,6 +211,7 @@
 				IDPersonUrl : IDPersonUrl,
 				cardUrl : cardUrl,
 				password : password,
+				repassword : repassword,
 				openId : '${openId}',
 				 _t:Math.random()},
 		       	function(data){
@@ -219,7 +220,7 @@
 		        	var result = eval('('+data+')'); 
 		            if (result.c == '0') {
 		            	layer.msg("注册成功");
-		            	setTimeout("closeWin()",3000);
+		            	setTimeout("closeWin()",2000);
 		            } else {
 		            	layer.msg(result.m);
 		            }
@@ -227,7 +228,7 @@
 		}
 	}
 	function closeWin(){
-		WeixinJSBridge.call('closeWindow');
+		window.location.href='${ctx}/weixin/dbIndex?openId=${openId}';
 	}
 </script>
 </html>

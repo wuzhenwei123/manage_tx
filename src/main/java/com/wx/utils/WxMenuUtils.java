@@ -45,18 +45,16 @@ public class WxMenuUtils {
    		 ConfigConstants.init();
          String accessToken = getAccessToken(ConfigConstants.APPID, ConfigConstants.APPSECRET); 
            
-          String MENU = "{\"button\":[{\"name\":\"充值缴费\",\"sub_button\":" +
-			"[{\"type\":\"view\",\"name\":\"充值缴费\",\"url\":\""+getUrl("cz")+"\"}," +
-			"{\"type\":\"view\",\"name\":\"邮寄发票\",\"url\":\"http://weixin.chinaepay.com/redirect_uri.jsp?state=s,purchaseRecord\"}]}," +
-			"{\"name\":\"更多服务\",\"sub_button\":"+
-			"[{\"type\":\"view\",\"name\":\"吉云官网\",\"url\":\"http://www.10111.com.cn/\"}]}," +
-			"{\"name\":\"个人中心\",\"sub_button\":"+
-			"[{\"type\":\"view\",\"name\":\"基本信息\",\"url\":\""+getUrl("jb")+"\"},"+ 
-			"{\"type\":\"view\",\"name\":\"我的银行卡\",\"url\":\""+getUrl("card")+"\"}," +
-			"{\"type\":\"view\",\"name\":\"交易明细\",\"url\":\""+getUrl("order")+"\"}," +
-			"{\"type\":\"view\",\"name\":\"我的推广码\",\"url\":\""+getUrl("qcode")+"\"}]}" +
+          String MENU = "{\"button\":[{\"type\":\"view\",\"name\":\"生活缴费\",\"url\":\""+getUrl("index")+"\"}," +
+			"{\"name\":\"门票和商品\",\"sub_button\":"+
+			"[{\"type\":\"view\",\"name\":\"国外门票\",\"url\":\"http://www.10111.com.cn/\"},"+
+			"{\"type\":\"view\",\"name\":\"精品购物\",\"url\":\"http://www.10111.com.cn/\"},"+
+			"{\"type\":\"view\",\"name\":\"我要开店\",\"url\":\"http://www.10111.com.cn/\"}]}," +
+			"{\"name\":\"关于我们\",\"sub_button\":"+
+			"[{\"type\":\"view\",\"name\":\"赚点钱\",\"url\":\""+getUrl("jb")+"\"},"+ 
+			"{\"type\":\"view\",\"name\":\"吉云信网\",\"url\":\"http://www.10111.com.cn/\"}]}" +
 			"]}";
-           
+          
            String res = createMenu(MENU, accessToken);  
        	   System.out.println(res);
          } catch (Exception e) {  

@@ -263,9 +263,9 @@
         		<if test="merId != null"> mer_id = #{merId,jdbcType=VARCHAR}, </if>
         		<if test="checkState != null"> check_state = #{checkState,jdbcType=INTEGER}, </if>
         		<if test="msg != null"> msg = #{msg,jdbcType=VARCHAR}, </if>
-        		<if test="twoPromoterId != null"> and a.two_promoter_id = #{twoPromoterId,jdbcType=INTEGER} </if>
-        		<if test="password != null"> and a.password = #{password,jdbcType=VARCHAR} </if>
-        		<if test="scanTicket != null"> and a.scanTicket = #{scanTicket,jdbcType=VARCHAR} </if>
+        		<if test="twoPromoterId != null">  two_promoter_id = #{twoPromoterId,jdbcType=INTEGER} </if>
+        		<if test="password != null">  password = #{password,jdbcType=VARCHAR} </if>
+        		<if test="scanTicket != null">  scanTicket = #{scanTicket,jdbcType=VARCHAR} </if>
         </set>
     	where openId = #{openId}
     </update>
