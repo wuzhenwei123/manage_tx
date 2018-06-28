@@ -25,11 +25,12 @@
 		<result column="accNo" jdbcType="VARCHAR" property="accNo" />
 		<result column="payWay" jdbcType="INTEGER" property="payWay" />
 		<result column="settleDate" jdbcType="TIMESTAMP" property="settleDate" />
+		<result column="refundNumber" jdbcType="VARCHAR" property="refundNumber" />
 	</resultMap>
 
 	<!-- 查询参数 -->
     <sql id="txPayOrder_column_body">
-         a.id,a.orderType,a.payNumber,a.orderNumber,a.queryNumber,a.state,a.createTime,a.fee,a.realFee,a.userId,a.userName,a.promoterId,a.promoterName,a.twoPromoterId,a.twoPromoterName,a.oneRate,a.twoRate,a.devRate,a.totalRate,a.accNo,a.payWay,a.settleDate
+         a.id,a.orderType,a.payNumber,a.orderNumber,a.queryNumber,a.state,a.createTime,a.fee,a.realFee,a.userId,a.userName,a.promoterId,a.promoterName,a.twoPromoterId,a.twoPromoterName,a.oneRate,a.twoRate,a.devRate,a.totalRate,a.accNo,a.payWay,a.settleDate,a.refundNumber
     </sql>
     <!-- 查询条件 -->
     <sql id="txPayOrder_select_body">
@@ -56,6 +57,7 @@
     		<if test="accNo != null"> and a.accNo = #{accNo,jdbcType=VARCHAR} </if>
     		<if test="payWay != null"> and a.payWay = #{payWay,jdbcType=INTEGER} </if>
     		<if test="settleDate != null"> and a.settleDate = #{settleDate,jdbcType=TIMESTAMP} </if>
+    		<if test="refundNumber != null"> and a.refundNumber = #{refundNumber,jdbcType=VARCHAR} </if>
 		</trim>
     </sql>
     <select id="getTxPayOrderById" parameterType="java.lang.Long" resultMap="baseResultMap">
@@ -98,6 +100,7 @@
 	        	<if test="accNo != null"> ,accNo </if>
 	        	<if test="payWay != null"> ,payWay </if>
 	        	<if test="settleDate != null"> ,settleDate </if>
+	        	<if test="refundNumber != null"> ,refundNumber </if>
         </trim>
         <trim prefix="values (" suffix=")" prefixOverrides=",">
 	        	<if test="orderType != null"> ,#{orderType,jdbcType=VARCHAR} </if>
@@ -121,6 +124,7 @@
 	        	<if test="accNo != null"> ,#{accNo,jdbcType=VARCHAR} </if>
 	        	<if test="payWay != null"> ,#{payWay,jdbcType=INTEGER} </if>
 	        	<if test="settleDate != null"> ,#{settleDate,jdbcType=TIMESTAMP} </if>
+	        	<if test="refundNumber != null"> ,#{refundNumber,jdbcType=VARCHAR} </if>
 		 </trim>
         <selectKey keyProperty="id" resultType="long">
 			SELECT @@IDENTITY AS id 
@@ -150,6 +154,7 @@
         		<if test="accNo != null"> accNo = #{accNo,jdbcType=VARCHAR}, </if>
         		<if test="payWay != null"> payWay = #{payWay,jdbcType=INTEGER}, </if>
         		<if test="settleDate != null"> settleDate = #{settleDate,jdbcType=TIMESTAMP}, </if>
+        		<if test="refundNumber != null"> refundNumber = #{refundNumber,jdbcType=VARCHAR}, </if>
         </set>
     	where id = #{id}
     </update>
