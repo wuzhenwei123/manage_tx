@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import com.base.utils.ConfigConstants;
 import com.base.utils.SessionName;
 import com.base.utils.Tinput;
+import com.base.utils.https.HttpUtils;
 import com.tx.task.service.PayLogCutter;
 import com.tx.txDfRate.dao.TxDfRateDAO;
 import com.tx.txDfRate.model.TxDfRate;
@@ -49,6 +50,8 @@ public class IndexService {
 	
 	@Autowired
 	private PayLogCutter payLogCutter;
+	@Autowired
+	private WxTemplateMsg wxTemplateMsg;
 	@Resource
     private TxPayOrderDAO txPayOrderDAO;
 	@Resource
@@ -215,6 +218,11 @@ public class IndexService {
 		    		hOrder.setCreateTime(sf1.parse(time_end));
 		    		hOrder.setQueryNumber(rspData.get("queryId"));
 		    		txPayOrderDAO.updateTxPayOrderById(hOrder);
+				}else{
+					TxPayOrder hOrder = new TxPayOrder();
+					hOrder.setId(id);
+					hOrder.setState(0);
+					txPayOrderDAO.updateTxPayOrderById(hOrder);
 				}
     		}
     	}catch(Exception e){
@@ -685,6 +693,14 @@ public class IndexService {
         			//查订单状态
         			TxPayOrder hOrder = txPayOrderDAO.getTxPayOrderByOrderNumber(orderId);
     				if(hOrder!=null&&hOrder.getState()==1){
+    					SimpleDateFormat sf11 = new SimpleDateFormat("yyyy-MM-dd");
+    					SimpleDateFormat sf111 = new SimpleDateFormat("yyyy");
+    					if(StringUtils.isNotBlank(time_end)){
+    						String source = sf111.format(new Date()) + "-" + time_end.substring(0,2)+"-"+time_end.substring(2,4);
+    						hOrder.setSettleDate(sf11.parse(source));
+    					}
+    					hOrder.setQueryNumber(transaction_id);
+    					txPayOrderDAO.updateTxPayOrderById(hOrder);
     					//去充值
     					logger.info("==销账开始====");
             			Map<String, Object> mappay = payDF(money, shopCode, customerNumber, orderId, transaction_id, ipAdd, centerInfo, time_end);
@@ -693,13 +709,7 @@ public class IndexService {
             				String paystatus = mappay.get("message").toString();
             				logger.info("----------paystatus--------"+paystatus);
             				if(paystatus.equals("ok")){
-            					SimpleDateFormat sf11 = new SimpleDateFormat("yyyy-MM-dd");
-            					SimpleDateFormat sf111 = new SimpleDateFormat("yyyy");
-            					if(StringUtils.isNotBlank(time_end)){
-            						String source = sf111.format(new Date()) + "-" + time_end.substring(0,2)+"-"+time_end.substring(2,4);
-            						hOrder.setSettleDate(sf11.parse(source));
-            						txPayOrderDAO.updateTxPayOrderById(hOrder);
-            					}
+            					
             				}else{//充值失败
             					//生成退费单
             					//修改用户的交易次数
@@ -707,7 +717,7 @@ public class IndexService {
             					if(payWay==3){
             						refundPay(hOrder.getQueryNumber(), hOrder.getRealFee(), hOrder, txWxUser);
             					}else if(payWay==4){
-            						refundPay_TZ(orderId, hOrder.getRealFee(), Integer.valueOf(hAddressId), hOrder);
+            						refundPay_TZ(orderId, hOrder.getRealFee(), hOrder);
             					}
             				}
             			}
@@ -822,9 +832,8 @@ public class IndexService {
 			data.put("merId", ConfigConstants.PAY_MERID);                  			   //商户号码，请改成自己申请的商户号或者open上注册得来的777商户号测试
 			
 			/***要调通交易以下字段必须修改***/
-			String orderId = this.getOrderNo().get("orderNo");
 			String txnTime = this.getOrderNo().get("orderNoTime");
-			data.put("orderId", orderId);                 //****商户订单号，每次发交易测试需修改为被查询的交易的订单号
+			data.put("orderId", hOrder.getOrderNumber());
 			data.put("txnTime", txnTime);                 //****订单发送时间，每次发交易测试需修改为被查询的交易的订单发送时间
 			data.put("backUrl", ConfigConstants.UNION_REFUNDPAY_BACKURL);                 //****订单发送时间，每次发交易测试需修改为被查询的交易的订单发送时间
 			data.put("origQryId", origQryId);                 //****原订单号
@@ -847,6 +856,11 @@ public class IndexService {
 			//应答码规范参考open.unionpay.com帮助中心 下载  产品接口规范  《平台接入接口规范-第5部分-附录》
 			if(!rspData.isEmpty()){
 				if("00".equals(rspData.get("respCode"))){
+					hOrder.setState(2);
+					hOrder.setRefundNumber(rspData.get("queryId"));
+					txPayOrderDAO.updateTxPayOrderById(hOrder);
+					TxWxUser user = txWxUserDAO.getTxWxUserById(hOrder.getUserId());
+					wxTemplateMsg.sendTFTempltMsg(user.getOpenId(), hOrder.getPayNumber(),hOrder.getRealFee());
 					return true;
 				}
 			}else{
@@ -1178,7 +1192,7 @@ public class IndexService {
 	 * @param orderId
 	 * @param txnTime
 	 */
-	public boolean refundPay_TZ(String origQryId,Long txnAmt,Integer hAddressId,TxPayOrder hOrder){
+	public boolean refundPay_TZ(String origQryId,Long txnAmt,TxPayOrder hOrder){
 		try{
 			Map<String, String> data = new HashMap<String, String>();
 			SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmmss");

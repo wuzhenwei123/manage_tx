@@ -140,6 +140,37 @@ public class WxTemplateMsg {
 		return null;
 	}
 	
+	
+	/**
+	 * 发送退费板信息
+	 * @param appid
+	 * @param secret
+	 * @return
+	 */
+	public String sendTFTempltMsg(String toOPENID,String customerNumber,Long money){
+		System.out.println("----------toOPENID-------->"+toOPENID);
+		SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss ");
+		try{
+			String accessToken = weiXinService.getAccessToken(ConfigConstants.APPID, ConfigConstants.APPSECRET);
+			String content = "{\"touser\": \""+toOPENID+"\","
+//					+ "\"template_id\": \"TdLzqd9yO_6ot30mmbrxIgeaVd1awLW8HL-TY7WvFFY\","
+					+ "\"template_id\": \"9GBcp4ZB1XCcA53eTMdkQafYJgG8VJh1_DHArhF7LGc\","
+					+ "\"topcolor\": \"#FF0000\","
+					+ "\"data\": {\"first\": {\"value\": \"很抱歉电费充值失败，正在退款中。\",\"color\": \"#173177\"},"
+					+ "\"keyword1\": {\"value\": \"北京市电力公司\",\"color\": \"#173177\"},"
+					+ "\"keyword2\": {\"value\": \""+customerNumber+"\",\"color\": \"#173177\"},"
+					+ "\"keyword3\": {\"value\": \""+sf.format(new Date())+"\",\"color\": \"#173177\"},"
+					+ "\"keyword4\": {\"value\": \""+this.getMoney(money)+"元\",\"color\": \"#173177\"},"
+					+ "\"remark\": {\"value\": \"预计3个工作日内原路退回支付账户，请注意查收\",\"color\": \"#173177\"}}}";
+			
+			String jsonStr = HttpUtils.httpsRequest("https://api.weixin.qq.com/cgi-bin/message/template/send?access_token="+accessToken, "POST", content);
+			System.out.println("-------发送退费消息--------->"+jsonStr);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public String getMoney(Long money){
 		String totalFeeStr1 = null;
 		if(money!=null&&money>0){
