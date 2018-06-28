@@ -23,6 +23,7 @@ public interface TxWxUserDAO{
     public int updateTxWxUserByOpenId(TxWxUser txWxUser);
     
     public int deleteTxWxUserById(int id);
+    public int unBindWx(String openId);
     
     public int getTxWxUserListCount(TxWxUser txWxUser);
 }
