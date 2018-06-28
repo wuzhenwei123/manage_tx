@@ -60,7 +60,14 @@ public class TxPayOrder extends BaseModel implements java.io.Serializable{
 	private Integer payWay;
 	/** 清算日期 **/
 	private Date settleDate;
+	private String refundNumber;
 		
+	public String getRefundNumber() {
+		return refundNumber;
+	}
+	public void setRefundNumber(String refundNumber) {
+		this.refundNumber = refundNumber;
+	}
 	/**
 	 * 
 	 * @return id
