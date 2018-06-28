@@ -372,14 +372,18 @@ public class IndexController extends BaseController{
 				
 				Map<String,String> mapsss = SessionName.maporder.get(ordercode);
 				
-				Long id = indexService.createOrder(mapsss, null, txWxUser, null,txWxUserBankNo.getAccNo(),3,"002",null);
 				
-				Map<String, String> rspData = indexService.pay(ordercode, txWxUserBankNo, smsCode, txWxUser, txnTime, "002",id);
-				if(("00").equals(rspData.get("respCode"))){
+				if(SessionName.xzOrder.get(ordercode)==null){
+					SessionName.xzOrder.put(ordercode, ordercode);
+					Long id = indexService.createOrder(mapsss, null, txWxUser, null,txWxUserBankNo.getAccNo(),3,"002",null);
 					
-					writeSuccessMsg("成功", "", response);
-				}else{
-					writeErrorMsg("fail", rspData.get("respMsg"), response);
+					Map<String, String> rspData = indexService.pay(ordercode, txWxUserBankNo, smsCode, txWxUser, txnTime, "002",id);
+					if(("00").equals(rspData.get("respCode"))){
+						
+						writeSuccessMsg("成功", "", response);
+					}else{
+						writeErrorMsg("fail", rspData.get("respMsg"), response);
+					}
 				}
 			}else{
 				writeErrorMsg("error", "支付失败，数据异常，，请联系客服：010-96199", response);
