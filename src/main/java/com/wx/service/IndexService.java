@@ -611,13 +611,14 @@ public class IndexService {
     			String orderId =valideData.get("orderId"); //获取后台通知的数据，其他字段也可用类似方式获取
     			String respCode = valideData.get("respCode");
     			String settleDate = valideData.get("settleDate");
+    			String queryId = valideData.get("queryId");
     			logger.info(respCode);
     			//如果配置了敏感信息加密证书，可以用以下方法解密，如果不加密可以不需要解密
     			if("00".equals(respCode)){
     				payLogCutter.filesMng(3, 2, valideData.toString(), null, null, null, valideData.get("accNo"));
     				Map<String,String> mapsss = SessionName.maporder.get(orderId);
-    				if(SessionName.xzOrder.get(orderId)==null){
-    					SessionName.xzOrder.put(orderId, orderId);
+    				if(SessionName.xzOrder.get(queryId)==null){
+    					SessionName.xzOrder.put(queryId, queryId);
     					//启动多线程查单
         				ThreadOrderExtends thread1 = new ThreadOrderExtends(mapsss.get("customerNumber"), mapsss.get("shopCode"), mapsss.get("money"), mapsss.get("orderId"), mapsss.get("centerInfo"), mapsss.get("dyqId"), mapsss.get("hAddressId"), Integer.valueOf(mapsss.get("userId")), mapsss.get("openId"), valideData.get("queryId"), mapsss.get("IpAddr"), mapsss.get("money"), settleDate,3);
     					thread1.start();
