@@ -705,7 +705,7 @@ public class IndexService {
             					//修改用户的交易次数
             					TxWxUser txWxUser = txWxUserDAO.getTxWxUserById(hOrder.getUserId());
             					if(payWay==3){
-            						refundPay(hOrder.getQueryNumber(), hOrder.getRealFee(), Integer.valueOf(hAddressId), hOrder, txWxUser);
+            						refundPay(hOrder.getQueryNumber(), hOrder.getRealFee(), hOrder, txWxUser);
             					}else if(payWay==4){
             						refundPay_TZ(orderId, hOrder.getRealFee(), Integer.valueOf(hAddressId), hOrder);
             					}
@@ -806,7 +806,7 @@ public class IndexService {
 	 * @param orderId
 	 * @param txnTime
 	 */
-	public boolean refundPay(String origQryId,Long txnAmt,Integer hAddressId,TxPayOrder hOrder,TxWxUser txWxUser){
+	public boolean refundPay(String origQryId,Long txnAmt,TxPayOrder hOrder,TxWxUser txWxUser){
 		try{
 			Map<String, String> data = new HashMap<String, String>();
 			
