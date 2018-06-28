@@ -816,6 +816,20 @@ public class WeiXinController extends BaseController{
 			String saveFilePath = ConfigConstants.UPLOAD_FILE_ROOT;
 			
 			boolean b = true;
+			
+			//验证手机是否存在
+			TxWxUser user2 = new TxWxUser();
+			user2.setMobile(txWxUser.getMobile());
+			int count = txWxUserService.getTxWxUserListCount(user2);
+			if(count>0){
+				json.put("c", -1);
+				json.put("m", "注册失败,手机号已占用,请更换!");
+				response.setContentType("text/html;charset=utf-8");
+				response.setHeader("Cache-Control","no-cache");
+				response.getWriter().write(json.toString());
+				return  null;
+			}
+			
 //			String imgUrlFront = txWxUser.getIDUrl().replace("https://file.mievie.com/file", saveFilePath);
 //			//进入身份证识别
 //			JSONObject jsonFront = new CardDistinguish().idDistinguish(imgUrlFront, "front");
@@ -1008,75 +1022,75 @@ public class WeiXinController extends BaseController{
 			String saveFilePath = ConfigConstants.UPLOAD_FILE_ROOT;
 			
 			boolean b = true;
-			String imgUrlFront = txWxUser.getIDUrl().replace("https://file.mievie.com/file", saveFilePath);
-			//进入身份证识别
-			JSONObject jsonFront = new CardDistinguish().idDistinguish(imgUrlFront, "front");
-			if("reversed_side".equals(jsonFront.getString("image_status"))){
-				json.put("c", -1);
-				json.put("m", "修改失败,未摆正身份证照片面");
-				b = false;
-			}else if("non_idcard".equals(jsonFront.getString("image_status"))){
-				json.put("c", -1);
-				json.put("m", "修改失败,上传的图片中不包含身份证照片面");
-				b = false;
-			}else if("blurred".equals(jsonFront.getString("image_status"))){
-				json.put("c", -1);
-				json.put("m", "修改失败,身份证照片面模糊");
-				b = false;
-			}else if("over_exposure".equals(jsonFront.getString("image_status"))){
-				json.put("c", -1);
-				json.put("m", "修改失败,身份证照片面关键字段反光或过曝");
-				b = false;
-			}else if("unknown".equals(jsonFront.getString("image_status"))){
-				json.put("c", -1);
-				json.put("m", "修改失败,身份证照片面未知状态");
-				b = false;
-			}else{
-				if(!txWxUser.getIDNumber().equals(jsonFront.getString("number"))){
-					json.put("c", -1);
-					json.put("m", "修改失败,身份证号与上传证件不一致");
-					b = false;
-				}else if(!txWxUser.getRealName().equals(jsonFront.getString("name"))){
-					json.put("c", -1);
-					json.put("m", "修改失败,真实姓名与上传证件不一致");
-					b = false;
-				}
-			}
+//			String imgUrlFront = txWxUser.getIDUrl().replace("https://file.mievie.com/file", saveFilePath);
+//			//进入身份证识别
+//			JSONObject jsonFront = new CardDistinguish().idDistinguish(imgUrlFront, "front");
+//			if("reversed_side".equals(jsonFront.getString("image_status"))){
+//				json.put("c", -1);
+//				json.put("m", "修改失败,未摆正身份证照片面");
+//				b = false;
+//			}else if("non_idcard".equals(jsonFront.getString("image_status"))){
+//				json.put("c", -1);
+//				json.put("m", "修改失败,上传的图片中不包含身份证照片面");
+//				b = false;
+//			}else if("blurred".equals(jsonFront.getString("image_status"))){
+//				json.put("c", -1);
+//				json.put("m", "修改失败,身份证照片面模糊");
+//				b = false;
+//			}else if("over_exposure".equals(jsonFront.getString("image_status"))){
+//				json.put("c", -1);
+//				json.put("m", "修改失败,身份证照片面关键字段反光或过曝");
+//				b = false;
+//			}else if("unknown".equals(jsonFront.getString("image_status"))){
+//				json.put("c", -1);
+//				json.put("m", "修改失败,身份证照片面未知状态");
+//				b = false;
+//			}else{
+//				if(!txWxUser.getIDNumber().equals(jsonFront.getString("number"))){
+//					json.put("c", -1);
+//					json.put("m", "修改失败,身份证号与上传证件不一致");
+//					b = false;
+//				}else if(!txWxUser.getRealName().equals(jsonFront.getString("name"))){
+//					json.put("c", -1);
+//					json.put("m", "修改失败,真实姓名与上传证件不一致");
+//					b = false;
+//				}
+//			}
 			
-			if(b){
-				String imgUrlback = txWxUser.getIDFanUrl().replace("https://file.mievie.com/file", saveFilePath);
-				//进入身份证识别
-				JSONObject jsonBack = new CardDistinguish().idDistinguish(imgUrlback, "back");
-				if("reversed_side".equals(jsonBack.getString("image_status"))){
-					json.put("c", -1);
-					json.put("m", "修改失败,未摆正身份证国徽面");
-					b = false;
-				}else if("non_idcard".equals(jsonBack.getString("image_status"))){
-					json.put("c", -1);
-					json.put("m", "修改失败,上传的图片中不包含身份证国徽面");
-					b = false;
-				}else if("blurred".equals(jsonBack.getString("image_status"))){
-					json.put("c", -1);
-					json.put("m", "修改失败,身份证国徽面模糊");
-					b = false;
-				}else if("over_exposure".equals(jsonBack.getString("image_status"))){
-					json.put("c", -1);
-					json.put("m", "修改失败,身份证国徽面关键字段反光或过曝");
-					b = false;
-				}else if("unknown".equals(jsonBack.getString("image_status"))){
-					json.put("c", -1);
-					json.put("m", "修改失败,身份证国徽面未知状态");
-					b = false;
-				}else{
-					SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
-					String today = sf.format(new Date());
-					if(Integer.valueOf(today)>Integer.valueOf(jsonBack.getString("end_time"))){
-						json.put("c", -1);
-						json.put("m", "修改失败,身份证已过期");
-						b = false;
-					}
-				}
-			}
+//			if(b){
+//				String imgUrlback = txWxUser.getIDFanUrl().replace("https://file.mievie.com/file", saveFilePath);
+//				//进入身份证识别
+//				JSONObject jsonBack = new CardDistinguish().idDistinguish(imgUrlback, "back");
+//				if("reversed_side".equals(jsonBack.getString("image_status"))){
+//					json.put("c", -1);
+//					json.put("m", "修改失败,未摆正身份证国徽面");
+//					b = false;
+//				}else if("non_idcard".equals(jsonBack.getString("image_status"))){
+//					json.put("c", -1);
+//					json.put("m", "修改失败,上传的图片中不包含身份证国徽面");
+//					b = false;
+//				}else if("blurred".equals(jsonBack.getString("image_status"))){
+//					json.put("c", -1);
+//					json.put("m", "修改失败,身份证国徽面模糊");
+//					b = false;
+//				}else if("over_exposure".equals(jsonBack.getString("image_status"))){
+//					json.put("c", -1);
+//					json.put("m", "修改失败,身份证国徽面关键字段反光或过曝");
+//					b = false;
+//				}else if("unknown".equals(jsonBack.getString("image_status"))){
+//					json.put("c", -1);
+//					json.put("m", "修改失败,身份证国徽面未知状态");
+//					b = false;
+//				}else{
+//					SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+//					String today = sf.format(new Date());
+//					if(Integer.valueOf(today)>Integer.valueOf(jsonBack.getString("end_time"))){
+//						json.put("c", -1);
+//						json.put("m", "修改失败,身份证已过期");
+//						b = false;
+//					}
+//				}
+//			}
 			
 //			if(b){
 //				String bankUrl = txWxUser.getCardUrl().replace("https://file.mievie.com/file", saveFilePath);
