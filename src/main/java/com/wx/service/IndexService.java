@@ -617,6 +617,7 @@ public class IndexService {
     			if("00".equals(respCode)){
     				payLogCutter.filesMng(3, 2, valideData.toString(), null, null, null, valideData.get("accNo"));
     				Map<String,String> mapsss = SessionName.maporder.get(orderId);
+    				
     				if(SessionName.xzOrder.get(queryId)==null){
     					SessionName.xzOrder.put(queryId, queryId);
     					//启动多线程查单
