@@ -74,7 +74,7 @@
         		<if test="token != null"> token = #{token,jdbcType=VARCHAR}, </if>
         		<if test="accName != null"> acc_name = #{accName,jdbcType=VARCHAR}, </if>
         		<if test="endCode != null"> end_code = #{endCode,jdbcType=VARCHAR}, </if>
-        		<if test="phone != null"> end_code = #{phone,jdbcType=VARCHAR}, </if>
+        		<if test="phone != null"> phone = #{phone,jdbcType=VARCHAR}, </if>
         </set>
     	where id = #{id}
     </update>

@@ -825,10 +825,6 @@ public class TxWxUserBankNoServiceImpl implements TxWxUserBankNoService{
     		contentData.put("backUrlDF", ConfigConstants.REDIRECT_BACKURLDF_SELL);
     		contentData.put("merId", ConfigConstants.MER_ID);                   //商户号码（本商户号码仅做为测试调通交易使用，该商户号配置了需要对敏感信息加密）测试时请改成自己申请的商户号，【自己注册的测试777开头的商户号不支持代收产品】
     		
-    		if(backCard.intValue()==0){
-    			contentData.put("merId", ConfigConstants.PK_MER_ID);
-    		}
-    		
     		contentData.put("xwMerId", wxUser.getMerId());                   //商户号码（本商户号码仅做为测试调通交易使用，该商户号配置了需要对敏感信息加密）测试时请改成自己申请的商户号，【自己注册的测试777开头的商户号不支持代收产品】
     		contentData.put("orderId", orderId);             			   //商户订单号，8-40位数字字母，不能含“-”或“_”，可以自行定制规则	
     		contentData.put("txnTime", txnTime);         				   //订单发送时间，格式为YYYYMMDDhhmmss，必须取当前时间，否则会报txnTime无效
@@ -988,10 +984,6 @@ public class TxWxUserBankNoServiceImpl implements TxWxUserBankNoService{
     		
     		contentData.put("merId", ConfigConstants.MER_ID);    
     		/***商户接入参数***/
-    		if(backCard.intValue()==0){
-    			contentData.put("merId", ConfigConstants.PK_MER_ID);    
-    		}
-    		               	
     		contentData.put("accessType", "0");                            //接入类型，商户接入固定填0，不需修改	
     		contentData.put("orderId", orderId);             			   //商户订单号，8-40位数字字母，不能含“-”或“_”，可以自行定制规则	
     		contentData.put("txnTime", txnTime);         				   //订单发送时间，格式为YYYYMMDDhhmmss，必须取当前时间，否则会报txnTime无效

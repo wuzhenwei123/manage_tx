@@ -28,15 +28,17 @@
 		<result column="promoterName" jdbcType="VARCHAR" property="promoterName" />
 		<result column="twoPromoterName" jdbcType="VARCHAR" property="twoPromoterName" />
 		<result column="refundTime" jdbcType="TIMESTAMP" property="refundTime" />
+		<result column="selTime" jdbcType="INTEGER" property="selTime" />
 	</resultMap>
 
 	<!-- 查询参数 -->
     <sql id="txSellingOrder_column_body">
          a.id,a.code,a.money,a.createTime,a.accNo,a.endTime,a.state,a.queryId,a.promoterId,a.twoPromoterId,a.wxUserName,a.one_rate,a.two_rate,a.dev_rate,a.wxUserId,a.profitManey,a.profits,a.backCard,a.refundState,a.refundQueryId,a.refundAccNo,a.refundCode,
-         b.realName as promoterName,c.realName as twoPromoterName
+         b.realName as promoterName,c.realName as twoPromoterName,a.selTime
     </sql>
     <sql id="txSellingOrder_column_body1">
-         a.id,a.code,a.money,a.createTime,a.accNo,a.endTime,a.state,a.queryId,a.promoterId,a.twoPromoterId,a.wxUserName,a.one_rate,a.two_rate,a.dev_rate,a.wxUserId,a.profitManey,a.profits,a.backCard,a.refundState,a.refundQueryId,a.refundAccNo,a.refundCode
+         a.id,a.code,a.money,a.createTime,a.accNo,a.endTime,a.state,a.queryId,a.promoterId,a.twoPromoterId,a.wxUserName,a.one_rate,a.two_rate,a.dev_rate,a.wxUserId,a.profitManey,a.profits,a.backCard,a.refundState,a.refundQueryId,a.refundAccNo,a.refundCode,
+         a.selTime
     </sql>
     <!-- 查询条件 -->
     <sql id="txSellingOrder_select_body">
@@ -58,6 +60,7 @@
     		<if test="profitManey != null"> and a.profitManey = #{profitManey,jdbcType=INTEGER} </if>
     		<if test="profits != null"> and a.profits = #{profits,jdbcType=DECIMAL} </if>
     		<if test="backCard != null"> and a.backCard = #{backCard,jdbcType=INTEGER} </if>
+    		<if test="selTime != null"> and a.selTime = #{selTime,jdbcType=INTEGER} </if>
     		<if test="refundState != null"> and a.refundState = #{refundState,jdbcType=INTEGER} </if>
     		<if test="refundQueryId != null"> and a.refundQueryId = #{refundQueryId,jdbcType=VARCHAR} </if>
     		<if test="refundAccNo != null"> and a.refundAccNo = #{refundAccNo,jdbcType=VARCHAR} </if>
@@ -97,6 +100,7 @@
     		<if test="profitManey != null"> and a.profitManey = #{profitManey,jdbcType=INTEGER} </if>
     		<if test="profits != null"> and a.profits = #{profits,jdbcType=DECIMAL} </if>
     		<if test="backCard != null"> and a.backCard = #{backCard,jdbcType=INTEGER} </if>
+    		<if test="selTime != null"> and a.selTime = #{selTime,jdbcType=INTEGER} </if>
     		<if test="refundState != null"> and a.refundState = #{refundState,jdbcType=INTEGER} </if>
     		<if test="refundQueryId != null"> and a.refundQueryId = #{refundQueryId,jdbcType=VARCHAR} </if>
     		<if test="refundAccNo != null"> and a.refundAccNo = #{refundAccNo,jdbcType=VARCHAR} </if>
@@ -164,6 +168,7 @@
 	        	<if test="refundAccNo != null"> ,refundAccNo </if>
 	        	<if test="refundCode != null"> ,refundCode </if>
 	        	<if test="refundTime != null"> ,refundTime </if>
+	        	<if test="selTime != null"> ,selTime </if>
         </trim>
         <trim prefix="values (" suffix=")" prefixOverrides=",">
 	        	<if test="code != null"> ,#{code,jdbcType=VARCHAR} </if>
@@ -188,6 +193,7 @@
 	        	<if test="refundAccNo != null"> ,#{refundAccNo,jdbcType=VARCHAR} </if>
 	        	<if test="refundCode != null"> ,#{refundCode,jdbcType=VARCHAR} </if>
 	        	<if test="refundTime != null"> ,#{refundTime,jdbcType=TIMESTAMP} </if>
+	        	<if test="selTime != null"> ,#{selTime,jdbcType=INTEGER} </if>
 		 </trim>
         <selectKey keyProperty="id" resultType="long">
 			SELECT @@IDENTITY AS id 
@@ -218,6 +224,7 @@
         		<if test="refundAccNo != null"> refundAccNo = #{refundAccNo,jdbcType=VARCHAR}, </if>
         		<if test="refundCode != null"> refundCode = #{refundCode,jdbcType=VARCHAR}, </if>
         		<if test="refundTime != null"> refundTime = #{refundTime,jdbcType=TIMESTAMP}, </if>
+        		<if test="selTime != null"> selTime = #{selTime,jdbcType=INTEGER}, </if>
         </set>
     	where id = #{id}
     </update>

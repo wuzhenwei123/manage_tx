@@ -296,7 +296,7 @@ body{background: #f4f4f4;}
 }
 .num_box input{
     width:90%;
-    border: 1px solid #f4f4f4;
+    border: 1px solid #dedede;
     border-radius: 4px;
     height:40px;
     color: #757575;
@@ -337,7 +337,7 @@ body{background: #f4f4f4;}
     height: 40px;
     width: 70%;
     float: left;
-    border:1px solid #f4f4f4;
+    border:1px solid #757575;
     padding: 0 5%;
     font-size: 16px;
     color: #757575;
