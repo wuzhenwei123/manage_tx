@@ -60,7 +60,7 @@
 // 			var loading = weui.loading('验证码获取中，请稍后...', {
 // 			    className: 'custom-classname'
 // 			});
-			$.post("<c:url value='/unionpay/vercode'/>",
+			$.post("<c:url value='/index/vercode'/>",
 	       	{
 				txnAmt:'${orderfee}',
 				orderId:'${ordercode}',
