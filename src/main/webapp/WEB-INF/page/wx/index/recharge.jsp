@@ -71,22 +71,24 @@
             if(money==""){
             	layer.msg("请输入预批电费金额");
             	return false;
-            }else if(money%100 > 0){
-            	layer.msg("请输入1000的整数倍");
-   				return false;
             }else if(parseFloat(money) > 20000){
             	layer.msg("最大充值金额不能超过20000");
    				return false;
-            }else if(parseFloat(money) < 5000){
-            	layer.msg("最大充值金额不能低于5000");
-   				return false;
             }
+            
+//             else if(money%100 > 0){
+//             	layer.msg("请输入1000的整数倍");
+//    				return false;
+//             }else if(parseFloat(money) < 5000){
+//             	layer.msg("最大充值金额不能低于5000");
+//    				return false;
+//             }
             var sel_time = $(".sel_time").val();
             if(sel_time==""){
             	layer.msg("请选择委托完成时间");
             	return false;
             }
-            window.location.href = "${ctx}/unionpay/toSellOrder?sel_time="+sel_time+"&money="+money;
+            window.location.href = "${ctx}/unionpay/toPayWayDF?sel_time="+sel_time+"&money="+money+"&backCard=1";
         })
     })
 </script>
