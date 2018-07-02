@@ -25,6 +25,7 @@ import com.base.utils.RequestHandler;
 import com.base.utils.SessionName;
 import com.sys.manageAdminUser.model.ManageAdminUser;
 import com.tx.task.service.SendCodeCutter;
+import com.tx.task.service.SendCodeDFCutter;
 import com.tx.txBanner.model.TxBanner;
 import com.tx.txBanner.service.TxBannerService;
 import com.tx.txBusinessType.service.TxBusinessTypeService;
@@ -62,6 +63,8 @@ public class IndexController extends BaseController{
 	private TxWxUserService txWxUserService = null;
 	@Autowired
 	private TxPayOrderService txPayOrderService = null;
+	@Autowired
+	private SendCodeDFCutter sendCodeDFCutter = null;
 	
 	
 	
@@ -317,6 +320,40 @@ public class IndexController extends BaseController{
 		}
 		return  null;
 	}
+	/**
+	 * 银行卡列表
+	 * 
+	 * @param response
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/getListCardDF", method = RequestMethod.GET)
+	public String getListCardDF(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
+		super.getJsticket(request);
+		Integer sel_time = RequestHandler.getInteger(request, "sel_time");
+		Integer backCard = RequestHandler.getInteger(request, "backCard");
+		Double money = RequestHandler.getDouble(request, "money");
+		try{
+			TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+			//查询银行卡是否已经获得token
+			TxWxUserBankNo txWxUserBankNo = new TxWxUserBankNo();
+			txWxUserBankNo.setWxUserId(txWxUser.getId());
+			List<TxWxUserBankNo> list = txWxUserBankNoService.getTxWxUserBankNoList(txWxUserBankNo);
+			model.addAttribute("backCard", backCard);
+			model.addAttribute("sel_time", sel_time);
+			model.addAttribute("money", money);
+			if(list!=null&&list.size()>0){
+				model.addAttribute("list", list);
+				return  "/wx/index/cardListDF";
+			}else{//获取token
+				return  "/wx/index/addCardDF";
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return  null;
+	}
 	
 	/** 进入支付界面**/
 	@RequestMapping(value = "toPay", method = RequestMethod.GET)
@@ -348,6 +385,41 @@ public class IndexController extends BaseController{
 			e.printStackTrace();
 		}
 		return "/wx/index/pay";
+	}
+	/** 进入支付界面**/
+	@RequestMapping(value = "toPayDF", method = RequestMethod.GET)
+	public String toPayDF(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception
+	{
+		super.getJsticket(request);
+		String accNo =  RequestHandler.getString(request, "accNo");
+		Integer sel_time = RequestHandler.getInteger(request, "sel_time");
+		Integer backCard = RequestHandler.getInteger(request, "backCard");
+		Double money = RequestHandler.getDouble(request, "money");
+		try{
+			
+			BigDecimal bg = new BigDecimal(money);
+			BigDecimal f = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
+			int money2 = f.multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+			
+			TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+			String orderNoTime = txPaynumberMsgService.getOrderNo().get("orderNoTime");
+			
+			TxWxUserBankNo txWxUserBankNo = new TxWxUserBankNo();
+			txWxUserBankNo.setAccNo(accNo);
+			txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(accNo);
+			model.addAttribute("txWxUserBankNo", txWxUserBankNo);
+			model.addAttribute("token", txWxUserBankNo.getToken());
+			model.addAttribute("txnTime", orderNoTime);
+			model.addAttribute("accNo", accNo);
+			model.addAttribute("backCard", backCard);
+			model.addAttribute("sel_time", sel_time);
+			model.addAttribute("money", money);
+			//创建订单
+			sendCodeDFCutter.filesMng(sel_time, backCard, accNo, txWxUserBankNo, money2, txWxUser);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return "/wx/index/payDF";
 	}
 	
 	
@@ -522,7 +594,7 @@ public class IndexController extends BaseController{
 					if(SessionName.xzOrder.get(orderId)==null){
 						sendCodeCutter.filesMng(txWxOrder.getZfOrderNo(), txWxOrder.getTxnTime(), txWxUserBankNo, txWxOrder.getZfOrderFee()+"", wxUser);
 					}
-    				return "/wx/unionpay/pay";
+    				return "/wx/index/pay";
     			}
 			}else{
 				logger.info("异常====");

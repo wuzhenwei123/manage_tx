@@ -820,6 +820,7 @@ public class WeiXinController extends BaseController{
 			//验证手机是否存在
 			TxWxUser user2 = new TxWxUser();
 			user2.setMobile(txWxUser.getMobile());
+			user2.setState(1);
 			int count = txWxUserService.getTxWxUserListCount(user2);
 			if(count>0){
 				json.put("c", -1);

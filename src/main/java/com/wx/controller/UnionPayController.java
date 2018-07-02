@@ -162,19 +162,42 @@ public class UnionPayController extends BaseController{
 		model.addAttribute("money", money);
 		return "/wx/tx/order";
 	}
+	/**
+	 * 转向支付方式
+	 * showShare
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/toPayWayDF", method = RequestMethod.GET)
+	public String toPayWayDF(HttpServletRequest request, HttpServletResponse response, Model model){
+		super.getJsticket(request);
+		Integer sel_time = RequestHandler.getInteger(request, "sel_time");
+		Integer backCard = RequestHandler.getInteger(request, "backCard");
+		Double money = RequestHandler.getDouble(request, "money");
+		model.addAttribute("backCard", backCard);
+		model.addAttribute("sel_time", sel_time);
+		model.addAttribute("money", money);
+		return "/wx/index/payWayDF";
+	}
 	
 	/** 发验证码 **/
 	@RequestMapping(value = "/vercode", method = RequestMethod.POST)
 	public String vercode(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception
 	{
 		String accNo =  RequestHandler.getString(request, "accNo");
-		Integer money =  RequestHandler.getInteger(request, "money");
+		Double money =  RequestHandler.getDouble(request, "money");
 		Integer backCard =  RequestHandler.getInteger(request, "backCard");
 		Integer sel_time =  RequestHandler.getInteger(request, "sel_time");
 		try{
 			TxWxUser wxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 			TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(accNo);
 			if(StringUtils.isNotBlank(accNo)&&money!=null){
+				
+				BigDecimal bg1 = new BigDecimal(money);
+				BigDecimal f = bg1.setScale(2, BigDecimal.ROUND_HALF_UP);
+				int money2 = f.multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
 				
 				String orderId = new MakeImei().getCode();
 				Date d = new Date();
@@ -188,10 +211,11 @@ public class UnionPayController extends BaseController{
 				TxSellingOrder txSellingOrder = new TxSellingOrder();
 				txSellingOrder.setBackCard(backCard);
 				txSellingOrder.setCode(orderId);
+				txSellingOrder.setSelTime(sel_time);
 				txSellingOrder.setAccNo(accNo);
 				txSellingOrder.setCreateTime(new Date());
 				txSellingOrder.setEndTime(calendar.getTime());
-				txSellingOrder.setMoney(money*100L);
+				txSellingOrder.setMoney(money2*1L);
 				txSellingOrder.setPromoterId(wxUser.getPromoterId());
 				txSellingOrder.setTwoPromoterId(wxUser.getTwoPromoterId());
 				txSellingOrder.setWxUserName(wxUser.getRealName());
@@ -200,7 +224,7 @@ public class UnionPayController extends BaseController{
 				
 				List<TxPayRate> list = txPayRateService.getTxPayRateList(new TxPayRate());
 				
-				BigDecimal bg = new BigDecimal(money*100);
+				BigDecimal bg = new BigDecimal(money2);
 				if(list!=null&&list.size()>0){
 					TxPayRate rate = list.get(0);
 					if(wxUser.getPromoterId()!=null){
@@ -216,7 +240,7 @@ public class UnionPayController extends BaseController{
 				}
 				txSellingOrderService.insertTxSellingOrder(txSellingOrder);
 				SessionName.MAPORDERNO.put("C_"+accNo, orderId+"_"+txnTime);
-				boolean b = txWxUserBankNoService.vercodeNew(wxUser, orderId, txnTime, txWxUserBankNo, money*100+"",backCard);
+				boolean b = txWxUserBankNoService.vercodeNew(wxUser, orderId, txnTime, txWxUserBankNo, money2+"",backCard);
 				if(b){
 					writeSuccessMsg("发送成功", orderId, response);
 				}else{
@@ -245,18 +269,23 @@ public class UnionPayController extends BaseController{
 	public String pay(HttpServletRequest request, HttpServletResponse response, Model model){
 		String accNo = RequestHandler.getString(request, "accNo");
 		String smsCode = RequestHandler.getString(request, "smsCode");
-		Integer money = RequestHandler.getInteger(request, "money");
+		Double money = RequestHandler.getDouble(request, "money");
 		Integer backCard = RequestHandler.getInteger(request, "backCard");
 		try{
 			if(StringUtils.isNotBlank(accNo)&&money!=null&&StringUtils.isNotBlank(smsCode)){
+				
+				BigDecimal bg = new BigDecimal(money);
+				BigDecimal f = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
+				int money2 = f.multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+				
 				TxWxUser wxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 				if(wxUser.getState().intValue()==1&&wxUser.getCheckState().intValue()==1){
 					TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(accNo);
 					String param = SessionName.MAPORDERNO.get("C_"+accNo);
 					if(StringUtils.isNotBlank(param)){
-						Map<String, String> map = txWxUserBankNoService.paySell(wxUser, param.split("_")[0], param.split("_")[1], txWxUserBankNo, money*100+"", smsCode,backCard);
+						Map<String, String> map = txWxUserBankNoService.paySell(wxUser, param.split("_")[0], param.split("_")[1], txWxUserBankNo, money2+"", smsCode,backCard);
 						if(map!=null&&"00".equals(map.get("respCode"))){
-							writeSuccessMsg("交易成功，交易可能存在延时，请耐心等待！", null, response);
+							writeSuccessMsg("交易成功，交易可能存在延时，请耐心等待！", param.split("_")[0], response);
 						}else{
 							writeErrorMsg(URLDecoder.decode(map.get("respMsg"),"UTF-8"), "", response);
 						}
