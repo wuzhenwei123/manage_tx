@@ -507,7 +507,7 @@ public class IndexService {
         			if(null!=tokenPayData){
         				Map<String,String> tokenPayDataMap = SDKUtil.parseQString(tokenPayData.substring(1, tokenPayData.length() - 1));
         				String token = tokenPayDataMap.get("token");//这样取
-            			
+            			//获取银行名称
             			if(txWxOrder!=null&&txWxOrder.getId()>0){
             				TxWxUserBankNo yxWxUserBankNo = txWxUserBankNoDAO.getTxWxUserBankNoByAccNo(txWxOrder.getAccNo());
             				if(yxWxUserBankNo!=null&&yxWxUserBankNo.getId()>0){
