@@ -847,9 +847,7 @@ public class TxWxUserBankNoServiceImpl implements TxWxUserBankNoService{
     		
     		contentData.put("txnAmtDF", AcpService.encryptData("0", DemoBase.encoding));
     		contentData.put("ppType", "0");
-    		
-    		
-    		
+    		contentData.put("hxtXWFee", "0");
     		
     		
     		Map<String, String> reqData = AcpService.sign(contentData,DemoBase.encoding);				//报文中certId,signature的值是在signData方法中获取并自动赋值的，只要证书配置正确即可。
