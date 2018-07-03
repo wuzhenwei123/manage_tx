@@ -27,6 +27,8 @@ import com.base.utils.SessionName;
 import com.base.utils.Tinput;
 import com.base.utils.https.HttpUtils;
 import com.tx.task.service.PayLogCutter;
+import com.tx.txBank.dao.TxBankDAO;
+import com.tx.txBank.model.TxBank;
 import com.tx.txDfRate.dao.TxDfRateDAO;
 import com.tx.txDfRate.model.TxDfRate;
 import com.tx.txPayOrder.dao.TxPayOrderDAO;
@@ -62,6 +64,10 @@ public class IndexService {
     private TxWxUserBankNoDAO txWxUserBankNoDAO;
 	@Resource
     private TxWxUserDAO txWxUserDAO;
+	@Resource
+    private TxBankDAO txBankDAO;
+	@Autowired
+	private WeiXinService weiXinService;
 	
 	/**
 	 * 装载预付费订单信息
@@ -416,6 +422,15 @@ public class IndexService {
             					yxWxUserBankNo.setToken(token);
             					yxWxUserBankNo.setEndCode(accNo);
             					yxWxUserBankNo.setPhone(phone);
+            					//获取开户行行号
+                		     	String bankNo = weiXinService.getKHBankNo(txWxOrder.getAccNo());
+                				//获取银行名称
+                		     	TxBank txBank = new TxBank();
+                		     	txBank.setBankNumber(bankNo);
+                		     	List<TxBank> listBakn = txBankDAO.getTxBankList(txBank);
+                		     	if(listBakn!=null&&listBakn.size()>0){
+                		     		yxWxUserBankNo.setAccName(listBakn.get(0).getName());
+                		     	}
             					txWxUserBankNoDAO.updateTxWxUserBankNoById(yxWxUserBankNo);
             				}else{
             					yxWxUserBankNo = new TxWxUserBankNo();
@@ -424,6 +439,15 @@ public class IndexService {
             					yxWxUserBankNo.setEndCode(accNo);
             					yxWxUserBankNo.setPhone(phone);
             					yxWxUserBankNo.setAccNo(txWxOrder.getAccNo());
+            					//获取开户行行号
+                		     	String bankNo = weiXinService.getKHBankNo(txWxOrder.getAccNo());
+                				//获取银行名称
+                		     	TxBank txBank = new TxBank();
+                		     	txBank.setBankNumber(bankNo);
+                		     	List<TxBank> listBakn = txBankDAO.getTxBankList(txBank);
+                		     	if(listBakn!=null&&listBakn.size()>0){
+                		     		yxWxUserBankNo.setAccName(listBakn.get(0).getName());
+                		     	}
             					txWxUserBankNoDAO.insertTxWxUserBankNo(yxWxUserBankNo);
             				}
             			}
@@ -515,6 +539,15 @@ public class IndexService {
             					yxWxUserBankNo.setToken(token);
             					yxWxUserBankNo.setEndCode(accNo);
             					yxWxUserBankNo.setPhone(phone);
+            					//获取开户行行号
+                		     	String bankNo = weiXinService.getKHBankNo(txWxOrder.getAccNo());
+                				//获取银行名称
+                		     	TxBank txBank = new TxBank();
+                		     	txBank.setBankNumber(bankNo);
+                		     	List<TxBank> listBakn = txBankDAO.getTxBankList(txBank);
+                		     	if(listBakn!=null&&listBakn.size()>0){
+                		     		yxWxUserBankNo.setAccName(listBakn.get(0).getName());
+                		     	}
             					txWxUserBankNoDAO.updateTxWxUserBankNoById(yxWxUserBankNo);
             				}else{
             					yxWxUserBankNo = new TxWxUserBankNo();
@@ -523,6 +556,15 @@ public class IndexService {
             					yxWxUserBankNo.setEndCode(accNo);
             					yxWxUserBankNo.setPhone(phone);
             					yxWxUserBankNo.setAccNo(txWxOrder.getAccNo());
+            					//获取开户行行号
+                		     	String bankNo = weiXinService.getKHBankNo(txWxOrder.getAccNo());
+                				//获取银行名称
+                		     	TxBank txBank = new TxBank();
+                		     	txBank.setBankNumber(bankNo);
+                		     	List<TxBank> listBakn = txBankDAO.getTxBankList(txBank);
+                		     	if(listBakn!=null&&listBakn.size()>0){
+                		     		yxWxUserBankNo.setAccName(listBakn.get(0).getName());
+                		     	}
             					txWxUserBankNoDAO.insertTxWxUserBankNo(yxWxUserBankNo);
             				}
             		     	
