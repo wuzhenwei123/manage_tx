@@ -203,6 +203,7 @@ public class UnionPayController extends BaseController{
 				SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmmss");
 				String txnTime = sf.format(d);
 				
+				
 				Calendar calendar = Calendar.getInstance();
 				calendar.setTime(new Date());
 				calendar.add(Calendar.MONTH, sel_time);
@@ -215,8 +216,17 @@ public class UnionPayController extends BaseController{
 				txSellingOrder.setCreateTime(new Date());
 				txSellingOrder.setEndTime(calendar.getTime());
 				txSellingOrder.setMoney(money2*1L);
-				txSellingOrder.setPromoterId(wxUser.getPromoterId());
-				txSellingOrder.setTwoPromoterId(wxUser.getTwoPromoterId());
+				
+				if(wxUser.getPromoterId()!=null){
+					TxWxUser wxUserPromet = txWxUserService.getTxWxUserById(wxUser.getPromoterId());//上级代理
+					if(wxUserPromet.getParentId()!=null){
+						txSellingOrder.setPromoterId(wxUserPromet.getPromoterId());
+						txSellingOrder.setTwoPromoterId(wxUser.getPromoterId());
+					}else{
+						txSellingOrder.setPromoterId(wxUser.getPromoterId());
+					}
+				}
+				
 				txSellingOrder.setWxUserName(wxUser.getRealName());
 				txSellingOrder.setWxUserId(wxUser.getId());
 				txSellingOrder.setProfits(new BigDecimal(ConfigConstants.PAY_RATE));
@@ -226,11 +236,12 @@ public class UnionPayController extends BaseController{
 				BigDecimal bg = new BigDecimal(money2);
 				if(list!=null&&list.size()>0){
 					TxPayRate rate = list.get(0);
-					if(wxUser.getPromoterId()!=null){
+					if(txSellingOrder.getPromoterId()!=null){
 						int one = (bg.multiply(rate.getOneRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
 						txSellingOrder.setOneRate(one);
 					}
-					if(wxUser.getTwoPromoterId()!=null){
+					
+					if(txSellingOrder.getTwoPromoterId()!=null){
 						int two = (bg.multiply(rate.getTwoRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
 						txSellingOrder.setTwoRate(two);
 					}

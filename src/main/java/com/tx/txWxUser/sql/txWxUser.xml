@@ -32,11 +32,11 @@
 	<!-- 查询参数 -->
     <sql id="txWxUser_column_body">
          a.id,a.nick_name,a.openId,a.head_url,a.sex,a.create_time,a.real_name,a.ID_number,a.card_number,a.ID_url,a.ID_fan_url,a.ID_person_url,a.card_url,a.mobile,a.state,a.open_bank,a.promoter_id,
-         a.mer_id,a.check_state,a.msg,b.realName as promoterName,a.two_promoter_id,a.password,a.scanTicket,a.qrCodeUrl
+         a.mer_id,a.check_state,a.msg,a.two_promoter_id,a.password,a.scanTicket,a.qrCodeUrl
     </sql>
     <sql id="txWxUser_column_body1">
          a.id,a.nick_name,a.openId,a.head_url,a.sex,a.create_time,a.real_name,a.ID_number,a.card_number,a.ID_url,a.ID_fan_url,a.ID_person_url,a.card_url,a.mobile,a.state,a.open_bank,a.promoter_id,
-         a.mer_id,a.check_state,a.msg,b.realName as promoterName,a.two_promoter_id,c.realName as twoPromoterName,a.password,a.scanTicket,a.qrCodeUrl
+         a.mer_id,a.check_state,a.msg,a.two_promoter_id,a.password,a.scanTicket,a.qrCodeUrl
     </sql>
     <!-- 查询条件 -->
     <sql id="txWxUser_select_body">
@@ -113,15 +113,11 @@
     <select id="getTxWxUserById" parameterType="java.lang.Integer" resultMap="baseResultMap">
         SELECT <include refid="txWxUser_column_body1" />
         FROM tx_wx_user a
-        left join manage_admin_user b on a.promoter_id = b.adminId
-        left join manage_admin_user c on a.two_promoter_id = c.adminId
 		where a.id = #{id}
     </select>
     <select id="getTxWxUserList" parameterType="com.tx.txWxUser.model.TxWxUser" resultMap="baseResultMap">
         SELECT <include refid="txWxUser_column_body1" />
         FROM tx_wx_user a
-        left join manage_admin_user b on a.promoter_id = b.adminId
-         left join manage_admin_user c on a.two_promoter_id = c.adminId
 		<include refid="txWxUser_select_body1" />
     </select>
     
@@ -228,7 +224,6 @@
     <select id="getTxWxUserListByPage" parameterType="com.tx.txWxUser.model.TxWxUser" resultMap="baseResultMap">
         SELECT <include refid="txWxUser_column_body" />
         FROM tx_wx_user a
-        left join manage_admin_user b on a.promoter_id = b.adminId
 		<include refid="txWxUser_select_body" />
 		<include refid="txWxUser_sort_body" />
 		<include refid="txWxUser_limit_body" />
@@ -243,7 +238,6 @@
     <select id="getTxWxUserByOpenId" parameterType="java.lang.String" resultMap="baseResultMap">
         SELECT <include refid="txWxUser_column_body" />
         FROM tx_wx_user a
-        left join manage_admin_user b on a.promoter_id = b.adminId
 		where a.openId = #{openId}
     </select>
     

@@ -1868,7 +1868,7 @@ public class WeiXinController extends BaseController{
 	 */
 	@RequestMapping(value = "/myFriendSell", method = RequestMethod.GET)
 	public String myFriendSell(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
-		ManageAdminUser adminUser = (ManageAdminUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+		TxWxUser wxUser1 = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 		
 		Integer state = RequestHandler.getInteger(request, "state");
 		String mobile = RequestHandler.getString(request, "mobile");
@@ -1883,70 +1883,63 @@ public class WeiXinController extends BaseController{
 			Integer pageNo = RequestHandler.getPageNo(request, "pageNo");
 			Integer rowCount = RequestHandler.getPageSize(request, "rowCount");
 			int from = RequestHandler.getFromByPage(pageNo, rowCount);
-			if(ConfigConstants.DB_ROLE_ID.equals(String.valueOf(adminUser.getRole_id()))){
-				ManageAdminUser manageAdminUser = new ManageAdminUser();
-				manageAdminUser.setParent_id(adminUser.getAdminId());
-				manageAdminUser.setOffset(from);
-				manageAdminUser.setState(state);
-				manageAdminUser.setLimit(rowCount);
-				manageAdminUser.setSort("createTime");
-				manageAdminUser.setOrder("desc");
 				
-				if(StringUtils.isNotBlank(mobile)){
-					manageAdminUser.setMobile(mobile);
-				}
-				if(StringUtils.isNotBlank(realName)){
-					manageAdminUser.setRealName(realName);
-				}
+			TxWxUser wxUser = new TxWxUser();
+			wxUser.setPromoterId(wxUser1.getId());
+			wxUser.setOffset(from);
+			wxUser.setState(state);
+			wxUser.setLimit(rowCount);
+			wxUser.setSort("createTime");
+			wxUser.setOrder("desc");
 				
-				ResponseList<ManageAdminUser> list = manageadminuserService.getManageAdminUserList(manageAdminUser);
+			if(StringUtils.isNotBlank(mobile)){
+				wxUser.setMobile(mobile);
+			}
+			if(StringUtils.isNotBlank(realName)){
+				wxUser.setRealName(realName);
+			}
+			
+			List<TxWxUser> list = txWxUserService.getTxWxUserListByPage(wxUser);
 				
 				
-				TxSellingOrder txSellingOrder1 = new TxSellingOrder();
-				txSellingOrder1.setState(1);
-				txSellingOrder1.setPromoter_state(state);
-				if(StringUtils.isNotBlank(realName)){
-					txSellingOrder1.setRealName(realName);
+			TxSellingOrder txSellingOrder1 = new TxSellingOrder();
+			txSellingOrder1.setState(1);
+			txSellingOrder1.setPromoter_state(state);
+			if(StringUtils.isNotBlank(realName)){
+				txSellingOrder1.setRealName(realName);
+			}
+			if(StringUtils.isNotBlank(mobile)){
+				txSellingOrder1.setMobile(mobile);
+			}
+			txSellingOrder1.setPromoterId(wxUser1.getId());
+			TxSellingOrder txSellingOrder = txSellingOrderService.getSellingOrderByTwoPromoter(txSellingOrder1);
+			if(list!=null&&list.size()>0){
+				for(TxWxUser obj:list){
+					JSONObject jsons = new JSONObject();
+					
+					jsons.put("mobile", obj.getMobile().replaceAll("(\\d{3})\\d{4}(\\d{4})","$1****$2"));
+					jsons.put("realName", weiXinService.chineseName(obj.getRealName()));
+					
+					TxSellingOrder txSellingOrder2 = new TxSellingOrder();
+					txSellingOrder2.setState(1);
+					txSellingOrder2.setParentId(obj.getId());
+					TxSellingOrder txSellingOrdersss = txSellingOrderService.getSellingOrderByTwoPromoter(txSellingOrder1);
+					jsons.put("money", super.getMoney(txSellingOrdersss.getMoney()));
+					
+					
+					jsons.put("profit", super.getMoney(Long.valueOf(txSellingOrdersss.getOneRate())));
+					
+					jsons.put("profit_one", super.getMoney(Long.valueOf(txSellingOrdersss.getTwoRate())));
+					
+					array.add(jsons);
 				}
-				if(StringUtils.isNotBlank(mobile)){
-					txSellingOrder1.setMobile(mobile);
-				}
-				txSellingOrder1.setParentId(adminUser.getAdminId());
-				TxSellingOrder txSellingOrder = txSellingOrderService.getSellingOrderByTwoPromoter(txSellingOrder1);
-				
-				if(list!=null){
-					Iterator<Object> it = list.iterator();
-					while(it.hasNext()){
-						ManageAdminUser obj = (ManageAdminUser)it.next();
-						JSONObject jsons = new JSONObject();
-						
-						jsons.put("mobile", obj.getMobile().replaceAll("(\\d{3})\\d{4}(\\d{4})","$1****$2"));
-						jsons.put("realName", weiXinService.chineseName(obj.getRealName()));
-						
-						TxSellingOrder txSellingOrder2 = new TxSellingOrder();
-						txSellingOrder2.setState(1);
-						txSellingOrder2.setTwoPromoterId(obj.getAdminId());
-						
-						TxSellingOrder txSellingOrdersss = txSellingOrderService.getSellingOrderByTwoPromoter(txSellingOrder1);
-						jsons.put("money", super.getMoney(txSellingOrdersss.getMoney()));
-						
-						
-						jsons.put("profit", super.getMoney(Long.valueOf(txSellingOrdersss.getOneRate())));
-						
-						jsons.put("profit_one", super.getMoney(Long.valueOf(txSellingOrdersss.getTwoRate())));
-						
-						array.add(jsons);
-					}
-					json.put("message", "ok");
-					json.put("fansCount", super.getMoney(txSellingOrder.getMoney()));
-					json.put("poneyPCount", super.getMoney(Long.valueOf(txSellingOrder.getOneRate())));
-					json.put("moneyCount", super.getMoney(Long.valueOf(txSellingOrder.getTwoRate())));
-					json.put("items", array);
-				}else{
-					json.put("message", "end");
-				}
+				json.put("message", "ok");
+				json.put("fansCount", super.getMoney(txSellingOrder.getMoney()));
+				json.put("poneyPCount", super.getMoney(Long.valueOf(txSellingOrder.getOneRate())));
+				json.put("moneyCount", super.getMoney(Long.valueOf(txSellingOrder.getTwoRate())));
+				json.put("items", array);
 			}else{
-				return  "/wx/tip";
+				json.put("message", "end");
 			}
 		}catch(Exception e){
 			json.put("message", "end");
