@@ -194,7 +194,6 @@ public class UnionPayController extends BaseController{
 			TxWxUser wxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 			TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(accNo);
 			if(StringUtils.isNotBlank(accNo)&&money!=null){
-				
 				BigDecimal bg1 = new BigDecimal(money);
 				BigDecimal f = bg1.setScale(2, BigDecimal.ROUND_HALF_UP);
 				int money2 = f.multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();

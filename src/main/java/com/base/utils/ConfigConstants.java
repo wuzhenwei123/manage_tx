@@ -132,6 +132,8 @@ public class ConfigConstants {
 	public static String UNION_QUERY_BACKTRANS = null;
 	/**银联支付-跳转支付-退费地址**/
 	public static String UNION_REFUNDPAY_BACKTRANS = null;
+	public static String UNIONPAYTOKEN_FRONTURL_DF = null;
+	public static String UNIONPAYTOKEN_BACKURL_DF = null;
 	
 	
 	private static Properties prop = null;
@@ -221,6 +223,8 @@ public class ConfigConstants {
 				UNION_BACKURL = (String) prop.get("union_backurl");
 				UNION_QUERY_BACKTRANS = (String) prop.get("union_query_backTrans");
 				UNION_REFUNDPAY_BACKTRANS = (String) prop.get("union_refundpay_backTrans");
+				UNIONPAYTOKEN_FRONTURL_DF = (String) prop.get("unionpaytoken_fronturl_df");
+				UNIONPAYTOKEN_BACKURL_DF = (String) prop.get("unionpaytoken_backurl_df");
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}

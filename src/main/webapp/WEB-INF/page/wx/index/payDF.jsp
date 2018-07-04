@@ -77,7 +77,7 @@
  	            if (result.code == '1') {
  	            	$("#orderNo").val(result.rows);
  	            	layer.msg("发送成功，请注意查收验证码");
- 	            	btnNum();
+ 	            	code();
  	             } else {
  	            	layer.msg(result.message);
  	             }
@@ -104,7 +104,7 @@
    			$.post("<c:url value='/unionpay/pay'/>",
    	       	{
 				money :'${money}',
- 				accNo :${accNo},
+ 				accNo :'${accNo}',
  				smsCode :smsCode,
  				backCard :'${backCard}',
    				ranNum:Math.random()

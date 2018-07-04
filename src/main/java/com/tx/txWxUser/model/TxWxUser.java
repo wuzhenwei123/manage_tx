@@ -67,7 +67,14 @@ public class TxWxUser extends BaseModel implements java.io.Serializable{
 	private String year_str;
 	private String password;
 	private String scanTicket;
+	private String qrCodeUrl;
 	
+	public String getQrCodeUrl() {
+		return qrCodeUrl;
+	}
+	public void setQrCodeUrl(String qrCodeUrl) {
+		this.qrCodeUrl = qrCodeUrl;
+	}
 	public String getScanTicket() {
 		return scanTicket;
 	}

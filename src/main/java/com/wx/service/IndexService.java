@@ -353,6 +353,57 @@ public class IndexService {
     	return reqMessage;
     }
     
+    /**
+     * 获取银联token
+     * @param merId
+     * @param orderId
+     * @param txnTime
+     * @return
+     */
+    public String getUnionPayTokenDF(String orderId,String txnTime,String accNo,TxWxUser wxUser){
+    	String reqMessage = null;
+    	try{
+    		Map<String, String> contentData = new HashMap<String, String>();
+    		
+    		/***银联全渠道系统，产品参数，除了encoding自行选择外其他不需修改***/
+    		contentData.put("version", "5.1.0");                  //版本号
+    		contentData.put("encoding", DemoBase.encoding);            //字符集编码 可以使用UTF-8,GBK两种方式
+    		contentData.put("signMethod", "01"); //签名方法
+    		contentData.put("txnType", "79");                              //交易类型 11-代收
+    		contentData.put("txnSubType", "00");                           //交易子类型 00-默认开通
+    		contentData.put("bizType", "000902");                          //业务类型 Token支付
+    		contentData.put("channelType", "07");                          //渠道类型07-PC
+    		
+    		/***商户接入参数***/
+    		contentData.put("merId", ConfigConstants.MER_ID);                   			   //商户号码（本商户号码仅做为测试调通交易使用，该商户号配置了需要对敏感信息加密）测试时请改成自己申请的商户号，【自己注册的测试777开头的商户号不支持代收产品】
+    		contentData.put("accessType", "0");                            //接入类型，商户接入固定填0，不需修改	
+    		contentData.put("orderId", orderId);             			   //商户订单号，8-40位数字字母，不能含“-”或“_”，可以自行定制规则	
+    		contentData.put("txnTime", txnTime);         				   //订单发送时间，格式为YYYYMMDDhhmmss，必须取当前时间，否则会报txnTime无效
+    		contentData.put("tokenPayData", "{trId="+ConfigConstants.TRID+"&tokenType=01}");
+    		
+    		contentData.put("encryptCertId",AcpService.getEncryptCertId());       //加密证书的certId，配置在acp_sdk.properties文件 acpsdk.encryptCert.path属性下
+    		
+    		contentData.put("frontUrl", ConfigConstants.UNIONPAYTOKEN_FRONTURL_DF);
+    		
+    		contentData.put("backUrl", ConfigConstants.UNIONPAYTOKEN_BACKURL_DF);
+    		
+    		accNo = AcpService.encryptData(accNo, "UTF-8");  //这里测试的时候使用的是测试卡号，正式环境请使用真实卡号
+    		contentData.put("accNo", accNo);
+    		/**请求参数设置完毕，以下对请求参数进行签名并生成html表单，将表单写入浏览器跳转打开银联页面**/
+    		Map<String, String> reqData = AcpService.sign(contentData,DemoBase.encoding);  			 //报文中certId,signature的值是在signData方法中获取并自动赋值的，只要证书配置正确即可。
+    		reqMessage = AcpService.createAutoFormHtml(ConfigConstants.FRONTTRANSURL,reqData,DemoBase.encoding);     //生成自动跳转的Html表单
+    		logger.info("开通（同步、异步）(后台快捷无此操作)银联侧开通交易-前台请求地址（页面跳转，异步处理）接口：");
+    		logger.info("http://114.113.238.50:18123/trans/frontTransTokenURL");
+    		logger.info("发送报文");
+    		logger.info(reqData);
+    		logger.info("打印请求HTML，此为请求报文，为联调排查问题的依据："+reqMessage);
+    		payLogCutter.filesMng(1, 1, reqData.toString(), wxUser.getId(), wxUser.getMobile(), wxUser.getNickName(), accNo);
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    	return reqMessage;
+    }
+    
     
     /**
      * 开通回调

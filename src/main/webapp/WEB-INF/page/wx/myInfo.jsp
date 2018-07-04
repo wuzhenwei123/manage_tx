@@ -22,40 +22,47 @@
 <body class="body">
 <div class="box">
 	<%@ include file="/WEB-INF/page/common/share1.jsp" %>
-    <div class="topBox">个人中心</div>
-    <c:set value="<%=ConfigConstants.DB_ROLE_ID %>" var="db"></c:set>
+    <div class="topBox" style="background: #0c8ee6;">个人中心</div>
+<!--     <div class="ch_ui_box marginTop16"> -->
+<!--         <a href="${ctx}/weixin/toMyCustomer?openId=${openId}" class="ui_cell ui_cells"> -->
+<!--         	<div style="background-image:url('${ctx}/images/wx/user_icon_!12.png');" class="ui_cell_icon_box"></div> -->
+<!--             <div class="ui_center ui_cell_flex">我的客户</div> -->
+<!--             <div class="ui_cell_link"></div> -->
+<!--         </a> -->
+<!--     </div>  -->
+     
     <div class="ch_ui_box marginTop16">
-        <a href="${ctx}/weixin/toMyCustomer?openId=${openId}" class="ui_cell ui_cells">
-        	<div style="background-image:url('${ctx}/images/wx/user_icon_!12.png');" class="ui_cell_icon_box"></div>
-            <div class="ui_center ui_cell_flex">我的客户</div>
+        <a href="${ctx}/other/toMyEmq" class="ui_cell ui_cells">
+        	<div style="background-image:url('${ctx}/images/wx/user_icon_!13.png');" class="ui_cell_icon_box"></div>
+            <div class="ui_center ui_cell_flex">领取展业二维码</div>
             <div class="ui_cell_link"></div>
         </a>
-    </div> 
+    </div>
+     <div class="ch_ui_box marginTop16">
+        <a href="${ctx}/weixin/toMyQRcodeFriend?openId=${openId}" class="ui_cell ui_cells">
+        	<div style="background-image:url('${ctx}/images/wx/user_icon_!13.png');" class="ui_cell_icon_box"></div>
+            <div class="ui_center ui_cell_flex">查看和提取佣金</div>
+            <div class="ui_cell_link"></div>
+        </a>
+    </div>  
     <div class="ch_ui_box marginTop16">
         <a href="${ctx}/weixin/toMyFriend?openId=${openId}" class="ui_cell ui_cells">
         	<div style="background-image:url('${ctx}/images/wx/user_icon_!.png');" class="ui_cell_icon_box"></div>
-            <div class="ui_center ui_cell_flex">我的朋友</div>
+            <div class="ui_center ui_cell_flex">我的团队</div>
             <div class="ui_cell_link"></div>
         </a>
-    </div> 
+    </div>
     <div class="ch_ui_box marginTop16">
-        <a href="${ctx}/weixin/toMyQRcodeFriend?openId=${openId}" class="ui_cell ui_cells">
+        <a href="${ctx}/index/toRecharge?openId=${openId}" class="ui_cell ui_cells">
         	<div style="background-image:url('${ctx}/images/wx/user_icon_!13.png');" class="ui_cell_icon_box"></div>
-            <div class="ui_center ui_cell_flex">我的朋友二维码</div>
-            <div class="ui_cell_link"></div>
-        </a>
-    </div> 
-    <div class="ch_ui_box marginTop16">
-        <a href="${ctx}/weixin/toMyQRcode?openId=${openId}" class="ui_cell ui_cells">
-        	<div style="background-image:url('${ctx}/images/wx/user_icon_!13.png');" class="ui_cell_icon_box"></div>
-            <div class="ui_center ui_cell_flex">我的客户二维码</div>
+            <div class="ui_center ui_cell_flex">预批电费，躺着赚</div>
             <div class="ui_cell_link"></div>
         </a>
     </div> 
     <div class="ch_ui_box marginTop16">
         <a href="${ctx}/index/toRecharge?openId=${openId}" class="ui_cell ui_cells">
         	<div style="background-image:url('${ctx}/images/wx/user_icon_!13.png');" class="ui_cell_icon_box"></div>
-            <div class="ui_center ui_cell_flex">预批电费，躺着赚</div>
+            <div class="ui_center ui_cell_flex">查看批电明细或退费</div>
             <div class="ui_cell_link"></div>
         </a>
     </div> 

@@ -513,6 +513,25 @@ public class IndexController extends BaseController{
 		model.addAttribute("PaymentInfo", ordercode);
 		return  "/wx/index/addCard";
 	}
+	/**
+	 * 添加银行卡
+	 * 
+	 * @param response
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/toAddCardDF", method = RequestMethod.GET)
+	public String toAddCardDF(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
+		super.getJsticket(request);
+		Integer sel_time = RequestHandler.getInteger(request, "sel_time");
+		Integer backCard = RequestHandler.getInteger(request, "backCard");
+		Double money = RequestHandler.getDouble(request, "money");
+		model.addAttribute("sel_time", sel_time);
+		model.addAttribute("backCard", backCard);
+		model.addAttribute("money", money);
+		return  "/wx/index/addCard";
+	}
 	
 	/**
 	 * 添加信用卡
@@ -549,6 +568,67 @@ public class IndexController extends BaseController{
 			txWxOrderService.insertTxWxOrder(txWxOrder);
 			
 			String html = indexService.getUnionPayToken(map.get("orderNo"), map.get("orderNoTime"), accNo, txWxUser);
+			PrintWriter pw = null;
+			try {
+				pw = response.getWriter();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			pw.print(html);
+			pw.flush();
+			pw.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return  null;
+	}
+	
+	/**
+	 * 添加信用卡
+	 * 
+	 * @param response
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/addCardDF", method = RequestMethod.GET)
+	public String addCardDF(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
+		String accNo = RequestHandler.getString(request, "accNo");
+		Integer sel_time = RequestHandler.getInteger(request, "sel_time");
+		Integer backCard = RequestHandler.getInteger(request, "backCard");
+		Double money = RequestHandler.getDouble(request, "money");
+		TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+		try{
+			
+			BigDecimal bg = new BigDecimal(money);
+			BigDecimal f = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
+			int money2 = f.multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+			
+			String orderNo = indexService.getOrderNo().get("orderNo");
+			String orderNoTime = indexService.getOrderNo().get("orderNoTime");
+			String orderNo1 = indexService.getOrderNo().get("orderNo");
+			String orderNoTime1 = indexService.getOrderNo().get("orderNoTime");
+			//先写入库
+			TxWxOrder txWxOrder = new TxWxOrder();
+			txWxOrder.setAccNo(accNo);
+			txWxOrder.setWxUserId(txWxUser.getId());
+			txWxOrder.setCreateTime(new Date());
+			txWxOrder.setOrderCode(orderNo);
+			txWxOrder.setStyle(0);
+			txWxOrder.setMoney(0*100L);
+			txWxOrder.setXfFlg(money+"");
+			txWxOrder.setTxnTime(orderNoTime1);
+			txWxOrder.setXfSettleDate(sel_time+"");
+			txWxOrder.setXfState(backCard);
+			txWxOrder.setTwoPromoterId(txWxUser.getTwoPromoterId());
+			txWxOrder.setTwoPromoterName(txWxUser.getTwoPromoterName());
+			txWxOrder.setWxUserName(txWxUser.getRealName());
+			txWxOrder.setPromoterId(txWxUser.getPromoterId());
+			txWxOrder.setZfOrderFee(money2);
+			txWxOrder.setZfOrderNo(orderNo1);
+			txWxOrderService.insertTxWxOrder(txWxOrder);
+			
+			String html = indexService.getUnionPayTokenDF(orderNo, orderNoTime, accNo, txWxUser);
 			PrintWriter pw = null;
 			try {
 				pw = response.getWriter();
@@ -604,6 +684,48 @@ public class IndexController extends BaseController{
 		}
 		return  null;
 	}
+	/**
+	 * 获取token前台回调
+	 * 
+	 * @param response
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/union_fronturl_token_df")
+	public String union_fronturl_token_df(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
+		try{
+			String orderId = indexService.frontTransUrl(request);
+			if(StringUtils.isNotBlank(orderId)){
+				TxWxOrder txWxOrder = txWxOrderService.getTxWxOrderByCode(orderId);
+				if(txWxOrder!=null&&txWxOrder.getId()>0){
+					model.addAttribute("txnTime", txWxOrder.getTxnTime());
+					model.addAttribute("accNo", txWxOrder.getAccNo());
+					model.addAttribute("sel_time", txWxOrder.getXfSettleDate());
+					model.addAttribute("money", txWxOrder.getXfFlg());
+					model.addAttribute("backCard", txWxOrder.getXfState());
+					
+					TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(txWxOrder.getAccNo());
+					model.addAttribute("endCode", txWxUserBankNo.getEndCode());
+					model.addAttribute("token", txWxUserBankNo.getToken());
+					model.addAttribute("txWxUserBankNo", txWxUserBankNo);
+					
+					TxWxUser wxUser = txWxUserService.getTxWxUserById(txWxOrder.getWxUserId());
+					request.getSession().setAttribute(SessionName.ADMIN_USER_NAME, wxUser.getRealName());
+					request.getSession().setAttribute(SessionName.ADMIN_USER_ID, wxUser.getId());
+					request.getSession().setAttribute(SessionName.ADMIN_USER, wxUser);
+					//创建订单
+					sendCodeDFCutter.filesMng(Integer.valueOf(txWxOrder.getXfSettleDate()), txWxOrder.getXfState(), txWxOrder.getAccNo(), txWxUserBankNo, txWxOrder.getZfOrderFee(), wxUser);
+					return "/wx/index/payDF";
+				}
+			}else{
+				logger.info("异常====");
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return  null;
+	}
 	
 	
 	/**
@@ -616,6 +738,20 @@ public class IndexController extends BaseController{
 	 */
 	@RequestMapping(value = "/union_backurl_token")
 	public String unionpaytoken_backurl(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
+		indexService.backTransUrl(request);
+		return  null;
+	}
+	
+	/**
+	 * 获取token后台回调
+	 * 
+	 * @param response
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/union_backurl_token_df")
+	public String union_backurl_token_df(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
 		indexService.backTransUrl(request);
 		return  null;
 	}
