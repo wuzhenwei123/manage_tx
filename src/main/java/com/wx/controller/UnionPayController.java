@@ -677,17 +677,7 @@ public class UnionPayController extends BaseController{
 				TxSellingOrder order = txSellingOrderService.getTxSellingOrderByCode(txRefundOrder.getOrderCode());
 				if(order.getState().intValue()==1&&order.getRefundState().intValue()==0){
 					
-					SimpleDateFormat sf2 = new SimpleDateFormat("yyyy年MM月dd日");
 					//调用查询接口
-	    			Calendar calendar = Calendar.getInstance();
-					calendar.setTime(order.getCreateTime());
-					calendar.add(Calendar.DAY_OF_YEAR, listT.get(0).getTrem());
-					SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMMdd");
-					String datastr = sf1.format(calendar.getTime());
-					if(Integer.valueOf(datastr)>Integer.valueOf((sf1.format(new Date())))){
-						writeErrorMsg("退卡失败，"+sf2.format(calendar.getTime())+"后，您可以退卡!", "", response);
-						return null;
-					}
 					TxWxUser wxUser = txWxUserService.getTxWxUserById(txRefundOrder.getUserId());
 					//调用接口退费
 					TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(order.getAccNo());
