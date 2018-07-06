@@ -272,6 +272,12 @@
         SELECT a.* FROM tx_selling_order a where a.state = #{state,jdbcType=INTEGER} and a.refundState = #{refundState,jdbcType=INTEGER} and DATE_FORMAT(a.endTime, '%Y-%c-%d') <![CDATA[<=]]> DATE_FORMAT(now(), '%Y-%c-%d')
     </select>
     
+    <select id="getTxSellingOrderListBySY1" parameterType="com.tx.txSellingOrder.model.TxSellingOrder" resultMap="baseResultMap">
+        SELECT a.*,b.mer_id as xwMerId FROM tx_selling_order a 
+        left join tx_wx_user b on a.wxUserId = b.id
+        where a.state = #{state,jdbcType=INTEGER} and a.refundState = #{refundState,jdbcType=INTEGER} and DATE_FORMAT(a.endTime, '%Y-%c-%d') = DATE_FORMAT(#{endTime}, '%Y-%c-%d')
+    </select>
+    
     
     <select id="orderAnalysis" parameterType="com.tx.txSellingOrder.model.TxSellingOrder" resultMap="baseResultMap">
          select if(sum(money) is null,0,sum(money)) as money from tx_selling_order where state = 1 and DATE_FORMAT(createTime, '%Y-%m')<![CDATA[ <= ]]>#{year_str} and DATE_FORMAT(createTime, '%Y')<![CDATA[ >=2018 ]]>

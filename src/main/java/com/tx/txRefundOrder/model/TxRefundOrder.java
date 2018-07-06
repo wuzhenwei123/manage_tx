@@ -31,7 +31,14 @@ public class TxRefundOrder extends BaseModel implements java.io.Serializable{
 	/** 退费金额 **/
 	private Long fee;
 	private Date orderTime;
+	private String batch;
 		
+	public String getBatch() {
+		return batch;
+	}
+	public void setBatch(String batch) {
+		this.batch = batch;
+	}
 	public Date getOrderTime() {
 		return orderTime;
 	}

@@ -2,6 +2,8 @@ package com.tx.task;
 
 import java.math.BigDecimal;
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,9 +13,11 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONObject;
 import com.base.utils.ChineseCharToEn;
 import com.base.utils.ConfigConstants;
 import com.base.utils.HttpUtils;
+import com.base.utils.MD5;
 import com.tx.txBusinessType.model.TxBusinessType;
 import com.tx.txBusinessType.service.TxBusinessTypeService;
 import com.tx.txCity.model.TxCity;
@@ -29,6 +33,7 @@ import com.tx.txSellingOrder.service.TxSellingOrderService;
 public class TaskJob {
 	
 	Logger log = Logger.getLogger(TaskJob.class);
+	private static MD5 MD5 = new MD5();
 	
 	@Autowired
 	private TxSellingOrderService txSellingOrderService = null;
@@ -41,28 +46,64 @@ public class TaskJob {
 	
     public void cut(){
     	try {
+    		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
     		TxSellingOrder txSellingOrder = new TxSellingOrder();
         	txSellingOrder.setState(1);
         	txSellingOrder.setRefundState(0);
-        	List<TxSellingOrder> list = txSellingOrderService.getTxSellingOrderListBySY(txSellingOrder);
+        	
+        	Calendar calendar = Calendar.getInstance();
+			calendar.setTime(new Date());
+			calendar.add(Calendar.DAY_OF_YEAR, -1);
+        	txSellingOrder.setEndTime(calendar.getTime());
+        	
+        	List<TxSellingOrder> list = txSellingOrderService.getTxSellingOrderListBySY1(txSellingOrder);
         	if(list!=null&&list.size()>0){
+        		JSONObject json = new JSONObject();
+        		json.put("msgType", "T1XW01");
+        		json.put("tranSum", list.size());
+        		json.put("merchantID", ConfigConstants.MER_ID);
+        		Long fee = 0L;
+        		JSONObject jsonDate = new JSONObject();
+        		String tmpMd5="";
         		for(TxSellingOrder order:list){
-//        			BigDecimal bg = new BigDecimal(order.getMoney());
-//    				BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.PAY_RATE));
-//    				long txnAmtDF = (bg.multiply(bgRate).multiply(new BigDecimal(30))).setScale(0, BigDecimal.ROUND_HALF_UP).longValue();
-//        			order.setProfitManey(order.getMoney()+txnAmtDF);
-//        			order.setProfits(bgRate);
-//        			order.setRefundTime(new Date());
-//        			txSellingOrderService.updateTxSellingOrderById(order);
-        			TxRefundOrder txRefundOrder = new TxRefundOrder();
-					txRefundOrder.setUserId(order.getWxUserId());
-					txRefundOrder.setRealName(order.getRealName());
-					txRefundOrder.setCreateTime(new Date());
-					txRefundOrder.setFee(order.getMoney());
-					txRefundOrder.setOrderCode(order.getCode());
-					txRefundOrder.setOrderTime(order.getCreateTime());
-					txRefundOrderService.insertTxRefundOrder(txRefundOrder);
-            	}
+        			
+        			BigDecimal bg = new BigDecimal(order.getMoney());
+					BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.PAY_RATE));
+					int txnAmtDF = (bg.multiply(bgRate).divide(new BigDecimal(12).multiply(new BigDecimal(order.getSelTime())))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+        			fee = order.getMoney() + txnAmtDF + fee;
+        			String md5str = MD5.getMD5ofStr(order.getXwMerId()+ txnAmtDF+ order.getMoney());
+        			jsonDate.put("xwMerId", order.getXwMerId());
+            		jsonDate.put("amt", txnAmtDF);
+            		jsonDate.put("orderAmt", order.getMoney());
+            		jsonDate.put("dataMd5", md5str);
+            		if(tmpMd5==""){
+            			tmpMd5 =  md5str;
+            		}else{
+            			tmpMd5 = MD5.getMD5ofStr(md5str+tmpMd5);
+            		}
+        		}
+        		json.put("totalFee", fee);
+        		json.put("data", jsonDate);
+        		json.put("md5Str", tmpMd5);
+        		json.put("batchNo", sf.format(new Date())+"0001");
+        		
+        		String jsonStr = com.base.utils.https.HttpUtils.httpsRequest(ConfigConstants.SY_URL, "POST", json.toString());
+                JSONObject result = JSONObject.parseObject(jsonStr);
+        		if("0".equals(result.get("respCode"))){
+        			for(TxSellingOrder order:list){
+            			TxRefundOrder txRefundOrder = new TxRefundOrder();
+    					txRefundOrder.setUserId(order.getWxUserId());
+    					txRefundOrder.setRealName(order.getRealName());
+    					txRefundOrder.setCreateTime(new Date());
+    					txRefundOrder.setFee(order.getMoney());
+    					txRefundOrder.setOrderCode(order.getCode());
+    					txRefundOrder.setOrderTime(order.getCreateTime());
+    					txRefundOrder.setBatch(sf.format(new Date())+"0001");
+    					txRefundOrderService.insertTxRefundOrder(txRefundOrder);
+                	}
+        		}else{
+        			log.info(sf.format(new Date())+"0001" + "---------------收益--------------------"+result.get("respMsg"));
+        		}
         	}
 		} catch (Exception e) {
 			e.printStackTrace();

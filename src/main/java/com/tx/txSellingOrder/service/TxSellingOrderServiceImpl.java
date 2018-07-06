@@ -40,6 +40,9 @@ public class TxSellingOrderServiceImpl implements TxSellingOrderService{
     public List<TxSellingOrder> getTxSellingOrderListBySY(TxSellingOrder txSellingOrder) {
     	return txSellingOrderDAO.getTxSellingOrderListBySY(txSellingOrder);
     }
+    public List<TxSellingOrder> getTxSellingOrderListBySY1(TxSellingOrder txSellingOrder) {
+    	return txSellingOrderDAO.getTxSellingOrderListBySY1(txSellingOrder);
+    }
     
     public TxSellingOrder getTxSellingOrderByRefundCode(String refundCode){
     	return txSellingOrderDAO.getTxSellingOrderByRefundCode(refundCode);

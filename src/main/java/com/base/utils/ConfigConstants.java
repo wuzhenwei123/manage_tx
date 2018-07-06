@@ -134,6 +134,7 @@ public class ConfigConstants {
 	public static String UNION_REFUNDPAY_BACKTRANS = null;
 	public static String UNIONPAYTOKEN_FRONTURL_DF = null;
 	public static String UNIONPAYTOKEN_BACKURL_DF = null;
+	public static String SY_URL = null;
 	
 	
 	private static Properties prop = null;
@@ -225,6 +226,7 @@ public class ConfigConstants {
 				UNION_REFUNDPAY_BACKTRANS = (String) prop.get("union_refundpay_backTrans");
 				UNIONPAYTOKEN_FRONTURL_DF = (String) prop.get("unionpaytoken_fronturl_df");
 				UNIONPAYTOKEN_BACKURL_DF = (String) prop.get("unionpaytoken_backurl_df");
+				SY_URL = (String) prop.get("sy_url");
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
