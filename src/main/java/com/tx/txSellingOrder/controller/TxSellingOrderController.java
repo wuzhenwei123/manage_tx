@@ -172,7 +172,7 @@ public class TxSellingOrderController extends BaseController
         		json.put("totalFee", fee);
         		json.put("data", array);
         		json.put("md5Str", MD5.getMD5ofStr(tmpMd5));
-        		json.put("batchNo", sf.format(new Date())+"0001");
+        		json.put("batchNo", sf.format(new Date())+"0002");
         		
         		String jsonStr = HttpRequest.sendPost(ConfigConstants.SY_URL, json.toString());
         		
