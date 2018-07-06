@@ -170,6 +170,7 @@
  	<task:scheduled-tasks>
  		<task:scheduled ref="taskJob" method="cut" cron="0 0 1 * * ?"/>   <!--每天凌晨1点触发  -->
  		<task:scheduled ref="taskJob" method="job5" cron="0 0 1 * * ?"/>   <!--每天凌晨1点触发  -->
+ 		<task:scheduled ref="taskJob" method="cut1" cron="0 0 3 * * ?"/>   <!--每天凌晨3点触发  -->
  	</task:scheduled-tasks>
 	
 <!-- 	<bean name="memcachedClientBuilder" class="net.rubyeye.xmemcached.XMemcachedClientBuilder"> -->

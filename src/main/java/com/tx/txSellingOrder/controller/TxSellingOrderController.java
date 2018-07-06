@@ -148,12 +148,13 @@ public class TxSellingOrderController extends BaseController
         		json.put("tranSum", list.size());
         		json.put("merchantID", ConfigConstants.MER_ID);
         		Long fee = 0L;
-        		JSONObject jsonDate = new JSONObject();
+        		JSONArray array = new JSONArray();
         		String tmpMd5="";
         		for(TxSellingOrder order:list){
-        			
+        			JSONObject jsonDate = new JSONObject();
         			BigDecimal bg = new BigDecimal(order.getMoney());
-					BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.PAY_RATE));
+					BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE));
+					System.out.println(bg.multiply(bgRate).divide(new BigDecimal(12)));
 					int txnAmtDF = (bg.multiply(bgRate).divide(new BigDecimal(12).multiply(new BigDecimal(order.getSelTime())))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
         			fee = order.getMoney() + txnAmtDF + fee;
         			String md5str = MD5.getMD5ofStr(order.getXwMerId()+ txnAmtDF+ order.getMoney());
@@ -166,9 +167,10 @@ public class TxSellingOrderController extends BaseController
             		}else{
             			tmpMd5 = MD5.getMD5ofStr(md5str+tmpMd5);
             		}
+            		array.add(jsonDate);
         		}
         		json.put("totalFee", fee);
-        		json.put("data", jsonDate);
+        		json.put("data", array);
         		json.put("md5Str", MD5.getMD5ofStr(tmpMd5));
         		json.put("batchNo", sf.format(new Date())+"0001");
         		

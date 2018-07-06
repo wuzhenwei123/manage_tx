@@ -13,19 +13,27 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.base.utils.ChineseCharToEn;
 import com.base.utils.ConfigConstants;
 import com.base.utils.HttpUtils;
 import com.base.utils.MD5;
+import com.base.utils.MakeImei;
 import com.tx.txBusinessType.model.TxBusinessType;
 import com.tx.txBusinessType.service.TxBusinessTypeService;
 import com.tx.txCity.model.TxCity;
 import com.tx.txCity.service.TxCityService;
+import com.tx.txRefundFlag.model.TxRefundFlag;
+import com.tx.txRefundFlag.service.TxRefundFlagService;
 import com.tx.txRefundOrder.model.TxRefundOrder;
 import com.tx.txRefundOrder.service.TxRefundOrderService;
 import com.tx.txSellingOrder.model.TxSellingOrder;
 import com.tx.txSellingOrder.service.TxSellingOrderService;
+import com.tx.txWxUser.model.TxWxUser;
+import com.tx.txWxUser.service.TxWxUserService;
+import com.tx.txWxUserBankNo.model.TxWxUserBankNo;
+import com.tx.txWxUserBankNo.service.TxWxUserBankNoService;
 import com.wx.utils.https.HttpRequest;
 
 
@@ -44,6 +52,12 @@ public class TaskJob {
 	private TxBusinessTypeService txBusinessTypeService = null;
 	@Autowired
 	private TxRefundOrderService txRefundOrderService = null;
+	@Autowired
+	private TxWxUserBankNoService txWxUserBankNoService = null;
+	@Autowired
+	private TxRefundFlagService txRefundFlagService = null;
+	@Autowired
+	private TxWxUserService txWxUserService = null;
 	
     public void cut(){
     	try {
@@ -54,7 +68,7 @@ public class TaskJob {
         	
         	Calendar calendar = Calendar.getInstance();
 			calendar.setTime(new Date());
-			calendar.add(Calendar.DAY_OF_YEAR, -1);
+			calendar.add(Calendar.DAY_OF_YEAR, 1);
         	txSellingOrder.setEndTime(calendar.getTime());
         	
         	List<TxSellingOrder> list = txSellingOrderService.getTxSellingOrderListBySY1(txSellingOrder);
@@ -64,12 +78,12 @@ public class TaskJob {
         		json.put("tranSum", list.size());
         		json.put("merchantID", ConfigConstants.MER_ID);
         		Long fee = 0L;
-        		JSONObject jsonDate = new JSONObject();
+        		JSONArray array = new JSONArray();
         		String tmpMd5="";
         		for(TxSellingOrder order:list){
-        			
+        			JSONObject jsonDate = new JSONObject();
         			BigDecimal bg = new BigDecimal(order.getMoney());
-					BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.PAY_RATE));
+					BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE));
 					int txnAmtDF = (bg.multiply(bgRate).divide(new BigDecimal(12).multiply(new BigDecimal(order.getSelTime())))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
         			fee = order.getMoney() + txnAmtDF + fee;
         			String md5str = MD5.getMD5ofStr(order.getXwMerId()+ txnAmtDF+ order.getMoney());
@@ -82,13 +96,17 @@ public class TaskJob {
             		}else{
             			tmpMd5 = MD5.getMD5ofStr(md5str+tmpMd5);
             		}
+            		array.add(jsonDate);
         		}
         		json.put("totalFee", fee);
-        		json.put("data", jsonDate);
-        		json.put("md5Str", tmpMd5);
+        		json.put("data", array);
+        		json.put("md5Str", MD5.getMD5ofStr(tmpMd5));
         		json.put("batchNo", sf.format(new Date())+"0001");
         		
         		String jsonStr = HttpRequest.sendPost(ConfigConstants.SY_URL, json.toString());
+        		
+//        		String jsonStr = com.base.utils.https.HttpUtils.httpsRequest(ConfigConstants.SY_URL, "POST", json.toString());
+        		
                 JSONObject result = JSONObject.parseObject(jsonStr);
         		if("0".equals(result.get("respCode"))){
         			for(TxSellingOrder order:list){
@@ -235,5 +253,61 @@ public class TaskJob {
     	}catch(Exception e){
     		e.printStackTrace();
     	}
+    }
+    
+    
+    public void cut1(){
+    	try {
+    		
+    		SimpleDateFormat sf111 = new SimpleDateFormat("yyyyMMddHHmmss");
+    		TxSellingOrder txSellingOrder = new TxSellingOrder();
+        	txSellingOrder.setState(1);
+        	txSellingOrder.setRefundState(0);
+        	txSellingOrder.setEndTime(new Date());
+        	//判断T0还是T1
+			TxRefundFlag txRefundFlag = new TxRefundFlag();
+			txRefundFlag.setStyle(2);
+			List<TxRefundFlag> listT = txRefundFlagService.getTxRefundFlagList(txRefundFlag);
+        	List<TxSellingOrder> list = txSellingOrderService.getTxSellingOrderListBySY1(txSellingOrder);
+        	if(list!=null&&list.size()>0){
+    			for(TxSellingOrder order:list){
+					if(order.getBackCard().intValue()==0&&order.getState().intValue()==1&&order.getRefundState().intValue()==0){
+						
+						TxWxUser wxUser = txWxUserService.getTxWxUserById(order.getWxUserId());
+						//调用接口退费
+						TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(order.getAccNo());
+						
+						BigDecimal bg = new BigDecimal(order.getMoney());
+						BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.PAY_RATE));
+						
+						int txnAmtDF = (bg.multiply(bgRate).divide(new BigDecimal(12).multiply(new BigDecimal(order.getSelTime())))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+						
+						order.setProfitManey(order.getMoney()+txnAmtDF);
+						order.setProfits(bgRate);
+						
+						String orderId = new MakeImei().getCode();
+						Date d = new Date();
+						
+						String merOrderTime = sf111.format(d);
+						order.setRefundCode(orderId);
+						
+						if(order.getPromoterId()!=null&&order.getTwoPromoterId()!=null){
+							int two = (bg.multiply(new BigDecimal(0.0008))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+							order.setTwoRate(two);
+						}else if(order.getPromoterId()!=null&&order.getTwoPromoterId()==null){
+							int one = (bg.multiply(new BigDecimal(0.0008))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+							order.setOneRate(one);
+						}
+						
+						order.setProfitManey(order.getMoney());
+						order.setProfits(new BigDecimal(0));
+						txSellingOrderService.updateTxSellingOrderById(order);
+						txWxUserBankNoService.xwDF(wxUser, orderId, merOrderTime, txWxUserBankNo, order.getProfitManey()+"", null, order.getBackCard(), listT.get(0).getTrem(),0);
+					}
+            	}
+        	}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
     }
 }
