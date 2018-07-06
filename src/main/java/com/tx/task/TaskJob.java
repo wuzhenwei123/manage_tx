@@ -26,6 +26,7 @@ import com.tx.txRefundOrder.model.TxRefundOrder;
 import com.tx.txRefundOrder.service.TxRefundOrderService;
 import com.tx.txSellingOrder.model.TxSellingOrder;
 import com.tx.txSellingOrder.service.TxSellingOrderService;
+import com.wx.utils.https.HttpRequest;
 
 
 
@@ -87,7 +88,7 @@ public class TaskJob {
         		json.put("md5Str", tmpMd5);
         		json.put("batchNo", sf.format(new Date())+"0001");
         		
-        		String jsonStr = com.base.utils.https.HttpUtils.httpsRequest(ConfigConstants.SY_URL, "POST", json.toString());
+        		String jsonStr = HttpRequest.sendPost(ConfigConstants.SY_URL, json.toString());
                 JSONObject result = JSONObject.parseObject(jsonStr);
         		if("0".equals(result.get("respCode"))){
         			for(TxSellingOrder order:list){

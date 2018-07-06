@@ -73,6 +73,7 @@ public class HttpUtils {
 			result = buffer.toString();
 		} catch (ConnectException ce) {
 		} catch (Exception e) {
+			e.printStackTrace();
 		}
 		return result;
 	}

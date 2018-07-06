@@ -89,6 +89,8 @@ public class HttpRequest {
             // 发送POST请求必须设置如下两行
             conn.setDoOutput(true);
             conn.setDoInput(true);
+            conn.setConnectTimeout(30000);  
+            conn.setReadTimeout(30000);  
             // 获取URLConnection对象对应的输出流
             out = new PrintWriter(conn.getOutputStream());
             // 发送请求参数
