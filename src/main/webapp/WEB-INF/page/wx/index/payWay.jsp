@@ -54,9 +54,9 @@
         $(".btn_boxs").on("click",function () {
         	var id = $(".sel_bank li.active").attr("id");
         	if(id=="3"){
-	       		location.href = "${ctx}/index/getListCard?PaymentInfo=${PaymentInfo}";
+	       		location.href = "${ctx}/index/getListCard?PaymentInfo=${PaymentInfo}&shopCode=${shopCode}";
 	       	}else if(id=="4"){
-	       		location.href = "${ctx}/index/toUnionpay?_t="+Math.random()+"&PaymentInfo=${PaymentInfo}";
+	       		location.href = "${ctx}/index/toUnionpay?_t="+Math.random()+"&PaymentInfo=${PaymentInfo}&shopCode=${shopCode}";
 	       	}
         })
     })

@@ -50,9 +50,9 @@
             	return false;
             }else{
             	if("addcard"==accNo){
-            		 location.href = "${ctx}/index/toAddCard?_t="+Math.random()+"&ordercode=${PaymentInfo}";
+            		 location.href = "${ctx}/index/toAddCard?_t="+Math.random()+"&ordercode=${PaymentInfo}&shopCode=${shopCode}";
             	}else{
-		            location.href = "${ctx}/index/toPay?accNo="+accNo+"&_t="+Math.random()+"&ordercode=${PaymentInfo}";
+		            location.href = "${ctx}/index/toPay?accNo="+accNo+"&_t="+Math.random()+"&ordercode=${PaymentInfo}&shopCode=${shopCode}";
             	}
             }
         })

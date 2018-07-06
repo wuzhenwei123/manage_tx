@@ -106,6 +106,7 @@
    				accNo:'${accNo}',
    				orderType:'${orderType}',
    				isFive:'${isFive}',
+   				shopCode:'${shopCode}',
    				ranNum:Math.random()
    			},
    	       	function(data){

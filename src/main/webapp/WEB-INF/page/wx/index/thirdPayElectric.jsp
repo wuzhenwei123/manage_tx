@@ -75,7 +75,7 @@
 </body>
 <script>
    function tijiao(){
-		window.location.href = '${ctx}/index/toSelPayWay?PaymentInfo=${PaymentInfo}';
+		window.location.href = '${ctx}/index/toSelPayWay?PaymentInfo=${PaymentInfo}&shopCode=${shopCode}';
    }
 </script>
 </html>
