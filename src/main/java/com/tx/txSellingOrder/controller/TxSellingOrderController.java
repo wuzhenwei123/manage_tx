@@ -156,7 +156,7 @@ public class TxSellingOrderController extends BaseController
 					BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE));
 					System.out.println(bg.multiply(bgRate).divide(new BigDecimal(12)));
 					int txnAmtDF = (bg.multiply(bgRate).divide(new BigDecimal(12).multiply(new BigDecimal(order.getSelTime())))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
-        			fee = order.getMoney() + txnAmtDF + fee;
+        			fee = + txnAmtDF + fee;
         			String md5str = MD5.getMD5ofStr(order.getXwMerId()+ txnAmtDF+ order.getMoney());
         			jsonDate.put("xwMerId", order.getXwMerId());
             		jsonDate.put("amt", txnAmtDF);
@@ -183,7 +183,7 @@ public class TxSellingOrderController extends BaseController
         			for(TxSellingOrder order:list){
             			TxRefundOrder txRefundOrder = new TxRefundOrder();
     					txRefundOrder.setUserId(order.getWxUserId());
-    					txRefundOrder.setRealName(order.getRealName());
+    					txRefundOrder.setRealName(order.getWxUserName());
     					txRefundOrder.setCreateTime(new Date());
     					txRefundOrder.setFee(order.getMoney());
     					txRefundOrder.setOrderCode(order.getCode());

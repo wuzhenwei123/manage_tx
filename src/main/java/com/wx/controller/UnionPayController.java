@@ -675,7 +675,7 @@ public class UnionPayController extends BaseController{
 				List<TxRefundFlag> listT = txRefundFlagService.getTxRefundFlagList(txRefundFlag);
 				
 				TxSellingOrder order = txSellingOrderService.getTxSellingOrderByCode(txRefundOrder.getOrderCode());
-				if(order.getBackCard().intValue()==0&&order.getState().intValue()==1&&order.getRefundState().intValue()==0){
+				if(order.getState().intValue()==1&&order.getRefundState().intValue()==0){
 					
 					SimpleDateFormat sf2 = new SimpleDateFormat("yyyy年MM月dd日");
 					//调用查询接口
@@ -693,7 +693,7 @@ public class UnionPayController extends BaseController{
 					TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(order.getAccNo());
 					
 					BigDecimal bg = new BigDecimal(order.getMoney());
-					BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.PAY_RATE));
+					BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE));
 					
 					int txnAmtDF = (bg.multiply(bgRate).divide(new BigDecimal(12).multiply(new BigDecimal(order.getSelTime())))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
 					
@@ -714,8 +714,8 @@ public class UnionPayController extends BaseController{
 						order.setOneRate(one);
 					}
 					
-					order.setProfitManey(order.getMoney());
-					order.setProfits(new BigDecimal(0));
+//					order.setProfitManey(order.getMoney());
+//					order.setProfits(new BigDecimal(0));
 					txSellingOrderService.updateTxSellingOrderById(order);
 					Map<String, String> map = txWxUserBankNoService.xwDF(wxUser, orderId, merOrderTime, txWxUserBankNo, order.getProfitManey()+"", null, order.getBackCard(), listT.get(0).getTrem(),0);
 					if(map!=null&&"00".equals(map.get("respCode"))){

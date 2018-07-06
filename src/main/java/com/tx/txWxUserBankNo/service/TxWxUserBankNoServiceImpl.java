@@ -1254,16 +1254,6 @@ public class TxWxUserBankNoServiceImpl implements TxWxUserBankNoService{
     		contentData.put("ppType", "0");
     		contentData.put("xwDFFee", xwDFFee+"");//手续费
     		
-    		//判断T0还是T1
-			TxRefundFlag txRefundFlag = new TxRefundFlag();
-			txRefundFlag.setStyle(1);
-			List<TxRefundFlag> listT = txRefundFlagDAO.getTxRefundFlagList(txRefundFlag);
-			Integer tFlag = 0;
-			if(listT!=null&&listT.size()>0){
-				tFlag = listT.get(0).getTrem();
-			}
-			
-    		
     		Map<String, String> reqData = AcpService.sign(contentData,DemoBase.encoding);				//报文中certId,signature的值是在signData方法中获取并自动赋值的，只要证书配置正确即可。
     		logger.info("消费&代付交易");
     		logger.info("http:// 114.113.238.50:54041/XW/Trans");
@@ -1297,7 +1287,7 @@ public class TxWxUserBankNoServiceImpl implements TxWxUserBankNoService{
     				String hh = datastr.substring(datastr.length()-8, datastr.length()-6);
     				String dd = datastr.substring(8, 10);
     				String MM = datastr.substring(5, 7);
-    				QuartzManager.addJob(orderId+"_"+tFlag+"_"+backCard+"_"+wxUser.getMerId(), QuartzJobDFService.class, ss+" "+mm+" "+hh+" "+dd+" "+MM+" ?");  
+    				QuartzManager.addJob(orderId+"_"+flag+"_"+wxUser.getMerId(), QuartzJobDFService.class, ss+" "+mm+" "+hh+" "+dd+" "+MM+" ?");  
     			}else if("E00099".equals(rspData.get("respCode"))){
     				
     				Calendar calendar = Calendar.getInstance();
@@ -1310,7 +1300,7 @@ public class TxWxUserBankNoServiceImpl implements TxWxUserBankNoService{
     				String hh = datastr.substring(datastr.length()-8, datastr.length()-6);
     				String dd = datastr.substring(8, 10);
     				String MM = datastr.substring(5, 7);
-    				QuartzManager.addJob(orderId+"_"+tFlag+"_"+backCard+"_"+wxUser.getMerId(), QuartzJobDFService.class, ss+" "+mm+" "+hh+" "+dd+" "+MM+" ?");  
+    				QuartzManager.addJob(orderId+"_"+flag+"_"+wxUser.getMerId(), QuartzJobDFService.class, ss+" "+mm+" "+hh+" "+dd+" "+MM+" ?");  
     			}
     		}else{
 //    			//调用查询接口
@@ -1324,7 +1314,7 @@ public class TxWxUserBankNoServiceImpl implements TxWxUserBankNoService{
     			String hh = datastr.substring(datastr.length()-8, datastr.length()-6);
     			String dd = datastr.substring(8, 10);
     			String MM = datastr.substring(5, 7);
-    			QuartzManager.addJob(orderId+"_"+tFlag+"_"+backCard+"_"+wxUser.getMerId(), QuartzJobDFService.class, ss+" "+mm+" "+hh+" "+dd+" "+MM+" ?");  
+    			QuartzManager.addJob(orderId+"_"+flag+"_"+wxUser.getMerId(), QuartzJobDFService.class, ss+" "+mm+" "+hh+" "+dd+" "+MM+" ?");  
     		}
 //    		reqMessage = DemoBase.genHtmlResult(reqData);
 //    		String rspMessage = DemoBase.genHtmlResult(rspData);

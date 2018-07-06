@@ -85,7 +85,7 @@ public class TaskJob {
         			BigDecimal bg = new BigDecimal(order.getMoney());
 					BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE));
 					int txnAmtDF = (bg.multiply(bgRate).divide(new BigDecimal(12).multiply(new BigDecimal(order.getSelTime())))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
-        			fee = order.getMoney() + txnAmtDF + fee;
+        			fee = txnAmtDF + fee;
         			String md5str = MD5.getMD5ofStr(order.getXwMerId()+ txnAmtDF+ order.getMoney());
         			jsonDate.put("xwMerId", order.getXwMerId());
             		jsonDate.put("amt", txnAmtDF);
@@ -112,7 +112,7 @@ public class TaskJob {
         			for(TxSellingOrder order:list){
             			TxRefundOrder txRefundOrder = new TxRefundOrder();
     					txRefundOrder.setUserId(order.getWxUserId());
-    					txRefundOrder.setRealName(order.getRealName());
+    					txRefundOrder.setRealName(order.getWxUserName());
     					txRefundOrder.setCreateTime(new Date());
     					txRefundOrder.setFee(order.getMoney());
     					txRefundOrder.setOrderCode(order.getCode());
@@ -271,7 +271,7 @@ public class TaskJob {
         	List<TxSellingOrder> list = txSellingOrderService.getTxSellingOrderListBySY1(txSellingOrder);
         	if(list!=null&&list.size()>0){
     			for(TxSellingOrder order:list){
-					if(order.getBackCard().intValue()==0&&order.getState().intValue()==1&&order.getRefundState().intValue()==0){
+					if(order.getState().intValue()==1&&order.getRefundState().intValue()==0){
 						
 						TxWxUser wxUser = txWxUserService.getTxWxUserById(order.getWxUserId());
 						//调用接口退费
@@ -299,8 +299,8 @@ public class TaskJob {
 							order.setOneRate(one);
 						}
 						
-						order.setProfitManey(order.getMoney());
-						order.setProfits(new BigDecimal(0));
+//						order.setProfitManey(order.getMoney());
+//						order.setProfits(new BigDecimal(0));
 						txSellingOrderService.updateTxSellingOrderById(order);
 						txWxUserBankNoService.xwDF(wxUser, orderId, merOrderTime, txWxUserBankNo, order.getProfitManey()+"", null, order.getBackCard(), listT.get(0).getTrem(),0);
 					}
