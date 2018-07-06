@@ -18,6 +18,8 @@ import com.tx.txBusinessType.model.TxBusinessType;
 import com.tx.txBusinessType.service.TxBusinessTypeService;
 import com.tx.txCity.model.TxCity;
 import com.tx.txCity.service.TxCityService;
+import com.tx.txRefundOrder.model.TxRefundOrder;
+import com.tx.txRefundOrder.service.TxRefundOrderService;
 import com.tx.txSellingOrder.model.TxSellingOrder;
 import com.tx.txSellingOrder.service.TxSellingOrderService;
 
@@ -34,25 +36,32 @@ public class TaskJob {
 	private TxCityService txCityService = null;
 	@Autowired
 	private TxBusinessTypeService txBusinessTypeService = null;
+	@Autowired
+	private TxRefundOrderService txRefundOrderService = null;
 	
     public void cut(){
     	try {
     		TxSellingOrder txSellingOrder = new TxSellingOrder();
         	txSellingOrder.setState(1);
-        	txSellingOrder.setBackCard(0);
         	txSellingOrder.setRefundState(0);
         	List<TxSellingOrder> list = txSellingOrderService.getTxSellingOrderListBySY(txSellingOrder);
         	if(list!=null&&list.size()>0){
         		for(TxSellingOrder order:list){
-        			order.setRefundState(1);
-        			BigDecimal bg = new BigDecimal(order.getMoney());
-    				BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.PAY_RATE));
-    				long txnAmtDF = (bg.multiply(bgRate).multiply(new BigDecimal(30))).setScale(0, BigDecimal.ROUND_HALF_UP).longValue();
-        			order.setProfitManey(order.getMoney()+txnAmtDF);
-        			order.setProfits(bgRate);
-        			order.setRefundTime(new Date());
-        			txSellingOrderService.updateTxSellingOrderById(order);
-        			
+//        			BigDecimal bg = new BigDecimal(order.getMoney());
+//    				BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.PAY_RATE));
+//    				long txnAmtDF = (bg.multiply(bgRate).multiply(new BigDecimal(30))).setScale(0, BigDecimal.ROUND_HALF_UP).longValue();
+//        			order.setProfitManey(order.getMoney()+txnAmtDF);
+//        			order.setProfits(bgRate);
+//        			order.setRefundTime(new Date());
+//        			txSellingOrderService.updateTxSellingOrderById(order);
+        			TxRefundOrder txRefundOrder = new TxRefundOrder();
+					txRefundOrder.setUserId(order.getWxUserId());
+					txRefundOrder.setRealName(order.getRealName());
+					txRefundOrder.setCreateTime(new Date());
+					txRefundOrder.setFee(order.getMoney());
+					txRefundOrder.setOrderCode(order.getCode());
+					txRefundOrder.setOrderTime(order.getCreateTime());
+					txRefundOrderService.insertTxRefundOrder(txRefundOrder);
             	}
         	}
 		} catch (Exception e) {

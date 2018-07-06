@@ -280,6 +280,7 @@ public class IndexController extends BaseController{
 	public String toSelPayWay(HttpServletRequest request, HttpServletResponse response, Model model){
 		super.getJsticket(request);
 		String PaymentInfo = RequestHandler.getString(request, "PaymentInfo");
+		String shopCode = RequestHandler.getString(request, "shopCode");
 		TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 		try{
 			
@@ -287,6 +288,7 @@ public class IndexController extends BaseController{
 			e.printStackTrace();
 		}
 		model.addAttribute("PaymentInfo", PaymentInfo);
+		model.addAttribute("shopCode", shopCode);
 		return "/wx/index/payWay";
 	}
 	
@@ -302,6 +304,7 @@ public class IndexController extends BaseController{
 	public String getListCard(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
 		super.getJsticket(request);
 		String PaymentInfo = RequestHandler.getString(request, "PaymentInfo");
+		String shopCode = RequestHandler.getString(request, "shopCode");
 		try{
 			TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 			//查询银行卡是否已经获得token
@@ -309,6 +312,7 @@ public class IndexController extends BaseController{
 			txWxUserBankNo.setWxUserId(txWxUser.getId());
 			List<TxWxUserBankNo> list = txWxUserBankNoService.getTxWxUserBankNoList(txWxUserBankNo);
 			model.addAttribute("PaymentInfo", PaymentInfo);
+			model.addAttribute("shopCode", shopCode);
 			if(list!=null&&list.size()>0){
 				model.addAttribute("list", list);
 				return  "/wx/index/cardList";
@@ -356,12 +360,13 @@ public class IndexController extends BaseController{
 	}
 	
 	/** 进入支付界面**/
-	@RequestMapping(value = "toPay", method = RequestMethod.GET)
+	@RequestMapping(value = "/toPay", method = RequestMethod.GET)
 	public String toPay(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception
 	{
 		super.getJsticket(request);
 		String accNo =  RequestHandler.getString(request, "accNo");
 		String ordercode =  RequestHandler.getString(request, "ordercode");
+		String shopCode =  RequestHandler.getString(request, "shopCode");
 		try{
 			
 			Map<String,String> mapssss = SessionName.maporder.get(ordercode);
@@ -378,6 +383,7 @@ public class IndexController extends BaseController{
 			model.addAttribute("txnTime", orderNoTime);
 			model.addAttribute("orderfee", orderfee);
 			model.addAttribute("accNo", accNo);
+			model.addAttribute("shopCode", shopCode);
 			if(SessionName.xzOrder.get(ordercode)==null){
 				sendCodeCutter.filesMng(ordercode, orderNoTime, txWxUserBankNo, orderfee, txWxUser);
 			}
@@ -387,7 +393,7 @@ public class IndexController extends BaseController{
 		return "/wx/index/pay";
 	}
 	/** 进入支付界面**/
-	@RequestMapping(value = "toPayDF", method = RequestMethod.GET)
+	@RequestMapping(value = "/toPayDF", method = RequestMethod.GET)
 	public String toPayDF(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception
 	{
 		super.getJsticket(request);
@@ -437,6 +443,7 @@ public class IndexController extends BaseController{
 		String smsCode = RequestHandler.getString(request, "smsCode");
 		String ordercode = RequestHandler.getString(request, "ordercode");
 		String txnTime = RequestHandler.getString(request, "txnTime");
+		String shopCode = RequestHandler.getString(request, "shopCode");
 		try{
 			TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 			TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(accNo);

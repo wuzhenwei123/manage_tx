@@ -18,6 +18,7 @@ import com.tx.txPayRate.service.TxPayRateService;
 import com.tx.txSellingOrder.model.TxSellingOrder;
 import com.tx.txSellingOrder.service.TxSellingOrderService;
 import com.tx.txWxUser.model.TxWxUser;
+import com.tx.txWxUser.service.TxWxUserService;
 import com.tx.txWxUserBankNo.model.TxWxUserBankNo;
 import com.tx.txWxUserBankNo.service.TxWxUserBankNoService;
 
@@ -32,6 +33,8 @@ public class SendCodeDFCutter {
 	private TxPayRateService txPayRateService = null;
 	@Autowired
 	private TxWxUserBankNoService txWxUserBankNoService = null;
+	@Autowired
+	private TxWxUserService txWxUserService = null;
 
 	public void filesMng(Integer sel_time,Integer backCard,String accNo,TxWxUserBankNo txWxUserBankNo,Integer money,TxWxUser wxUser) {
 		this.taskExecutor.execute(new SendCodeThread(sel_time, backCard,accNo, txWxUserBankNo, money, wxUser));
@@ -76,28 +79,36 @@ public class SendCodeDFCutter {
 				txSellingOrder.setCreateTime(new Date());
 				txSellingOrder.setEndTime(calendar.getTime());
 				txSellingOrder.setMoney(money*1L);
-				txSellingOrder.setPromoterId(wxUser.getPromoterId());
-				txSellingOrder.setTwoPromoterId(wxUser.getTwoPromoterId());
 				txSellingOrder.setWxUserName(wxUser.getRealName());
 				txSellingOrder.setWxUserId(wxUser.getId());
 				txSellingOrder.setProfits(new BigDecimal(ConfigConstants.PAY_RATE));
 				
-				List<TxPayRate> list = txPayRateService.getTxPayRateList(new TxPayRate());
-				
-				BigDecimal bg = new BigDecimal(money);
-				if(list!=null&&list.size()>0){
-					TxPayRate rate = list.get(0);
-					if(wxUser.getPromoterId()!=null){
-						int one = (bg.multiply(rate.getOneRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
-						txSellingOrder.setOneRate(one);
+				if(wxUser.getPromoterId()!=null){
+					TxWxUser wxUserPromet = txWxUserService.getTxWxUserById(wxUser.getPromoterId());//上级代理
+					if(wxUserPromet.getParentId()!=null){
+						txSellingOrder.setPromoterId(wxUserPromet.getPromoterId());
+						txSellingOrder.setTwoPromoterId(wxUser.getPromoterId());
+					}else{
+						txSellingOrder.setPromoterId(wxUser.getPromoterId());
 					}
-					if(wxUser.getTwoPromoterId()!=null){
-						int two = (bg.multiply(rate.getTwoRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
-						txSellingOrder.setTwoRate(two);
-					}
-					int devRate = (bg.multiply(rate.getDevRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
-					txSellingOrder.setDevRate(devRate);
 				}
+				
+//				List<TxPayRate> list = txPayRateService.getTxPayRateList(new TxPayRate());
+//				
+//				BigDecimal bg = new BigDecimal(money);
+//				if(list!=null&&list.size()>0){
+//					TxPayRate rate = list.get(0);
+//					if(wxUser.getPromoterId()!=null){
+//						int one = (bg.multiply(rate.getOneRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+//						txSellingOrder.setOneRate(one);
+//					}
+//					if(wxUser.getTwoPromoterId()!=null){
+//						int two = (bg.multiply(rate.getTwoRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+//						txSellingOrder.setTwoRate(two);
+//					}
+//					int devRate = (bg.multiply(rate.getDevRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+//					txSellingOrder.setDevRate(devRate);
+//				}
 				txSellingOrderService.insertTxSellingOrder(txSellingOrder);
 				SessionName.MAPORDERNO.put("C_"+accNo, orderId+"_"+txnTime);
 				boolean b = txWxUserBankNoService.vercodeNew(wxUser, orderId, txnTime, txWxUserBankNo, money+"",backCard);

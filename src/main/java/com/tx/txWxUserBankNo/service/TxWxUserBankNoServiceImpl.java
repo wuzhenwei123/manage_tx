@@ -1228,7 +1228,7 @@ public class TxWxUserBankNoServiceImpl implements TxWxUserBankNoService{
      * @param request
      * @return
      */
-    public Map<String, String> xwDF(TxWxUser wxUser,String orderId,String merOrderTime,TxWxUserBankNo txWxUserBankNo,String txnAmt,String smsCode,Integer backCard,String flag){
+    public Map<String, String> xwDF(TxWxUser wxUser,String orderId,String merOrderTime,TxWxUserBankNo txWxUserBankNo,String txnAmt,String smsCode,Integer backCard,Integer flag,Integer xwDFFee){
     	Map<String, String> rspData = null;
     	try{
     		
@@ -1237,17 +1237,11 @@ public class TxWxUserBankNoServiceImpl implements TxWxUserBankNoService{
     		/***银联全渠道系统，产品参数，除了encoding自行选择外其他不需修改***/
     		contentData.put("txnType", "01");                              //交易类型 01-消费
     		contentData.put("settType", "0");                           //交易子类型 01-消费
-    		if("1".equals(flag)){
-    			contentData.put("settType", "1"); 
-    		}
+    		contentData.put("settType", flag+""); 
     		
     		/***商户接入参数***/
     		contentData.put("backUrl", ConfigConstants.XW_BACKURL);
     		contentData.put("merId", ConfigConstants.MER_ID);                   //商户号码（本商户号码仅做为测试调通交易使用，该商户号配置了需要对敏感信息加密）测试时请改成自己申请的商户号，【自己注册的测试777开头的商户号不支持代收产品】
-    		
-    		if(backCard.intValue()==0){
-    			contentData.put("merId", ConfigConstants.PK_MER_ID);
-    		}
     		
     		contentData.put("xwMerId", wxUser.getMerId());                   //商户号码（本商户号码仅做为测试调通交易使用，该商户号配置了需要对敏感信息加密）测试时请改成自己申请的商户号，【自己注册的测试777开头的商户号不支持代收产品】
     		contentData.put("orderId", orderId);             			   //商户订单号，8-40位数字字母，不能含“-”或“_”，可以自行定制规则	
@@ -1258,6 +1252,7 @@ public class TxWxUserBankNoServiceImpl implements TxWxUserBankNoService{
     		contentData.put("BankName", txWxUserBankNo.getAccName());                              //账号类型
     		
     		contentData.put("ppType", "0");
+    		contentData.put("xwDFFee", xwDFFee+"");//手续费
     		
     		//判断T0还是T1
 			TxRefundFlag txRefundFlag = new TxRefundFlag();
@@ -1288,8 +1283,6 @@ public class TxWxUserBankNoServiceImpl implements TxWxUserBankNoService{
     				if(txSellingOrder!=null&&txSellingOrder.getId()>0){
     					txSellingOrder.setRefundQueryId(rspData.get("queryID"));
     					txSellingOrder.setRefundAccNo(txWxUserBankNo.getAccNo());
-    					txSellingOrder.setRefundState(1);
-    					txSellingOrder.setRefundTime(new Date());
     					txSellingOrderDAO.updateTxSellingOrderById(txSellingOrder);
     				}
     			}else if("S90004".equals(rspData.get("respCode"))){

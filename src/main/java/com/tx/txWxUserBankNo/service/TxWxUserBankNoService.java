@@ -107,5 +107,5 @@ public interface TxWxUserBankNoService {
      * @param request
      * @return
      */
-    public Map<String, String> xwDF(TxWxUser wxUser,String orderId,String merOrderTime,TxWxUserBankNo txWxUserBankNo,String txnAmt,String smsCode,Integer backCard,String flag);
+    public Map<String, String> xwDF(TxWxUser wxUser,String orderId,String merOrderTime,TxWxUserBankNo txWxUserBankNo,String txnAmt,String smsCode,Integer backCard,Integer flag,Integer xwDFFee);
 }

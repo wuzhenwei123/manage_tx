@@ -269,7 +269,7 @@
     </select>
     
     <select id="getTxSellingOrderListBySY" parameterType="com.tx.txSellingOrder.model.TxSellingOrder" resultMap="baseResultMap">
-        SELECT a.* FROM tx_selling_order a where a.state = #{state,jdbcType=INTEGER} and a.refundState = #{refundState,jdbcType=INTEGER} and a.backCard = #{backCard,jdbcType=INTEGER} and DATE_FORMAT(a.endTime, '%Y-%c-%d') <![CDATA[<=]]> DATE_FORMAT(now(), '%Y-%c-%d')
+        SELECT a.* FROM tx_selling_order a where a.state = #{state,jdbcType=INTEGER} and a.refundState = #{refundState,jdbcType=INTEGER} and DATE_FORMAT(a.endTime, '%Y-%c-%d') <![CDATA[<=]]> DATE_FORMAT(now(), '%Y-%c-%d')
     </select>
     
     

@@ -61,7 +61,14 @@ public class TxPayOrder extends BaseModel implements java.io.Serializable{
 	/** 清算日期 **/
 	private Date settleDate;
 	private String refundNumber;
+	private String shopCode;
 		
+	public String getShopCode() {
+		return shopCode;
+	}
+	public void setShopCode(String shopCode) {
+		this.shopCode = shopCode;
+	}
 	public String getRefundNumber() {
 		return refundNumber;
 	}

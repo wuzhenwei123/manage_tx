@@ -255,6 +255,7 @@ public class IndexService {
 			hOrder.setCreateTime(new Date());
 			logger.info("--------------->"+mapsss.get("money"));
 			hOrder.setFee(Long.valueOf(mapsss.get("money")));
+			hOrder.setShopCode(mapsss.get("shopCode"));
 			hOrder.setRealFee(Long.valueOf(mapsss.get("money")));
 			hOrder.setPayWay(payWay);
 			SimpleDateFormat sf11 = new SimpleDateFormat("yyyy-MM-dd");
@@ -265,10 +266,10 @@ public class IndexService {
 			}
 			hOrder.setOrderType(orderType);
 			
-			BigDecimal oneRate = new BigDecimal(0);
-			BigDecimal twoRate = new BigDecimal(0);
-			BigDecimal devRate = new BigDecimal(0);
-			BigDecimal totalRate = new BigDecimal(0);
+			BigDecimal oneRate = new BigDecimal(0);//智能电
+			BigDecimal twoRate = new BigDecimal(0);//抄表电
+			BigDecimal devRate = new BigDecimal(0);//运营
+			BigDecimal totalRate = new BigDecimal(0);//地区总代
 			List<TxDfRate> listRate = txDfRateDAO.getTxDfRateList(new TxDfRate());
 			if(listRate!=null&&listRate.size()>0){
 				oneRate = listRate.get(0).getOneRate();
@@ -280,13 +281,13 @@ public class IndexService {
 			
 			BigDecimal bg = new BigDecimal(Integer.valueOf(mapsss.get("money")));
 			
-			if(wxUser.getPromoterId()!=null&&wxUser.getTwoPromoterId()!=null){
-				hOrder.setOneRate((bg.multiply(oneRate.subtract(twoRate))).setScale(1, BigDecimal.ROUND_HALF_UP).intValue());
-				hOrder.setTotalRate((bg.multiply(twoRate)).setScale(1, BigDecimal.ROUND_HALF_UP).intValue());
-			}else if(wxUser.getPromoterId()!=null&&wxUser.getTwoPromoterId()==null){
-				hOrder.setOneRate((bg.multiply(oneRate)).setScale(1, BigDecimal.ROUND_HALF_UP).intValue());
+			if(wxUser.getPromoterId()!=null){
+				if("3102".equals(mapsss.get("shopCode"))){//抄表电
+					hOrder.setOneRate((bg.multiply(twoRate)).setScale(1, BigDecimal.ROUND_HALF_UP).intValue());
+				}else{
+					hOrder.setOneRate((bg.multiply(oneRate)).setScale(1, BigDecimal.ROUND_HALF_UP).intValue());
+				}
 			}
-			
 			hOrder.setDevRate((bg.multiply(devRate)).setScale(1, BigDecimal.ROUND_HALF_UP).intValue());
 			hOrder.setTotalRate((bg.multiply(totalRate)).setScale(1, BigDecimal.ROUND_HALF_UP).intValue());
 			hOrder.setPromoterName(wxUser.getPromoterName());

@@ -30,6 +30,8 @@ import com.base.utils.SessionName;
 import com.sys.manageAdminUser.model.ManageAdminUser;
 import com.sys.manageAdminUser.service.ManageAdminUserService;
 import com.tx.task.service.ManageUserCutter;
+import com.tx.txDfRate.model.TxDfRate;
+import com.tx.txDfRate.service.TxDfRateService;
 import com.tx.txPayRate.model.TxPayRate;
 import com.tx.txPayRate.service.TxPayRateService;
 import com.tx.txRate.model.TxRate;
@@ -69,6 +71,8 @@ public class UnionPayController extends BaseController{
 	private TxRefundFlagService txRefundFlagService = null;
 	@Autowired
 	private TxWxUserService txWxUserService = null;
+	@Autowired
+	private TxDfRateService txDfRateService = null;
 	
 	/**
 	 * 转向注册前说明页
@@ -229,25 +233,25 @@ public class UnionPayController extends BaseController{
 				
 				txSellingOrder.setWxUserName(wxUser.getRealName());
 				txSellingOrder.setWxUserId(wxUser.getId());
-				txSellingOrder.setProfits(new BigDecimal(ConfigConstants.PAY_RATE));
+//				txSellingOrder.setProfits(new BigDecimal(ConfigConstants.PAY_RATE));
 				
-				List<TxPayRate> list = txPayRateService.getTxPayRateList(new TxPayRate());
-				
-				BigDecimal bg = new BigDecimal(money2);
-				if(list!=null&&list.size()>0){
-					TxPayRate rate = list.get(0);
-					if(txSellingOrder.getPromoterId()!=null){
-						int one = (bg.multiply(rate.getOneRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
-						txSellingOrder.setOneRate(one);
-					}
-					
-					if(txSellingOrder.getTwoPromoterId()!=null){
-						int two = (bg.multiply(rate.getTwoRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
-						txSellingOrder.setTwoRate(two);
-					}
-					int devRate = (bg.multiply(rate.getDevRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
-					txSellingOrder.setDevRate(devRate);
-				}
+//				List<TxPayRate> list = txPayRateService.getTxPayRateList(new TxPayRate());
+//				
+//				BigDecimal bg = new BigDecimal(money2);
+//				if(list!=null&&list.size()>0){
+//					TxPayRate rate = list.get(0);
+//					if(txSellingOrder.getPromoterId()!=null){
+//						int one = (bg.multiply(rate.getOneRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+//						txSellingOrder.setOneRate(one);
+//					}
+//					
+//					if(txSellingOrder.getTwoPromoterId()!=null){
+//						int two = (bg.multiply(rate.getTwoRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+//						txSellingOrder.setTwoRate(two);
+//					}
+//					int devRate = (bg.multiply(rate.getDevRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+//					txSellingOrder.setDevRate(devRate);
+//				}
 				txSellingOrderService.insertTxSellingOrder(txSellingOrder);
 				SessionName.MAPORDERNO.put("C_"+accNo, orderId+"_"+txnTime);
 				boolean b = txWxUserBankNoService.vercodeNew(wxUser, orderId, txnTime, txWxUserBankNo, money2+"",backCard);
@@ -516,28 +520,16 @@ public class UnionPayController extends BaseController{
 	public String refundPay(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
 		super.getJsticket(request);
 		Long id = RequestHandler.getLong(request, "id");
+		Integer backCard = RequestHandler.getInteger(request, "backCard");
 		try{
 			//判断T0还是T1
 			TxRefundFlag txRefundFlag = new TxRefundFlag();
-			txRefundFlag.setStyle(1);
+			txRefundFlag.setStyle(backCard);
 			List<TxRefundFlag> listT = txRefundFlagService.getTxRefundFlagList(txRefundFlag);
-			
 			TxWxUser wxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 			TxSellingOrder order = txSellingOrderService.getTxSellingOrderById(id);
 			if(wxUser.getId().intValue()==order.getWxUserId().intValue()&&order.getRefundState().intValue()==0){
-				if(order.getBackCard().intValue()==1){
-					SimpleDateFormat sf2 = new SimpleDateFormat("yyyy年MM月dd日");
-					//调用查询接口
-	    			Calendar calendar = Calendar.getInstance();
-					calendar.setTime(order.getCreateTime());
-					calendar.add(Calendar.DAY_OF_YEAR, listT.get(0).getTrem());
-					SimpleDateFormat sf1 = new SimpleDateFormat("yyyyMMdd");
-					String datastr = sf1.format(calendar.getTime());
-					if(Integer.valueOf(datastr)>Integer.valueOf((sf1.format(new Date())))){
-						writeErrorMsg(sf2.format(calendar.getTime())+"后，您可以退卡!", "", response);
-						return null;
-					}
-					
+//				if(order.getBackCard().intValue()==1){
 					//调用接口退费
 					TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(order.getAccNo());
 					
@@ -551,25 +543,41 @@ public class UnionPayController extends BaseController{
 					order.setRefundCode(orderId);
 					order.setProfitManey(order.getMoney()-txnAmtDF);
 					order.setProfits(bgRate.add(new BigDecimal(3)));
+					if(backCard.intValue()==1){//立即退
+						List<TxDfRate> list = txDfRateService.getTxDfRateList(new TxDfRate());
+						TxDfRate rate = list.get(0);
+						if(order.getPromoterId()!=null&&order.getTwoPromoterId()!=null){
+							int one = (bg.multiply(rate.getOneRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+							order.setOneRate(one);
+							int two = (bg.multiply(rate.getTwoRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+							order.setTwoRate(two);
+						}else if(order.getPromoterId()!=null&&order.getTwoPromoterId()==null){
+							int one = (bg.multiply(rate.getOneRate().add(rate.getTwoRate()))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+							order.setOneRate(one);
+						}
+						int devRate = (bg.multiply(rate.getDevRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+						order.setDevRate(devRate);
+					}
+					order.setBackCard(backCard);
 					txSellingOrderService.updateTxSellingOrderById(order);
-					Map<String, String> map = txWxUserBankNoService.xwDF(wxUser, orderId, merOrderTime, txWxUserBankNo, (order.getMoney()-txnAmtDF)+"", null, order.getBackCard(), "0");
+					Map<String, String> map = txWxUserBankNoService.xwDF(wxUser, orderId, merOrderTime, txWxUserBankNo, (order.getMoney()-txnAmtDF)+"", null, order.getBackCard(), listT.get(0).getTrem(),txnAmtDF);
 					if(map!=null&&"00".equals(map.get("respCode"))){
 						writeSuccessMsg("退卡成功！", null, response);
 					}else{
 						writeErrorMsg(URLDecoder.decode(map.get("respMsg"),"UTF-8"), "", response);
 					}
-				}else{
-					//入库，等待管理员操作
-					TxRefundOrder txRefundOrder = new TxRefundOrder();
-					txRefundOrder.setUserId(wxUser.getId());
-					txRefundOrder.setRealName(wxUser.getRealName());
-					txRefundOrder.setCreateTime(new Date());
-					txRefundOrder.setFee(order.getMoney());
-					txRefundOrder.setOrderCode(order.getCode());
-					txRefundOrder.setOrderTime(order.getCreateTime());
-					txRefundOrderService.insertTxRefundOrder(txRefundOrder);
-					writeSuccessMsg("申请成功！", null, response);
-				}
+//				}else{
+//					//入库，等待管理员操作
+//					TxRefundOrder txRefundOrder = new TxRefundOrder();
+//					txRefundOrder.setUserId(wxUser.getId());
+//					txRefundOrder.setRealName(wxUser.getRealName());
+//					txRefundOrder.setCreateTime(new Date());
+//					txRefundOrder.setFee(order.getMoney());
+//					txRefundOrder.setOrderCode(order.getCode());
+//					txRefundOrder.setOrderTime(order.getCreateTime());
+//					txRefundOrderService.insertTxRefundOrder(txRefundOrder);
+//					writeSuccessMsg("申请成功！", null, response);
+//				}
 			}else{
 				writeSuccessMsg("退卡失败！", null, response);
 			}
@@ -680,20 +688,36 @@ public class UnionPayController extends BaseController{
 						writeErrorMsg("退卡失败，"+sf2.format(calendar.getTime())+"后，您可以退卡!", "", response);
 						return null;
 					}
-					
 					TxWxUser wxUser = txWxUserService.getTxWxUserById(txRefundOrder.getUserId());
 					//调用接口退费
 					TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(order.getAccNo());
+					
+					BigDecimal bg = new BigDecimal(order.getMoney());
+					BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.PAY_RATE));
+					
+					int txnAmtDF = (bg.multiply(bgRate).divide(new BigDecimal(12).multiply(new BigDecimal(order.getSelTime())))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+					
+					order.setProfitManey(order.getMoney()+txnAmtDF);
+					order.setProfits(bgRate);
 					
 					String orderId = new MakeImei().getCode();
 					Date d = new Date();
 					SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmmss");
 					String merOrderTime = sf.format(d);
 					order.setRefundCode(orderId);
+					
+					if(order.getPromoterId()!=null&&order.getTwoPromoterId()!=null){
+						int two = (bg.multiply(new BigDecimal(0.0008))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+						order.setTwoRate(two);
+					}else if(order.getPromoterId()!=null&&order.getTwoPromoterId()==null){
+						int one = (bg.multiply(new BigDecimal(0.0008))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+						order.setOneRate(one);
+					}
+					
 					order.setProfitManey(order.getMoney());
 					order.setProfits(new BigDecimal(0));
 					txSellingOrderService.updateTxSellingOrderById(order);
-					Map<String, String> map = txWxUserBankNoService.xwDF(wxUser, orderId, merOrderTime, txWxUserBankNo, order.getMoney()+"", null, order.getBackCard(), "0");
+					Map<String, String> map = txWxUserBankNoService.xwDF(wxUser, orderId, merOrderTime, txWxUserBankNo, order.getProfitManey()+"", null, order.getBackCard(), listT.get(0).getTrem(),0);
 					if(map!=null&&"00".equals(map.get("respCode"))){
 						//进行分润
 						writeSuccessMsg("退卡成功！", null, response);

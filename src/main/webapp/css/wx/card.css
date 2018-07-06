@@ -210,17 +210,17 @@
 	width: 1.6rem;
 }
 .deal_box{
-	height: 160px;
+	height: 130px;
 	background: #409eff;
 }
 .deal_box dl{
 	margin-top: 0;
-	text-align: center;
-	font-size: 0.8rem;
-	color: #333;
+	text-align: left;
+	font-size: .59733rem;
+	color: #ffffff;
 }
 .deal_box dl dt{
-	padding-top: 50px;
+	/*padding-top: 50px;*/
 }
 .deal_box dl dd{
 	margin:10px 0 0 0;

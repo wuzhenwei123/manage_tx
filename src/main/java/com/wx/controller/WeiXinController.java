@@ -1643,8 +1643,6 @@ public class WeiXinController extends BaseController{
 	public String getOrderListByCustumer(HttpServletRequest request, HttpServletResponse response, Model model)throws Exception
 	{
 		Integer wxUserId = RequestHandler.getInteger(request, "wxUserId");
-		String startTime = RequestHandler.getString(request, "startTime");
-		String endTime = RequestHandler.getString(request, "endTime");
 		String orderCode = RequestHandler.getString(request, "orderCode");
 		JSONObject json = new JSONObject();
 		JSONArray array = new JSONArray();
@@ -1654,19 +1652,13 @@ public class WeiXinController extends BaseController{
 			SimpleDateFormat sf1 = new SimpleDateFormat("yy-MM-dd");
 			
 			
-			TxWxOrder txWxOrder = new TxWxOrder();
+			TxSellingOrder txWxOrder = new TxSellingOrder();
 			
 			txWxOrder.setWxUserId(wxUserId);
-			txWxOrder.setStyle(1);
+			txWxOrder.setState(1);
 			
 			if(StringUtils.isNotBlank(orderCode)){
-				txWxOrder.setOrderCode(orderCode);
-			}
-			if(StringUtils.isNotBlank(startTime)){
-				txWxOrder.setStartTime(sf.parse(startTime+" 00:00:00"));
-			}
-			if(StringUtils.isNotBlank(endTime)){
-				txWxOrder.setEndTime(sf.parse(endTime+" 23:59:59"));
+				txWxOrder.setCode(orderCode);
 			}
 			// 分页开始
 			Integer pageNo = RequestHandler.getPageNo(request, "pageNo");
@@ -1680,30 +1672,28 @@ public class WeiXinController extends BaseController{
 			txWxOrder.setSort("id");
 			txWxOrder.setOrder("desc");
 			
-			int totalResults = txWxOrderService.getTxWxOrderCount(txWxOrder);
-			Long totalMoney = txWxOrderService.getTxWxOrderMoney(txWxOrder);
-			List<TxWxOrder> list = txWxOrderService.getTxWxOrderListByPage(txWxOrder);
+//			int totalResults = txSellingOrderService.getTxSellingOrderCount(txWxOrder);
+//			Long totalMoney = txWxOrderService.getTxWxOrderMoney(txWxOrder);
+			List<TxSellingOrder> list = txSellingOrderService.getTxSellingOrderList(txWxOrder);
 			
 			if(list!=null&&list.size()>0){
-				for(TxWxOrder obj:list){
+				for(TxSellingOrder obj:list){
 					JSONObject jsons = new JSONObject();
-					jsons.put("orderCode", obj.getOrderCode());
+//					jsons.put("orderCode", obj.getOrderCode());
 					jsons.put("money", super.getMoney(obj.getMoney()));
 					jsons.put("accNo", obj.getAccNo());
-					if(obj.getXfState().intValue()==1){
-						jsons.put("xfState", "已消费");
+					if(obj.getRefundState().intValue()==1){
+						if(obj.getRefundTime().before(obj.getEndTime())){
+							jsons.put("state", "已提前退款");
+						}else{
+							jsons.put("state", "到期退款");
+						}
 					}else{
-						jsons.put("xfState", "未消费");
-					}
-					if(obj.getDfState().intValue()==1){
-						jsons.put("dfState", "已代付");
-					}else{
-						jsons.put("dfState", "未代付");
-					}
-					if(obj.getXfState().intValue()==1&&obj.getDfState().intValue()==1){
-						jsons.put("state", "交易完成");
-					}else{
-						jsons.put("state", "处理中");
+						if(obj.getEndTime().after(new Date())){
+							jsons.put("state", "赚钱中");
+						}else{
+							jsons.put("state", "已到期");
+						}
 					}
 					jsons.put("createTimeStr", sf.format(obj.getCreateTime()));
 					jsons.put("createTimeStr1", sf1.format(obj.getCreateTime()));
@@ -1711,8 +1701,6 @@ public class WeiXinController extends BaseController{
 					array.add(jsons);
 				}
 				json.put("message", "ok");
-				json.put("totalResults", totalResults);
-				json.put("totalMoney", super.getMoney(totalMoney));
 				json.put("items", array);
 			}else{
 				json.put("message", "end");
