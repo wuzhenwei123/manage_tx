@@ -49,6 +49,11 @@
     		<if test="isNeedPolt != null"> and a.isNeedPolt = #{isNeedPolt,jdbcType=INTEGER} </if>
 		</trim>
     </sql>
+    <!-- 排序 -->
+    <sql id="txBusinessType_sort_body">
+    	<if test="sort!=null and order!=null"> order by a.${sort} ${order} </if>
+    </sql>
+    
     <select id="getTxBusinessTypeById" parameterType="java.lang.Integer" resultMap="baseResultMap">
         SELECT <include refid="txBusinessType_column_body" />
         FROM tx_business_type a
@@ -68,6 +73,13 @@
         SELECT <include refid="txBusinessType_column_body" />
         FROM tx_business_type a
 		<include refid="txBusinessType_select_body" />
+    </select>
+    
+    <select id="getTxBusinessTypeListGroup" parameterType="com.tx.txBusinessType.model.TxBusinessType" resultMap="baseResultMap">
+        SELECT <include refid="txBusinessType_column_body" />
+        FROM tx_business_type a
+		<include refid="txBusinessType_select_body" />
+		<include refid="manageAdminUser_sort_body" />
     </select>
     
     <insert id="insertTxBusinessType" parameterType="com.tx.txBusinessType.model.TxBusinessType">

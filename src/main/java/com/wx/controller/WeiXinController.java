@@ -226,6 +226,7 @@ public class WeiXinController extends BaseController{
 							weiXinService.bindMchAndBD(openId,ticket,super.getIp(request));
 						}else if("LOCATION".equals(event)){
 							String str = weiXinService.getBaiDuLocationXY(m.getLatitude(),m.getLongitude());
+							
 							System.out.println(str);
 						}
 						WeiXin.send(sendMsg, response.getOutputStream());

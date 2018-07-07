@@ -12,6 +12,8 @@ import com.tx.txBusinessType.model.TxBusinessType;
 public interface TxBusinessTypeService {
 	
 	public List<TxBusinessType> getTxBusinessTypeList(TxBusinessType txBusinessType);
+	
+	public List<TxBusinessType> getTxBusinessTypeListGroup(TxBusinessType txBusinessType);
 
 	public TxBusinessType getTxBusinessTypeById(int id);
 

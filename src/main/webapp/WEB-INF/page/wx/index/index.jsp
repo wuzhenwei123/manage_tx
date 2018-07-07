@@ -28,7 +28,7 @@
     <div class="m_top">
         <div class="sel_box">
         	<input type="hidden" value="010" id="cityCode">
-            <a href="javascript:;">北京</a>
+            <a href="${ctx}/other/toPlace">北京</a>
         </div>
     </div>
     <div class="m_grid clear">
