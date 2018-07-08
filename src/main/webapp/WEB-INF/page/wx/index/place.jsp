@@ -12,63 +12,28 @@
 <body>
 <div class="wrap">
     <div class="search_box">
-        <input type="text">
+        <input type="text" id="name" value="${name}">
         <i>搜索</i>
     </div>
 
-    <div class="search_place">
-        <p>当前定位城市：<i>北京</i></p>
-    </div>
+<!--     <div class="search_place"> -->
+<!--         <p>当前定位城市：<i>北京</i></p> -->
+<!--     </div> -->
 
     <div class="place_lists">
         <ul>
-            <li>
-                <div class="zimu">A</div>
-                <div class="places">
-                    <div class="tc">
-                        <a href="javascript:;">鞍山市</a>
-                        <a href="javascript:;">鞍山市</a>
-                        <a href="javascript:;">鞍山市</a>
-                        <a href="javascript:;">鞍山市</a>
-                    </div>
-                    <div class="tc">
-                        <a href="javascript:;">鞍山市</a>
-                        <a href="javascript:;">鞍山市</a>
-                        <a href="javascript:;">鞍山市</a>
-                        <a href="javascript:;">鞍山市</a>
-                    </div>
-                    <div class="tc">
-                        <a href="javascript:;">鞍山市</a>
-                        <a href="javascript:;">鞍山市</a>
-                        <a href="javascript:;">阿克苏地区</a>
-                        <a href="javascript:;"></a>
-                    </div>
-                </div>
-            </li>
-
-            <li>
-                <div class="zimu">B</div>
-                <div class="places">
-                    <div class="tc">
-                        <a href="javascript:;">鞍山市</a>
-                        <a href="javascript:;">鞍山市</a>
-                        <a href="javascript:;">鞍山市</a>
-                        <a href="javascript:;">鞍山市</a>
-                    </div>
-                    <div class="tc">
-                        <a href="javascript:;">鞍山市</a>
-                        <a href="javascript:;">鞍山市</a>
-                        <a href="javascript:;">鞍山市</a>
-                        <a href="javascript:;">鞍山市</a>
-                    </div>
-                    <div class="tc">
-                        <a href="javascript:;">鞍山市</a>
-                        <a href="javascript:;">鞍山市</a>
-                        <a href="javascript:;">鞍山市</a>
-                        <a href="javascript:;"></a>
-                    </div>
-                </div>
-            </li>
+        	<c:forEach items="${map}" var="place">
+        		<li>
+	                <div class="zimu">${place.key}</div>
+	                <div class="places">
+               			<c:forEach items="${place.value}" var="obj" varStatus="status">
+               				<c:if test="${status.index%4==0}"><div class="tc"></c:if>
+               				<a href="${ctx}/other/toIndex?cityCode=${obj.cityCode}">${obj.billArea}</a>
+               				<c:if test="${(status.index+1)%4==0}"></div></c:if>
+               			</c:forEach>
+	                </div>
+	            </li>
+        	</c:forEach>
         </ul>
     </div>
 </div>
@@ -91,9 +56,20 @@
             }
         })
         
-        $(".tc a").on("click",function () {
-            $(this).text() ?$(".search_place i").text($(this).text()):''
-        })
+//         $(".tc a").on("click",function () {
+//             $(this).text() ?$(".search_place i").text($(this).text()):''
+//         })
     })
+    
+    $(document).ready(function(e) {
+		$(this).keydown(function (e){
+			if(e.which == "13"){
+				var name = $("#name").val();
+				if(name!=""){
+					window.location.href = "${ctx}/other/toPlace?name="+name;
+				}
+		  	}
+		})
+	});
 </script>
 </html>

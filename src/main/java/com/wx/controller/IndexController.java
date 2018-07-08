@@ -104,6 +104,7 @@ public class IndexController extends BaseController{
 		super.getJsticket(request);
 		String cityCode = RequestHandler.getString(request, "cityCode");
 		String billType = RequestHandler.getString(request, "billType");
+		String billArea = RequestHandler.getString(request, "billArea");
 		TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 		try{
 			TxPaynumberMsg txPaynumberMsg = new TxPaynumberMsg();
@@ -120,6 +121,7 @@ public class IndexController extends BaseController{
 		}
 		model.addAttribute("billType", billType);
 		model.addAttribute("cityCode", cityCode);
+		model.addAttribute("billArea", billArea);
 		return "/wx/index/firstPayElectric";
 	}
 	

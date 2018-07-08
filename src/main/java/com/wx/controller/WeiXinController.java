@@ -171,7 +171,7 @@ public class WeiXinController extends BaseController{
 				request.getSession().setAttribute(SessionName.SESSION_OPENID, openId);
 				if(b){
 					if("index".equals(states[0])){//缴费
-						return  "redirect:/index/index";
+						return  "redirect:/other/toIndex?cityCode=010";
 					}else if("jb".equals(states[0])){//赚点钱
 						return  "redirect:/weixin/dbIndex?openId="+ openId;
 					}
@@ -180,7 +180,7 @@ public class WeiXinController extends BaseController{
 					request.getSession().removeAttribute(SessionName.ADMIN_USER_ID);
 					request.getSession().removeAttribute(SessionName.ADMIN_USER);
 					if("index".equals(states[0])){//缴费
-						return  "redirect:/index/index";
+						return  "redirect:/other/toIndex?cityCode=010";
 					}else if("jb".equals(states[0])){//基本信息
 						return  "redirect:/weixin/dbIndex?openId="+ openId;
 					}

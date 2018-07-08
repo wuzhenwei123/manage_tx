@@ -33,7 +33,7 @@
     		<if test="id != null"> and a.id = #{id,jdbcType=INTEGER} </if>
     		<if test="billType != null"> and a.billType = #{billType,jdbcType=VARCHAR} </if>
     		<if test="feeTypeDesc != null"> and a.feeTypeDesc = #{feeTypeDesc,jdbcType=VARCHAR} </if>
-    		<if test="billArea != null"> and a.billArea = #{billArea,jdbcType=VARCHAR} </if>
+    		<if test="billArea != null"> and a.billArea like CONCAT('%',#{billArea,jdbcType=VARCHAR},'%') </if>
     		<if test="chargeUnit != null"> and a.chargeUnit = #{chargeUnit,jdbcType=VARCHAR} </if>
     		<if test="isNeedDate != null"> and a.isNeedDate = #{isNeedDate,jdbcType=INTEGER} </if>
     		<if test="cityCode != null"> and a.cityCode = #{cityCode,jdbcType=VARCHAR} </if>
@@ -52,6 +52,10 @@
     <!-- 排序 -->
     <sql id="txBusinessType_sort_body">
     	<if test="sort!=null and order!=null"> order by a.${sort} ${order} </if>
+    </sql>
+    <!-- 排序 -->
+    <sql id="txBusinessType_group_body">
+    	<if test="group!=null"> group by a.${group} </if>
     </sql>
     
     <select id="getTxBusinessTypeById" parameterType="java.lang.Integer" resultMap="baseResultMap">
@@ -79,7 +83,8 @@
         SELECT <include refid="txBusinessType_column_body" />
         FROM tx_business_type a
 		<include refid="txBusinessType_select_body" />
-		<include refid="manageAdminUser_sort_body" />
+		<include refid="txBusinessType_group_body" />
+		<include refid="txBusinessType_sort_body" />
     </select>
     
     <insert id="insertTxBusinessType" parameterType="com.tx.txBusinessType.model.TxBusinessType">

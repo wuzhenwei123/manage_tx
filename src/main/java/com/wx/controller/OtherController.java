@@ -9,6 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -27,6 +29,8 @@ import com.base.utils.SessionName;
 import com.base.utils.https.HttpUtils;
 import com.sys.manageAdminUser.model.ManageAdminUser;
 import com.sys.manageAdminUser.service.ManageAdminUserService;
+import com.tx.txBanner.model.TxBanner;
+import com.tx.txBanner.service.TxBannerService;
 import com.tx.txBusinessType.model.TxBusinessType;
 import com.tx.txBusinessType.service.TxBusinessTypeService;
 import com.tx.txSellingOrder.model.TxSellingOrder;
@@ -50,6 +54,8 @@ public class OtherController extends BaseController{
 	private TxSellingOrderService txSellingOrderService = null;
 	@Autowired
 	private TxBusinessTypeService txBusinessTypeService = null;
+	@Autowired
+	private TxBannerService txBannerService = null;
 	
 	
 	/**
@@ -148,13 +154,16 @@ public class OtherController extends BaseController{
 	public String toPlace(HttpServletRequest request, HttpServletResponse response, Model model){
 		super.getJsticket(request);
 		TxWxUser wxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+		String name = RequestHandler.getString(request, "name");
 		try{
 			TxBusinessType txBusinessType = new TxBusinessType();
+			txBusinessType.setBillArea(name);
 			txBusinessType.setSort("bigLetters");
 			txBusinessType.setOrder("asc");
-			Map<String,List<TxBusinessType>> map = new HashMap<String,List<TxBusinessType>>();
+			txBusinessType.setGroup("cityCode");
+			TreeMap<String,List<TxBusinessType>> map = new TreeMap<String,List<TxBusinessType>>();
 			List<TxBusinessType> list = txBusinessTypeService.getTxBusinessTypeListGroup(txBusinessType);
-			Set<String> set = new HashSet<String>();
+			Set<String> set = new TreeSet<String>();
 			for(TxBusinessType t:list){
 				set.add(t.getBigLetters());
 			}
@@ -170,10 +179,41 @@ public class OtherController extends BaseController{
 				map.put(key, listSub);
 			}
 			model.addAttribute("map", map);
+			model.addAttribute("name", name);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		return  "/wx/index/place";
+	}
+	/**
+	 * 根据缴费地区进入首页
+	 * showShare
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/toIndex")
+	public String toIndex(HttpServletRequest request, HttpServletResponse response, Model model){
+		super.getJsticket(request);
+		TxWxUser wxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+		String cityCode = RequestHandler.getString(request, "cityCode");
+		try{
+			
+			TxBanner txBanner = new TxBanner();
+			txBanner.setState(1);
+			List<TxBanner> list = txBannerService.getTxBannerList(txBanner);
+			model.addAttribute("list", list);
+			
+			TxBusinessType txBusinessType = new TxBusinessType();
+			txBusinessType.setCityCode(cityCode);
+			txBusinessType.setGroup("billType");
+			List<TxBusinessType> listType = txBusinessTypeService.getTxBusinessTypeListGroup(txBusinessType);
+			model.addAttribute("listType", listType);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return  "/wx/index/index";
 	}
 	
 }
