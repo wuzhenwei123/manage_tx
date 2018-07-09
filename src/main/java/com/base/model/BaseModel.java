@@ -10,6 +10,13 @@ public class BaseModel {
 	/** 排序 **/
 	private String sort;
 	private String order;
+	private String group;
+	public String getGroup() {
+		return group;
+	}
+	public void setGroup(String group) {
+		this.group = group;
+	}
 	/**
 	 * 排序
 	 */
