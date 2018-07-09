@@ -1,11 +1,13 @@
 package com.wx.controller;
 
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,14 +23,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.alibaba.fastjson.JSONObject;
 import com.base.controller.BaseController;
 import com.base.utils.ConfigConstants;
 import com.base.utils.RequestHandler;
 import com.base.utils.SessionName;
-import com.base.utils.https.HttpUtils;
-import com.sys.manageAdminUser.model.ManageAdminUser;
-import com.sys.manageAdminUser.service.ManageAdminUserService;
+import com.base.utils.HttpUtils;
 import com.tx.txBanner.model.TxBanner;
 import com.tx.txBanner.service.TxBannerService;
 import com.tx.txBusinessType.model.TxBusinessType;
@@ -37,10 +36,7 @@ import com.tx.txSellingOrder.model.TxSellingOrder;
 import com.tx.txSellingOrder.service.TxSellingOrderService;
 import com.tx.txWxUser.model.TxWxUser;
 import com.tx.txWxUser.service.TxWxUserService;
-import com.wx.service.KefuService;
 import com.wx.service.WeiXinService;
-import com.wx.utils.WxMenuUtils;
-import com.wx.x0001.vo.send.WxSendTextMsg;
 
 @Controller
 @RequestMapping("/other")
@@ -83,6 +79,34 @@ public class OtherController extends BaseController{
 			e.printStackTrace();
 		}
 		return "/wx/index/share";
+	}
+	/**
+	 * 测试
+	 * showShare
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/test")
+	public void test(HttpServletRequest request, HttpServletResponse response, Model model){
+		Map<String, Object> param = new LinkedHashMap<String, Object>();
+		param.put("MsgType", "Open");
+		param.put("TerminalID", ConfigConstants.NATIONAL_UNITY_TERMINALID);
+		param.put("TraceNo", txBusinessTypeService.getTraceNo());
+		param.put("Source", ConfigConstants.NATIONAL_UNITY_SOURCE);
+		param.put("Channel", ConfigConstants.NATIONAL_UNITY_CHANNEL);
+		param.put("KeyID", ConfigConstants.NATIONAL_UNITY_KEYID);
+		param.put("MCode", HttpUtils.getMcode(param));
+		String result = HttpUtils.sendPost(param);
+		String ResultCode = HttpUtils.getVal(result, "ResultCode");
+		String ResultInfo = HttpUtils.getVal(result, "ResultInfo");
+		
+		try {
+			System.out.println(URLDecoder.decode(ResultInfo,"UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -210,6 +234,112 @@ public class OtherController extends BaseController{
 			txBusinessType.setGroup("billType");
 			List<TxBusinessType> listType = txBusinessTypeService.getTxBusinessTypeListGroup(txBusinessType);
 			model.addAttribute("listType", listType);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return  "/wx/index/index";
+	}
+	/**
+	 * 根据缴费地区进入首页
+	 * showShare
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/toFirstPay")
+	public String toFirstPay(HttpServletRequest request, HttpServletResponse response, Model model){
+		super.getJsticket(request);
+		TxWxUser wxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+		Integer id = RequestHandler.getInteger(request, "id");
+		try{
+			TxBusinessType txBusinessType = txBusinessTypeService.getTxBusinessTypeById(id);
+			
+			if(txBusinessType.getIsNeedFee().intValue()==1){//需要预存金额
+				String feeRule = txBusinessType.getFeeRule();
+				if(StringUtils.isNotBlank(feeRule)){
+					String[] rules =  feeRule.split("&");
+					String gz = rules[0].substring(0, 1);
+					if("M".equals(gz)){//规则型
+						model.addAttribute("maxfee", super.getMoney(Long.valueOf(rules[2])) );
+						model.addAttribute("minfee", super.getMoney(Long.valueOf(rules[1])));
+						model.addAttribute("beishu", super.getMoney(Long.valueOf(rules[0].substring(1, rules[0].length()))));
+					}else if("E".equals(gz)){//枚举型
+						List<String> strFeeList = new ArrayList<String>();
+						for(int i=0;i<rules.length;i++){
+							if(i==0){
+								strFeeList.add(super.getMoney(Long.valueOf(rules[i].substring(1, rules[i].length()))));
+							}else{
+								strFeeList.add(super.getMoney(Long.valueOf(rules[i])));
+							}
+						}
+						model.addAttribute("strFee", strFeeList);
+					}
+					model.addAttribute("gz", gz);
+				}
+			}
+			model.addAttribute("txBusinessType", txBusinessType);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return "/wx/index/firstPayElectricOther";
+	}
+	/**
+	 * 查询其他地区缴费信息
+	 * showShare
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("/queryPayNumberMsg")
+	public String queryPayNumberMsg(HttpServletRequest request, HttpServletResponse response, Model model){
+		super.getJsticket(request);
+		TxWxUser wxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+		String cityCode = RequestHandler.getString(request, "cityCode");
+		String paynumber = RequestHandler.getString(request, "paynumber");
+		Integer typeId = RequestHandler.getInteger(request, "typeId");
+		String fee = RequestHandler.getString(request, "fee");
+		try{
+			TxBusinessType txBusinessType = txBusinessTypeService.getTxBusinessTypeById(typeId);
+			
+			int money2 = 0;
+			if(StringUtils.isNotBlank(fee)){
+				Double money1 = Double.valueOf(fee);
+				BigDecimal bg = new BigDecimal(money1);
+				BigDecimal f = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
+				money2 = f.multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+			}else{
+				model.addAttribute("resultCode", "E100");
+				model.addAttribute("errmessage", "金额输入有误");
+				return "/wx/queryfail";
+			}
+			SimpleDateFormat sf = new SimpleDateFormat("yyyyMM");
+			Map<String, Object> param = new LinkedHashMap<String, Object>();
+    		param.put("MsgType", "Query");
+    		param.put("TerminalID", ConfigConstants.NATIONAL_UNITY_TERMINALID);
+    		param.put("TraceNo", txBusinessTypeService.getTraceNo());
+    		param.put("Source", ConfigConstants.NATIONAL_UNITY_SOURCE);
+    		param.put("Channel", ConfigConstants.NATIONAL_UNITY_CHANNEL);
+    		param.put("CityCode", cityCode);
+    		param.put("ServiceType", txBusinessType.getServiceType());
+    		param.put("PayNo", paynumber);
+    		param.put("PreTotalFee", money2+"");
+    		param.put("BankCardNo", "");
+    		if(txBusinessType.getIsNeedDate().intValue()==0){
+    			param.put("AccountPeriod", "        ");
+    		}else if(txBusinessType.getIsNeedDate().intValue()==1){
+    			param.put("AccountPeriod", "  "+sf.format(new Date()));
+    		}else if(txBusinessType.getIsNeedDate().intValue()==2){
+    			param.put("AccountPeriod", sf.format(new Date())+"00");
+    		}
+    		param.put("CustomerType", "0");
+    		param.put("KeyID", ConfigConstants.NATIONAL_UNITY_KEYID);
+    		param.put("MCode", HttpUtils.getMcode(param));
+    		String result = HttpUtils.sendPost(param);
+    		String ResultCode = HttpUtils.getVal(result, "ResultCode");
+    		String ResultInfo = HttpUtils.getVal(result, "ResultInfo");
+    		System.out.println(URLDecoder.decode(ResultInfo,"UTF-8"));
 		}catch(Exception e){
 			e.printStackTrace();
 		}

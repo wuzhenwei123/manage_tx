@@ -594,7 +594,7 @@ public class TxBusinessTypeServiceImpl implements TxBusinessTypeService{
 	}
     
     public String getTraceNo(){
-    	int max_count = 100000;
+    	int max_count = 999999;
     	if(SessionName.TRACENO_COUNT>=max_count){
     		SessionName.TRACENO_COUNT = 1;
     		return "000001";
@@ -604,7 +604,8 @@ public class TxBusinessTypeServiceImpl implements TxBusinessTypeService{
     		if(str.length()==6){
     			return str;
     		}else if(str.length()<6){
-    			for(int i=0;i<(6-str.length());i++){
+    			int len = 6-str.length();
+    			for(int i=0;i<len;i++){
     				str = "0" + str;
     			}
     			return str;

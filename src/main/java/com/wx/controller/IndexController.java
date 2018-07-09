@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -28,6 +29,7 @@ import com.tx.task.service.SendCodeCutter;
 import com.tx.task.service.SendCodeDFCutter;
 import com.tx.txBanner.model.TxBanner;
 import com.tx.txBanner.service.TxBannerService;
+import com.tx.txBusinessType.model.TxBusinessType;
 import com.tx.txBusinessType.service.TxBusinessTypeService;
 import com.tx.txPayOrder.model.TxPayOrder;
 import com.tx.txPayOrder.service.TxPayOrderService;
@@ -107,6 +109,18 @@ public class IndexController extends BaseController{
 		String billArea = RequestHandler.getString(request, "billArea");
 		TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 		try{
+			if(!"010".equals(cityCode)){
+				TxBusinessType txBusinessType = new TxBusinessType();
+				txBusinessType.setCityCode(cityCode);
+				txBusinessType.setBillType(billType);
+				List<TxBusinessType> listType = txBusinessTypeService.getTxBusinessTypeList(txBusinessType);
+				if(listType.size()==1){
+					return "redirect:/other/toFirstPay?id="+listType.get(0).getId();
+				}else{
+					model.addAttribute("listType", listType);
+					return "/wx/index/selDepartment";
+				}
+			}
 			TxPaynumberMsg txPaynumberMsg = new TxPaynumberMsg();
 			txPaynumberMsg.setUserId(txWxUser.getId());
 			txPaynumberMsg.setBillType(billType);
