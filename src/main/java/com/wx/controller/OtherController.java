@@ -339,11 +339,16 @@ public class OtherController extends BaseController{
     		String result = HttpUtils.sendPost(param);
     		String ResultCode = HttpUtils.getVal(result, "ResultCode");
     		String ResultInfo = HttpUtils.getVal(result, "ResultInfo");
+    		String DisplayInfo = HttpUtils.getVal(result, "DisplayInfo");
+    		model.addAttribute("displayInfo", URLDecoder.decode(DisplayInfo,"UTF-8"));
+    		model.addAttribute("paynumber", paynumber);
+    		model.addAttribute("txBusinessType", txBusinessType);
+    		model.addAttribute("money", super.getMoney(Long.valueOf(money2)));
     		System.out.println(URLDecoder.decode(ResultInfo,"UTF-8"));
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		return  "/wx/index/index";
+		return  "/wx/index/thirdPayElectricOther";
 	}
 	
 }
