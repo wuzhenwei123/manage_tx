@@ -6,6 +6,7 @@ import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -22,20 +23,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.base.controller.BaseController;
 import com.base.utils.ConfigConstants;
 import com.base.utils.RequestHandler;
 import com.base.utils.SessionName;
 import com.base.utils.HttpUtils;
+import com.tx.task.service.SendCodeCutter;
 import com.tx.txBanner.model.TxBanner;
 import com.tx.txBanner.service.TxBannerService;
 import com.tx.txBusinessType.model.TxBusinessType;
 import com.tx.txBusinessType.service.TxBusinessTypeService;
+import com.tx.txPaynumberMsg.service.TxPaynumberMsgService;
 import com.tx.txSellingOrder.model.TxSellingOrder;
 import com.tx.txSellingOrder.service.TxSellingOrderService;
 import com.tx.txWxUser.model.TxWxUser;
 import com.tx.txWxUser.service.TxWxUserService;
+import com.tx.txWxUserBankNo.model.TxWxUserBankNo;
+import com.tx.txWxUserBankNo.service.TxWxUserBankNoService;
+import com.wx.service.IndexService;
 import com.wx.service.WeiXinService;
 
 @Controller
@@ -52,7 +59,14 @@ public class OtherController extends BaseController{
 	private TxBusinessTypeService txBusinessTypeService = null;
 	@Autowired
 	private TxBannerService txBannerService = null;
-	
+	@Autowired
+	private TxWxUserBankNoService txWxUserBankNoService = null;
+	@Autowired
+	private TxPaynumberMsgService txPaynumberMsgService = null;
+	@Autowired
+	private SendCodeCutter sendCodeCutter = null;
+	@Autowired
+	private IndexService indexService = null;
 	
 	/**
 	 * 展业二维码
@@ -343,6 +357,7 @@ public class OtherController extends BaseController{
     		model.addAttribute("displayInfo", URLDecoder.decode(DisplayInfo,"UTF-8"));
     		model.addAttribute("paynumber", paynumber);
     		model.addAttribute("txBusinessType", txBusinessType);
+    		model.addAttribute("fee", fee);
     		model.addAttribute("money", super.getMoney(Long.valueOf(money2)));
     		System.out.println(URLDecoder.decode(ResultInfo,"UTF-8"));
 		}catch(Exception e){
@@ -351,4 +366,146 @@ public class OtherController extends BaseController{
 		return  "/wx/index/thirdPayElectricOther";
 	}
 	
+	/**
+	 * 进入选择支付方式界面
+	 * showShare
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/toSelPayWay", method = RequestMethod.GET)
+	public String toSelPayWay(HttpServletRequest request, HttpServletResponse response, Model model){
+		super.getJsticket(request);
+		String PaymentInfo = RequestHandler.getString(request, "PaymentInfo");
+		String fee = RequestHandler.getString(request, "fee");
+		String paynumber = RequestHandler.getString(request, "paynumber");
+		TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+		try{
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		model.addAttribute("PaymentInfo", PaymentInfo);
+		model.addAttribute("fee", fee);
+		model.addAttribute("paynumber", paynumber);
+		return "/wx/index/payWayOther";
+	}
+	
+	
+	/**
+	 * 银行卡列表
+	 * 
+	 * @param response
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/getListCard", method = RequestMethod.GET)
+	public String getListCard(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
+		super.getJsticket(request);
+		String PaymentInfo = RequestHandler.getString(request, "PaymentInfo");
+		String fee = RequestHandler.getString(request, "fee");
+		String paynumber = RequestHandler.getString(request, "paynumber");
+		try{
+			TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+			//查询银行卡是否已经获得token
+			TxWxUserBankNo txWxUserBankNo = new TxWxUserBankNo();
+			txWxUserBankNo.setWxUserId(txWxUser.getId());
+			List<TxWxUserBankNo> list = txWxUserBankNoService.getTxWxUserBankNoList(txWxUserBankNo);
+			model.addAttribute("PaymentInfo", PaymentInfo);
+			model.addAttribute("paynumber", paynumber);
+			model.addAttribute("fee", fee);
+			if(list!=null&&list.size()>0){
+				model.addAttribute("list", list);
+				return  "/wx/index/cardListOther";
+			}else{//获取token
+				return  "/wx/index/addCardOther";
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return  null;
+	}
+	
+	
+	/** 进入支付界面**/
+	@RequestMapping(value = "/toPay", method = RequestMethod.GET)
+	public String toPay(HttpServletRequest request, HttpServletResponse response, Model model) throws Exception
+	{
+		super.getJsticket(request);
+		String accNo =  RequestHandler.getString(request, "accNo");
+		String orderfee =  RequestHandler.getString(request, "fee");
+		String paynumber = RequestHandler.getString(request, "paynumber");
+		try{
+			
+			TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+			String orderNoTime = txPaynumberMsgService.getOrderNo().get("orderNoTime");
+			String ordercode =  txPaynumberMsgService.getOrderNo().get("orderNo");
+			
+			indexService.setOrderMsgToSession(null, txWxUser, null, Integer.valueOf(orderfee), super.getIp(request), ordercode, paynumber);
+			
+			TxWxUserBankNo txWxUserBankNo = new TxWxUserBankNo();
+			txWxUserBankNo.setAccNo(accNo);
+			txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(accNo);
+			model.addAttribute("txWxUserBankNo", txWxUserBankNo);
+			model.addAttribute("ordercode", ordercode);
+			model.addAttribute("token", txWxUserBankNo.getToken());
+			model.addAttribute("txnTime", orderNoTime);
+			model.addAttribute("orderfee", orderfee);
+			model.addAttribute("accNo", accNo);
+			model.addAttribute("orderfee", orderfee);
+			model.addAttribute("paynumber", paynumber);
+			if(SessionName.xzOrder.get(ordercode)==null){
+				sendCodeCutter.filesMng(ordercode, orderNoTime, txWxUserBankNo, orderfee, txWxUser);
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return "/wx/index/payOther";
+	}
+	
+	/**
+	 * 获取token后台回调
+	 * 
+	 * @param response
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/pay")
+	public String pay(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
+		String accNo = RequestHandler.getString(request, "accNo");
+		String smsCode = RequestHandler.getString(request, "smsCode");
+		String ordercode = RequestHandler.getString(request, "ordercode");
+		String txnTime = RequestHandler.getString(request, "txnTime");
+		try{
+			TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+			TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(accNo);
+			if(txWxUserBankNo!=null&&StringUtils.isNotBlank(ordercode)&&StringUtils.isNotBlank(smsCode)){
+				
+				Map<String,String> mapsss = SessionName.maporder.get(ordercode);
+				
+				
+				if(SessionName.xzOrder.get(ordercode)==null){
+					SessionName.xzOrder.put(ordercode, ordercode);
+					Long id = indexService.createOrder(mapsss, null, txWxUser, null,txWxUserBankNo.getAccNo(),3,"002",null);
+					
+					Map<String, String> rspData = indexService.pay(ordercode, txWxUserBankNo, smsCode, txWxUser, txnTime, "002",id);
+					if(("00").equals(rspData.get("respCode"))){
+						
+						writeSuccessMsg("成功", "", response);
+					}else{
+						writeErrorMsg("fail", rspData.get("respMsg"), response);
+					}
+				}
+			}else{
+				writeErrorMsg("error", "支付失败，数据异常，，请联系客服：010-96199", response);
+			}
+		}catch(Exception e){
+			writeErrorMsg("error", "支付失败，系统异常，请联系客服：010-96199", response);
+			e.printStackTrace();
+		}
+		return  null;
+	}
 }

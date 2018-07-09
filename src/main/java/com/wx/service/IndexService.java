@@ -76,14 +76,17 @@ public class IndexService {
 	 */
 	public void setOrderMsgToSession(Map<String, Object> mapresult,TxWxUser txWxUser,String shopCode,Integer money2,String IpAddr,String PaymentInfo,String paynumber){
 		Map<String,String> mapssss = new HashMap<String,String>();
-		mapssss.put("bujia", (String)mapresult.get("bujia"));
-		mapssss.put("tradeName", (String)mapresult.get("username1"));
-		mapssss.put("koujian", (String)mapresult.get("koujian"));
-		mapssss.put("chajia", (String)mapresult.get("chajia"));
-		mapssss.put("customerNumber", (String)mapresult.get("customerNumber"));
+		if(!mapresult.isEmpty()){
+			mapssss.put("bujia", (String)mapresult.get("bujia"));
+			mapssss.put("tradeName", (String)mapresult.get("username1"));
+			mapssss.put("koujian", (String)mapresult.get("koujian"));
+			mapssss.put("chajia", (String)mapresult.get("chajia"));
+			mapssss.put("customerNumber", (String)mapresult.get("customerNumber"));
+			mapssss.put("centerInfo", (String)mapresult.get("centerInfo"));
+		}
+		
 		mapssss.put("shopCode", shopCode);
 		mapssss.put("money", money2+"");
-		mapssss.put("centerInfo", (String)mapresult.get("centerInfo"));
 		mapssss.put("orderId", PaymentInfo);
 		mapssss.put("IpAddr", IpAddr);
 		mapssss.put("userId", txWxUser.getId()+"");

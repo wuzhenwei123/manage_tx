@@ -43,7 +43,7 @@
 </body>
 <script>
    function tijiao(){
-		window.location.href = '${ctx}/index/toSelPayWayOther?PaymentInfo=${PaymentInfo}&shopCode=${shopCode}';
+		window.location.href = '${ctx}/other/toSelPayWayOther?PaymentInfo=${paynumber}&fee=${fee}&paynumber=${paynumber}';
    }
 </script>
 </html>
