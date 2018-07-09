@@ -27,21 +27,27 @@
     </div>
     <div class="m_top">
         <div class="sel_box">
-        	<input type="hidden" value="010" id="cityCode">
-            <a href="javascript:;">北京</a>
+        	<c:forEach items="${listType}" var="buss" varStatus="status">
+        		<c:if test="${status.index==0}">
+        			<input type="hidden" value="${buss.cityCode}" id="cityCode">
+            		<a href="${ctx}/other/toPlace">${buss.billArea}</a>
+        		</c:if>
+        	</c:forEach>
+        	
         </div>
     </div>
     <div class="m_grid clear">
-        <a href="javascript:toElectric()"><img src="${ctx}/images/index/3.png" alt=""><p>电费</p></a>
-        <a href="#"><img src="${ctx}/images/index/2.png" alt=""><p>水费</p></a>
-        <a href="#"><img src="${ctx}/images/index/4.png" alt=""><p>燃气费</p></a>
-        <a href="#"><img src="${ctx}/images/index/5.png" alt=""><p>固话费</p></a>
-        <a href="#"><img src="${ctx}/images/index/6.png" alt=""><p>宽带费</p></a>
-        <a href="#"><img src="${ctx}/images/index/7.png" alt=""><p>油卡充值</p></a>
-        <a href="#"><img src="${ctx}/images/index/8.png" alt=""><p>有线电视</p></a>
-        <a href="#"><img src="${ctx}/images/index/9.png" alt=""><p>交通违章</p></a>
-        <a href="#"><img src="${ctx}/images/index/10.png" alt=""><p>公交卡充值</p></a>
-
+    	<c:forEach items="${listType}" var="buss">
+    		<c:if test="${buss.billType=='002'}"><a href="${ctx}/index/toElectric?billType=002&cityCode=${buss.cityCode}&billArea=${buss.billArea}"><img src="${ctx}/images/index/3.png" alt=""><p>电费</p></a></c:if>
+    		<c:if test="${buss.billType=='001'}"><a href="${ctx}/index/toElectric?billType=001&cityCode=${buss.cityCode}"><img src="${ctx}/images/index/2.png" alt=""><p>水费</p></a></c:if>
+    		<c:if test="${buss.billType=='003'}"><a href="${ctx}/index/toElectric?billType=003&cityCode=${buss.cityCode}"><img src="${ctx}/images/index/4.png" alt=""><p>燃气费</p></a></c:if>
+    		<c:if test="${buss.billType=='004'}"><a href="${ctx}/index/toElectric?billType=004&cityCode=${buss.cityCode}"><img src="${ctx}/images/index/8.png" alt=""><p>通讯费</p></a></c:if>
+    		<c:if test="${buss.billType=='006'}"><a href="${ctx}/index/toElectric?billType=006&cityCode=${buss.cityCode}"><img src="${ctx}/images/index/5.png" alt=""><p>手机充值</p></a></c:if>
+    		<c:if test="${buss.billType=='007'}"><a href="${ctx}/index/toElectric?billType=007&cityCode=${buss.cityCode}"><img src="${ctx}/images/index/10.png" alt=""><p>物业费</p></a></c:if>
+    		<c:if test="${buss.billType=='008'}"><a href="${ctx}/index/toElectric?billType=008&cityCode=${buss.cityCode}"><img src="${ctx}/images/index/9.png" alt=""><p>交通罚款</p></a></c:if>
+    		<c:if test="${buss.billType=='009'}"><a href="${ctx}/index/toElectric?billType=009&cityCode=${buss.cityCode}"><img src="${ctx}/images/index/7.png" alt=""><p>加油卡</p></a></c:if>
+    		<c:if test="${buss.billType=='010'}"><a href="${ctx}/index/toElectric?billType=010&cityCode=${buss.cityCode}"><img src="${ctx}/images/index/6.png" alt=""><p>供暖费</p></a></c:if>
+    	</c:forEach>
     </div>
 </div>
 

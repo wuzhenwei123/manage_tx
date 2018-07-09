@@ -37,6 +37,10 @@ public class TxBusinessTypeServiceImpl implements TxBusinessTypeService{
     public List<TxBusinessType> getTxBusinessTypeList(TxBusinessType txBusinessType) {
         return txBusinessTypeDAO.getTxBusinessTypeList(txBusinessType);
     }
+    
+    public List<TxBusinessType> getTxBusinessTypeListGroup(TxBusinessType txBusinessType) {
+    	return txBusinessTypeDAO.getTxBusinessTypeListGroup(txBusinessType);
+    }
 
     public TxBusinessType getTxBusinessTypeById(int id) { 
         return txBusinessTypeDAO.getTxBusinessTypeById(id);

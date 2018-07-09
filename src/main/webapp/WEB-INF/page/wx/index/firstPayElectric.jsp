@@ -13,7 +13,7 @@
 <body>
 <div class="wrap">
     <div class="bus_top">
-        <p>您的地区 <i>北京市</i></p>
+        <p>您的地区 <i>${billArea}</i></p>
     </div>
     <div class="bus_con">
     	<c:if test="${cityCode=='010'&&billType=='002'}">
