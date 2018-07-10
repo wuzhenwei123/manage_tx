@@ -76,15 +76,13 @@ public class IndexService {
 	 */
 	public void setOrderMsgToSession(Map<String, Object> mapresult,TxWxUser txWxUser,String shopCode,Integer money2,String IpAddr,String PaymentInfo,String paynumber){
 		Map<String,String> mapssss = new HashMap<String,String>();
-		if(!mapresult.isEmpty()){
-			mapssss.put("bujia", (String)mapresult.get("bujia"));
-			mapssss.put("tradeName", (String)mapresult.get("username1"));
-			mapssss.put("koujian", (String)mapresult.get("koujian"));
-			mapssss.put("chajia", (String)mapresult.get("chajia"));
-			mapssss.put("customerNumber", (String)mapresult.get("customerNumber"));
-			mapssss.put("centerInfo", (String)mapresult.get("centerInfo"));
-		}
-		
+		mapssss.put("bujia", (String)mapresult.get("bujia"));
+		mapssss.put("tradeName", (String)mapresult.get("username1"));
+		mapssss.put("koujian", (String)mapresult.get("koujian"));
+		mapssss.put("chajia", (String)mapresult.get("chajia"));
+		mapssss.put("customerNumber", (String)mapresult.get("customerNumber"));
+		mapssss.put("centerInfo", (String)mapresult.get("centerInfo"));
+	
 		mapssss.put("shopCode", shopCode);
 		mapssss.put("money", money2+"");
 		mapssss.put("orderId", PaymentInfo);
@@ -300,6 +298,49 @@ public class IndexService {
 			hOrder.setState(1);
 			hOrder.setUserId(Integer.valueOf(mapsss.get("userId")));
 			id = txPayOrderDAO.insertTxPayOrder(hOrder);
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    	return id;
+    }
+    
+    /**
+     * 生成订单
+     * @param mapsss
+     */
+    public Long createOrderOther(Map<String,String> mapsss,String transaction_id,TxWxUser wxUser,String time_end,String accNo,Integer payWay,String orderType,String SettleDate){
+    	Long id = null;
+    	try{
+    		//生成订单
+    		TxPayOrder hOrder = new TxPayOrder();
+    		hOrder.setOrderNumber(mapsss.get("orderId"));
+    		hOrder.setAccNo(accNo);
+    		hOrder.setPayNumber(mapsss.get("paynumber"));
+    		hOrder.setQueryNumber(transaction_id);
+    		hOrder.setUserName(mapsss.get("userName"));
+    		hOrder.setCreateTime(new Date());
+    		logger.info("--------------->"+mapsss.get("money"));
+    		hOrder.setFee(Long.valueOf(mapsss.get("money")));
+    		hOrder.setShopCode(mapsss.get("shopCode"));
+    		hOrder.setRealFee(Long.valueOf(mapsss.get("money")));
+    		hOrder.setPayWay(payWay);
+    		SimpleDateFormat sf11 = new SimpleDateFormat("yyyy-MM-dd");
+    		SimpleDateFormat sf111 = new SimpleDateFormat("yyyy");
+    		if(StringUtils.isNotBlank(SettleDate)){
+    			String source = sf111.format(new Date()) + "-" + SettleDate.substring(0,2)+"-"+SettleDate.substring(2,4);
+    			hOrder.setSettleDate(sf11.parse(source));
+    		}
+    		hOrder.setOrderType(orderType);
+    		
+    		hOrder.setPromoterId(wxUser.getPromoterId());
+    		
+    		hOrder.setPromoterName(wxUser.getPromoterName());
+    		hOrder.setTwoPromoterId(wxUser.getTwoPromoterId());
+    		hOrder.setTwoPromoterName(wxUser.getTwoPromoterName());
+    		
+    		hOrder.setState(1);
+    		hOrder.setUserId(Integer.valueOf(mapsss.get("userId")));
+    		id = txPayOrderDAO.insertTxPayOrder(hOrder);
     	}catch(Exception e){
     		e.printStackTrace();
     	}

@@ -106,6 +106,7 @@ public class ConfigConstants {
 	public static String PAY_TRID = null;
 	public static String UNION_SMSCODE_URL = null;
 	public static String PAY_BACKURL = null;
+	public static String PAY_BACKURL_OTHER = null;
 	/** 银联支付-消费支付地址**/
 	public static String UNION_PAY_URL = null;
 	/** 银联支付-获取token前台回调地址**/
@@ -134,6 +135,7 @@ public class ConfigConstants {
 	public static String UNION_REFUNDPAY_BACKTRANS = null;
 	public static String UNIONPAYTOKEN_FRONTURL_DF = null;
 	public static String UNIONPAYTOKEN_BACKURL_DF = null;
+	public static String UNIONPAYTOKEN_FRONTURL_OTHER = null;
 	public static String SY_URL = null;
 	
 	
@@ -213,6 +215,7 @@ public class ConfigConstants {
 				PAY_BACKURL = (String) prop.get("pay_backurl");
 				UNION_PAY_URL = (String) prop.get("union_pay_url");
 				UNIONPAYTOKEN_FRONTURL = (String) prop.get("unionpaytoken_fronturl");
+				UNIONPAYTOKEN_FRONTURL_OTHER = (String) prop.get("unionpaytoken_fronturl_other");
 				UNIONPAYTOKEN_BACKURL = (String) prop.get("unionpaytoken_backurl");
 				UNION_REFUNDPAY_BACKURL = (String) prop.get("union_refundpay_backurl");
 				UNION_REFUNDPAY_URL = (String) prop.get("union_refundpay_url");
@@ -227,6 +230,7 @@ public class ConfigConstants {
 				UNIONPAYTOKEN_FRONTURL_DF = (String) prop.get("unionpaytoken_fronturl_df");
 				UNIONPAYTOKEN_BACKURL_DF = (String) prop.get("unionpaytoken_backurl_df");
 				SY_URL = (String) prop.get("sy_url");
+				PAY_BACKURL_OTHER = (String) prop.get("pay_backurl_other");
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}

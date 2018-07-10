@@ -73,6 +73,8 @@
             <mvc:exclude-mapping path="/index/union_refundpay_backTrans_backurl"/>
             <mvc:exclude-mapping path="/index/union_fronturl_token_df"/>
             <mvc:exclude-mapping path="/index/union_backurl_token_df"/>
+            <mvc:exclude-mapping path="/other/union_fronturl_token_other"/>
+            <mvc:exclude-mapping path="/other/pay_backurl_other"/>
             <ref bean="systemInterceptor" />
         </mvc:interceptor>
     </mvc:interceptors>  

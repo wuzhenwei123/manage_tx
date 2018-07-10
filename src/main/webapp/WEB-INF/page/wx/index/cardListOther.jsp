@@ -50,9 +50,9 @@
             	return false;
             }else{
             	if("addcard"==accNo){
-            		 location.href = "${ctx}/other/toAddCard?_t="+Math.random()+"&ordercode=${PaymentInfo}&fee=${fee}";
+            		 location.href = "${ctx}/other/toAddCard?_t="+Math.random()+"&ordercode=${PaymentInfo}&fee=${fee}&cityCode=${cityCode}&LoopInfo=${LoopInfo}&ServiceType=${ServiceType}";
             	}else{
-		            location.href = "${ctx}/other/toPay?accNo="+accNo+"&_t="+Math.random()+"&ordercode=${PaymentInfo}&fee=${fee}";
+		            location.href = "${ctx}/other/toPay?accNo="+accNo+"&_t="+Math.random()+"&ordercode=${PaymentInfo}&fee=${fee}&cityCode=${cityCode}&LoopInfo=${LoopInfo}&ServiceType=${ServiceType}";
             	}
             }
         })

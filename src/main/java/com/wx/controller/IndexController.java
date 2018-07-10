@@ -219,7 +219,7 @@ public class IndexController extends BaseController{
 				model.addAttribute("shopCode", shopCode);
 				model.addAttribute("resultCode", map.get("resultCode"));
 				model.addAttribute("errmessage", map.get("resultInfo"));
-				return "/wx/index/queryfail";
+				return "/wx/index/payfail";
 			}
 			
 		}catch(Exception e){

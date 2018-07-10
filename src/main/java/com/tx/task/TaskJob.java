@@ -155,8 +155,8 @@ public class TaskJob {
     					String[] strs = str.split(",");
     					TxBusinessType txBusinessType1 = new TxBusinessType();
     					txBusinessType1.setBillType(strs[0]);
-    					txBusinessType1.setCityCode(strs[5]);
-    					txBusinessType1.setServiceType(strs[6]);
+    					txBusinessType1.setCityCode(strs[7]);
+    					txBusinessType1.setServiceType(strs[8]);
     					txBusinessType1 = txBusinessTypeService.getTxBusinessType(txBusinessType1);
     					if(txBusinessType1!=null){
     						txBusinessType1.setBillType(strs[0]);

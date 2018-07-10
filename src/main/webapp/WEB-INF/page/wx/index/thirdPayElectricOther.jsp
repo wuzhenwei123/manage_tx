@@ -16,7 +16,7 @@
     <div class="charge_con">
         <div class="charge_m clear">
             <p>缴费金额</p>
-            <em>${money}元</em>
+            <em>${fee}元</em>
         </div>
         <ul>
             <li class="clear">
@@ -43,7 +43,7 @@
 </body>
 <script>
    function tijiao(){
-		window.location.href = '${ctx}/other/toSelPayWayOther?PaymentInfo=${paynumber}&fee=${fee}&paynumber=${paynumber}';
+		window.location.href = '${ctx}/other/toSelPayWayOther?PaymentInfo=${PaymentInfo}&fee=${money}&paynumber=${paynumber}&cityCode=${cityCode}&loopID=${loopID}&ServiceType=${ServiceType}';
    }
 </script>
 </html>
