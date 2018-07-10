@@ -844,7 +844,7 @@ public class IndexController extends BaseController{
 				return "/wx/unionpay/payFail";
 			}
 			
-			request.setAttribute("customerNumber", hOrder.getOrderNumber());
+			request.setAttribute("customerNumber", hOrder.getPayNumber());
 			request.setAttribute("money", super.getMoney(hOrder.getRealFee()));
 			request.setAttribute("realmoney", super.getMoney(hOrder.getRealFee()));
 			request.setAttribute("orderId", ordercode);

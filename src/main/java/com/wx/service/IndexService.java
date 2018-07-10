@@ -341,6 +341,7 @@ public class IndexService {
     		hOrder.setState(1);
     		hOrder.setUserId(Integer.valueOf(mapsss.get("userId")));
     		id = txPayOrderDAO.insertTxPayOrder(hOrder);
+    		id = hOrder.getId();
     	}catch(Exception e){
     		e.printStackTrace();
     	}

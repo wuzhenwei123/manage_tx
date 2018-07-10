@@ -28,12 +28,10 @@
 		
 		<div class="suc-info suc-chongzhi">
 			<h3 class="btm-border">
-				<c:if test="${shopCode=='3202'}">智能电充值</c:if>
-				<c:if test="${shopCode=='3102'}">抄表电充值</c:if>
+				电费充值
 			</h3>
 			<p class="pline">
-				<c:if test="${shopCode=='3202'}"><label>客户编号</label></c:if>
-				<c:if test="${shopCode=='3102'}"><label>缴费号</label></c:if>
+				<label>缴费号</label>
 				<span>${customerNumber}</span>
 			</p>
 			<p class="pline">

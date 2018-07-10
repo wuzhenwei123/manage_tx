@@ -461,7 +461,7 @@ public class OtherController extends BaseController{
 		super.getJsticket(request);
 		String accNo =  RequestHandler.getString(request, "accNo");
 		String orderfee =  RequestHandler.getString(request, "fee");
-		String paynumber = RequestHandler.getString(request, "ordercode");
+		String paynumber = RequestHandler.getString(request, "paynumber");
 		String cityCode = RequestHandler.getString(request, "cityCode");
 		String loopID = RequestHandler.getString(request, "loopID");
 		String serviceType = RequestHandler.getString(request, "ServiceType");

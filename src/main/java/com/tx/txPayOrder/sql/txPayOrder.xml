@@ -31,8 +31,7 @@
 
 	<!-- 查询参数 -->
     <sql id="txPayOrder_column_body">
-         a.id,a.orderType,a.payNumber,a.orderNumber,a.queryNumber,a.state,a.createTime,a.fee,a.realFee,a.userId,a.userName,a.promoterId,a.promoterName,a.twoPromoterId,a.twoPromoterName,a.oneRate,a.twoRate,a.devRate,a.totalRate,a.accNo,a.payWay,a.settleDate,a.refundNumber,
-         a.shopCode
+         a.id,a.orderType,a.payNumber,a.orderNumber,a.queryNumber,a.state,a.createTime,a.fee,a.realFee,a.userId,a.userName,a.promoterId,a.promoterName,a.twoPromoterId,a.twoPromoterName,a.oneRate,a.twoRate,a.devRate,a.totalRate,a.accNo,a.payWay,a.settleDate,a.refundNumber
     </sql>
     <!-- 查询条件 -->
     <sql id="txPayOrder_select_body">

@@ -521,7 +521,7 @@ public class OtherService {
 		public Map<String, Object> payDF(String totalFee,String centerSerial,String paynumber,String traceNo,String hostSerialNo,String cityCode,String bankCardNo,String settlementDate,String loopID,String serviceType) {
 			
 			Map<String, Object> param = new LinkedHashMap<String, Object>();
-    		param.put("MsgType", "Query");
+    		param.put("MsgType", "Pay");
     		param.put("TerminalID", ConfigConstants.NATIONAL_UNITY_TERMINALID);
     		param.put("TraceNo", traceNo);
     		param.put("Source", ConfigConstants.NATIONAL_UNITY_SOURCE);
@@ -531,10 +531,10 @@ public class OtherService {
     		param.put("ServiceType", serviceType);
     		param.put("PayNo", paynumber);
     		param.put("BankCardNo", bankCardNo);
-    		param.put("HostSerialNo", hostSerialNo);
-    		param.put("TotalFee", totalFee+"");
-    		param.put("LoopID", loopID);
     		param.put("SettlementDate", settlementDate);
+    		param.put("HostSerialNo", hostSerialNo);
+    		param.put("LoopID", loopID);
+    		param.put("TotalFee", totalFee+"");
     		param.put("KeyID", ConfigConstants.NATIONAL_UNITY_KEYID);
     		param.put("MCode", HttpUtils.getMcode(param));
     		Map<String, Object> map = new HashMap<String, Object>();
@@ -550,6 +550,7 @@ public class OtherService {
 				}else{
 					String resultCode = HttpUtils.getVal(result, "ResultCode");
 					String resultInfo = HttpUtils.getVal(result, "ResultInfo");
+					System.out.println("--------------------------------------"+URLDecoder.decode(resultInfo,"UTF-8"));
 					if("G0".equals(resultCode)||"30".equals(resultCode)){
 						map.put("message", "fail");
 					}else{
