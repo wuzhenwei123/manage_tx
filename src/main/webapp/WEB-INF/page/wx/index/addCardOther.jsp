@@ -17,7 +17,7 @@
 	<div class="add_crad">
 	    <label for="cardnumber">请您输入银行卡卡号：</label>
 	    <input type="number" id="accNo" value="">
-	    <span>注：暂不支持招商银行的储蓄卡和信用卡</span>
+<!-- 	    <span>注：暂不支持招商银行的储蓄卡和信用卡</span> -->
 	</div>
 	<div class="btn_box cardlist_btn" style="margin-top: 5px">
 	    <a href="javascript:tijiao();" class="btn" style="background: #0c8ee6;">下一步</a>
@@ -38,7 +38,7 @@
 // 			});
 			if(accNo.length==16||accNo.length==19){
 				flag = false;
-				location.href = "${ctx}/other/addCard?accNo="+accNo+"&_t="+Math.random()+"&zfOrderNo=${PaymentInfo}&fee=${fee}&paynumber=${paynumber}&cityCode=${cityCode}&loopID=${loopID}&ServiceType=${ServiceType}";
+				location.href = "${ctx}/other/addCard?accNo="+accNo+"&_t="+Math.random()+"&zfOrderNo=${PaymentInfo}&fee=${fee}&paynumber=${paynumber}&cityCode=${cityCode}&loopID=${loopID}&ServiceType=${ServiceType}&centerSerial=${centerSerial}";
 			}else{
 				weui.alert("您输入的卡号有误，请重新输入");
 				return false;

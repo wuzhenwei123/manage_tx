@@ -154,6 +154,10 @@ public class IndexController extends BaseController{
 		String billType = RequestHandler.getString(request, "billType");
 		TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 		try{
+			TxBusinessType txBusinessType = new TxBusinessType();
+			txBusinessType.setCityCode(cityCode);
+			List<TxBusinessType> list = txBusinessTypeService.getTxBusinessTypeList(txBusinessType);
+			model.addAttribute("billArea", list.get(0).getBillArea());
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -218,8 +222,8 @@ public class IndexController extends BaseController{
 			}else{
 				model.addAttribute("shopCode", shopCode);
 				model.addAttribute("resultCode", map.get("resultCode"));
-				model.addAttribute("errmessage", map.get("resultInfo"));
-				return "/wx/index/payfail";
+				model.addAttribute("msg", map.get("resultInfo"));
+				return "/wx/index/payFail";
 			}
 			
 		}catch(Exception e){

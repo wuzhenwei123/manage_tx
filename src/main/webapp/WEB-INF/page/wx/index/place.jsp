@@ -12,7 +12,7 @@
 <body>
 <div class="wrap">
     <div class="search_box">
-        <input type="text" id="name" value="${name}">
+        <input type="text" id="name" value="合肥">
         <i>搜索</i>
     </div>
 

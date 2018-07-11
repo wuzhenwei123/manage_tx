@@ -54,9 +54,9 @@
         $(".btn_boxs").on("click",function () {
         	var id = $(".sel_bank li.active").attr("id");
         	if(id=="3"){
-	       		location.href = "${ctx}/other/getListCard?PaymentInfo=${PaymentInfo}&fee=${fee}&paynumber=${paynumber}&cityCode=${cityCode}&loopID=${loopID}&ServiceType=${ServiceType}";
+	       		location.href = "${ctx}/other/getListCard?PaymentInfo=${PaymentInfo}&fee=${fee}&paynumber=${paynumber}&cityCode=${cityCode}&loopID=${loopID}&ServiceType=${ServiceType}&centerSerial=${centerSerial}";
 	       	}else if(id=="4"){
-	       		location.href = "${ctx}/other/toUnionpay?_t="+Math.random()+"&PaymentInfo=${PaymentInfo}&fee=${fee}&paynumber=${paynumber}&cityCode=${cityCode}&loopID=${loopID}&ServiceType=${ServiceType}";
+	       		location.href = "${ctx}/other/toUnionpay?_t="+Math.random()+"&PaymentInfo=${PaymentInfo}&fee=${fee}&paynumber=${paynumber}&cityCode=${cityCode}&loopID=${loopID}&ServiceType=${ServiceType}&centerSerial=${centerSerial}";
 	       	}
         })
     })

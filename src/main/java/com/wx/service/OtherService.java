@@ -55,7 +55,7 @@ public class OtherService {
 	 * @param mapresult
 	 * @param txWxUser
 	 */
-	public void setOrderMsgToSession(String serviceType,String bankCardNo,TxWxUser txWxUser,String cityCode,Integer money2,String loopID,String PaymentInfo,String paynumber){
+	public void setOrderMsgToSession(String serviceType,String bankCardNo,TxWxUser txWxUser,String cityCode,Integer money2,String loopID,String PaymentInfo,String paynumber,String centerSerial){
 		Map<String,String> mapssss = new HashMap<String,String>();
 		mapssss.put("money", money2+"");
 		mapssss.put("orderId", PaymentInfo);
@@ -67,6 +67,7 @@ public class OtherService {
 		mapssss.put("loopID",loopID);
 		mapssss.put("serviceType",serviceType);
 		mapssss.put("bankCardNo",bankCardNo);
+		mapssss.put("centerSerial",centerSerial);
 		if(txWxUser.getPromoterId()!=null){
 			mapssss.put("promoterId", txWxUser.getPromoterId()+"");
 		}
@@ -259,7 +260,7 @@ public class OtherService {
     				if(SessionName.xzOrder.get(queryId)==null){
     					SessionName.xzOrder.put(queryId, queryId);
     					//启动多线程查单
-        				ThreadOrderExtends thread1 = new ThreadOrderExtends(mapsss.get("paynumber"), mapsss.get("cityCode"), mapsss.get("orderId"), mapsss.get("loopID"), mapsss.get("serviceType"), mapsss.get("bankCardNo"), valideData.get("queryId"), traceNo, mapsss.get("money"), settleDate, 3);
+        				ThreadOrderExtends thread1 = new ThreadOrderExtends(mapsss.get("paynumber"), mapsss.get("cityCode"), mapsss.get("orderId"), mapsss.get("loopID"), mapsss.get("serviceType"), mapsss.get("bankCardNo"), valideData.get("queryId"), traceNo, mapsss.get("money"), settleDate, 3,mapsss.get("centerSerial"));
     					thread1.start();
     				}
     			}else{
@@ -318,9 +319,10 @@ public class OtherService {
 	        private String bankCardNo;
 	        private String transaction_id;
 	        private String traceNo;
+	        private String centerSerial;
 	        private String time_end;
 	        private Integer payWay;
-	        public ThreadOrderExtends(String customerNumber,String cityCode, String orderId,String loopID,String serviceType,String bankCardNo,String transaction_id,String traceNo,String realmoney,String time_end,Integer payWay){ 
+	        public ThreadOrderExtends(String customerNumber,String cityCode, String orderId,String loopID,String serviceType,String bankCardNo,String transaction_id,String traceNo,String realmoney,String time_end,Integer payWay,String centerSerial){ 
 	        	this.customerNumber = customerNumber; 
 	        	this.cityCode = cityCode;
 	        	this.realmoney = realmoney;
@@ -332,6 +334,7 @@ public class OtherService {
 	        	this.traceNo = traceNo;
 	        	this.time_end = time_end;
 	        	this.payWay = payWay;
+	        	this.centerSerial = centerSerial;
 	        }
 	        public void run(){
 	        	synchronized (this) {
@@ -352,7 +355,7 @@ public class OtherService {
 	    					txPayOrderDAO.updateTxPayOrderById(hOrder);
 	    					//去充值
 	    					logger.info("==销账开始====");
-	            			Map<String, Object> mappay = payDF(realmoney, orderId, customerNumber, traceNo, transaction_id, cityCode, bankCardNo, time_end, loopID, serviceType);
+	            			Map<String, Object> mappay = payDF(realmoney, centerSerial, customerNumber, traceNo, transaction_id, cityCode, bankCardNo, time_end, loopID, serviceType);
 	            			logger.info(sf.format(new Date())+"==销账开始===="+customerNumber+"--------------------->"+mappay);
 	            			if(mappay!=null){
 	            				String paystatus = mappay.get("message").toString();

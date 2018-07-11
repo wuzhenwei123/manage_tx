@@ -32,15 +32,9 @@
 	        <c:if test="${gz=='M'}">
 	        	<div class="num_box">
 		            <p>请输入缴费金额</p>
-		            <input type="number" id="fee" max="${maxfee}" min="${minfee}" step="${beishu}">
+		            <input type="number" id="fee" max="${maxfee}" min="${minfee}" step="${beishu}" placeholder="输入大于${minfee}元的${beishu}元的整数倍">
 		        </div>
 	        </c:if>
-        </c:if>
-        <c:if test="${empty gz}">
-        	<div class="num_box">
-	            <p>请输入缴费金额</p>
-	            <input type="text" id="fee">
-	        </div>
         </c:if>
         <div class="num_box">
             <p>请输入智能表客户编号或抄表电缴费号</p>
@@ -72,19 +66,23 @@
     
     function next(){
     	var cityCode = '${txBusinessType.cityCode}';
-    	
-   		var fee = $("#fee").val();
-   		if(""==fee){
-   			layer.msg("请输入缴费金额");
-   			return false;
-   		}
-    	
+    	var gz = '${gz}';
+    	var fee = "";
+    	if(gz!=""){
+    		fee = $("#fee").val();
+       		if(""==fee){
+       			layer.msg("请输入缴费金额");
+       			return false;
+       		}
+    	}else{
+    		fee = "0";
+    	}
     	var paynumber = $("#paynumber").val();
     	if(""==paynumber){
     		layer.msg("请填写缴费号");
 			return false;
     	}
-    	window.location.href = "${ctx}/other/queryPayNumberMsg?paynumber="+paynumber+"&cityCode="+cityCode+"&typeId=${txBusinessType.id}&fee="+fee;
+    	window.location.href = "${ctx}/other/queryPayNumberMsg?paynumber="+paynumber+"&cityCode="+cityCode+"&typeId=${txBusinessType.id}&fee="+fee+"&isNeedFee=${txBusinessType.isNeedFee}";
     }
 </script>
 </html>

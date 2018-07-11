@@ -323,9 +323,11 @@ public class OtherController extends BaseController{
 		String paynumber = RequestHandler.getString(request, "paynumber");
 		Integer typeId = RequestHandler.getInteger(request, "typeId");
 		String fee = RequestHandler.getString(request, "fee");
+		Integer isNeedFee = RequestHandler.getInteger(request, "isNeedFee");
 		try{
 			TxBusinessType txBusinessType = txBusinessTypeService.getTxBusinessTypeById(typeId);
-			
+			model.addAttribute("txBusinessType", txBusinessType);
+			model.addAttribute("ServiceType", txBusinessType.getServiceType());
 			int money2 = 0;
 			if(StringUtils.isNotBlank(fee)){
 				Double money1 = Double.valueOf(fee);
@@ -362,21 +364,34 @@ public class OtherController extends BaseController{
     		String result = HttpUtils.sendPost(param);
     		String ResultCode = HttpUtils.getVal(result, "ResultCode");
     		String ResultInfo = HttpUtils.getVal(result, "ResultInfo");
-    		String DisplayInfo = HttpUtils.getVal(result, "DisplayInfo");
-    		String LoopInfo = HttpUtils.getVal(result, "LoopInfo");
-    		model.addAttribute("displayInfo", URLDecoder.decode(DisplayInfo,"UTF-8"));
-    		model.addAttribute("loopID", URLDecoder.decode(LoopInfo,"UTF-8").split(",")[0]);
-    		model.addAttribute("paynumber", paynumber);
-    		model.addAttribute("txBusinessType", txBusinessType);
-    		model.addAttribute("fee", fee);
-    		model.addAttribute("money", money2);
-    		model.addAttribute("ServiceType", txBusinessType.getServiceType());
-    		model.addAttribute("cityCode", cityCode);
     		System.out.println(URLDecoder.decode(ResultInfo,"UTF-8"));
+    		if("00".equals(ResultCode)){
+    			String DisplayInfo = HttpUtils.getVal(result, "DisplayInfo");
+    			String CenterSerial = HttpUtils.getVal(result, "CenterSerial");
+    			String LoopInfo = HttpUtils.getVal(result, "LoopInfo"); 
+    			System.out.println(URLDecoder.decode(LoopInfo,"UTF-8"));
+    			model.addAttribute("displayInfo", URLDecoder.decode(DisplayInfo,"UTF-8"));
+        		model.addAttribute("loopID", URLDecoder.decode(LoopInfo,"UTF-8").split(",")[0]);
+        		model.addAttribute("qf", super.getMoney(Long.valueOf(URLDecoder.decode(LoopInfo,"UTF-8").split(",")[3])));
+        		model.addAttribute("lx", URLDecoder.decode(LoopInfo,"UTF-8").split(",")[2]);
+        		model.addAttribute("fee", fee);
+        		model.addAttribute("money", money2);
+        		model.addAttribute("centerSerial", CenterSerial);
+    		}else{
+    			model.addAttribute("msg", URLDecoder.decode(ResultInfo,"UTF-8"));
+    			model.addAttribute("resultCode", ResultCode);
+    			return  "/wx/index/payFail";
+    		}
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		return  "/wx/index/thirdPayElectricOther";
+		model.addAttribute("paynumber", paynumber);
+		model.addAttribute("cityCode", cityCode);
+		if(isNeedFee.intValue()==0){
+			return  "/wx/index/secondPayElectricOther";
+		}else{
+			return  "/wx/index/thirdPayElectricOther";
+		}
 	}
 	
 	/**
@@ -396,17 +411,29 @@ public class OtherController extends BaseController{
 		String paynumber = RequestHandler.getString(request, "paynumber");
 		String loopID = RequestHandler.getString(request, "loopID");
 		String ServiceType = RequestHandler.getString(request, "ServiceType");
+		String centerSerial = RequestHandler.getString(request, "centerSerial");
 		TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 		try{
-			
+			int money2 = 0;
+			if(StringUtils.isNotBlank(fee)){
+				Double money1 = Double.valueOf(fee);
+				BigDecimal bg = new BigDecimal(money1);
+				BigDecimal f = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
+				money2 = f.multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+			}else{
+				model.addAttribute("resultCode", "E100");
+				model.addAttribute("errmessage", "金额输入有误");
+				return "/wx/queryfail";
+			}
+			model.addAttribute("fee", money2);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 		model.addAttribute("PaymentInfo", PaymentInfo);
-		model.addAttribute("fee", fee);
 		model.addAttribute("paynumber", paynumber);
 		model.addAttribute("cityCode", cityCode);
 		model.addAttribute("loopID", loopID);
+		model.addAttribute("centerSerial", centerSerial);
 		model.addAttribute("ServiceType", ServiceType);
 		return "/wx/index/payWayOther";
 	}
@@ -428,6 +455,7 @@ public class OtherController extends BaseController{
 		String paynumber = RequestHandler.getString(request, "paynumber");
 		String cityCode = RequestHandler.getString(request, "cityCode");
 		String loopID = RequestHandler.getString(request, "loopID");
+		String centerSerial = RequestHandler.getString(request, "centerSerial");
 		String ServiceType = RequestHandler.getString(request, "ServiceType");
 		try{
 			TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
@@ -441,6 +469,7 @@ public class OtherController extends BaseController{
 			model.addAttribute("cityCode", cityCode);
 			model.addAttribute("loopID", loopID);
 			model.addAttribute("ServiceType", ServiceType);
+			model.addAttribute("centerSerial", centerSerial);
 			if(list!=null&&list.size()>0){
 				model.addAttribute("list", list);
 				return  "/wx/index/cardListOther";
@@ -464,6 +493,7 @@ public class OtherController extends BaseController{
 		String paynumber = RequestHandler.getString(request, "paynumber");
 		String cityCode = RequestHandler.getString(request, "cityCode");
 		String loopID = RequestHandler.getString(request, "loopID");
+		String centerSerial = RequestHandler.getString(request, "centerSerial");
 		String serviceType = RequestHandler.getString(request, "ServiceType");
 		try{
 			
@@ -472,7 +502,7 @@ public class OtherController extends BaseController{
 			String orderNoTime = txPaynumberMsgService.getOrderNo().get("orderNoTime");
 			String ordercode =  txPaynumberMsgService.getOrderNo().get("orderNo");
 			
-			otherService.setOrderMsgToSession(serviceType, accNo, txWxUser, cityCode, Integer.valueOf(orderfee), loopID, ordercode, paynumber);
+			otherService.setOrderMsgToSession(serviceType, accNo, txWxUser, cityCode, Integer.valueOf(orderfee), loopID, ordercode, paynumber,centerSerial);
 			
 			TxWxUserBankNo txWxUserBankNo = new TxWxUserBankNo();
 			txWxUserBankNo.setAccNo(accNo);
@@ -485,6 +515,7 @@ public class OtherController extends BaseController{
 			model.addAttribute("accNo", accNo);
 			model.addAttribute("orderfee", orderfee);
 			model.addAttribute("paynumber", paynumber);
+			model.addAttribute("centerSerial", centerSerial);
 			if(SessionName.xzOrder.get(ordercode)==null){
 				sendCodeCutter.filesMng(ordercode, orderNoTime, txWxUserBankNo, orderfee, txWxUser);
 			}
@@ -508,6 +539,7 @@ public class OtherController extends BaseController{
 		String smsCode = RequestHandler.getString(request, "smsCode");
 		String ordercode = RequestHandler.getString(request, "ordercode");
 		String txnTime = RequestHandler.getString(request, "txnTime");
+		String centerSerial = RequestHandler.getString(request, "centerSerial");
 		try{
 			TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 			TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(accNo);
@@ -555,7 +587,9 @@ public class OtherController extends BaseController{
 		String ServiceType = RequestHandler.getString(request, "ServiceType");
 		String fee = RequestHandler.getString(request, "fee");
 		String paynumber = RequestHandler.getString(request, "paynumber");
+		String centerSerial = RequestHandler.getString(request, "centerSerial");
 		
+		model.addAttribute("centerSerial", centerSerial);
 		model.addAttribute("PaymentInfo", ordercode);
 		model.addAttribute("fee", fee);
 		model.addAttribute("paynumber", paynumber);
@@ -583,6 +617,7 @@ public class OtherController extends BaseController{
 		String cityCode = RequestHandler.getString(request, "cityCode");
 		String loopID = RequestHandler.getString(request, "loopID");
 		String serviceType = RequestHandler.getString(request, "ServiceType");
+		String centerSerial = RequestHandler.getString(request, "centerSerial");
 		TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 		try{
 			Map<String,String> map = txPaynumberMsgService.getOrderNo();
@@ -605,7 +640,7 @@ public class OtherController extends BaseController{
 			txWxOrder.setZfOrderNo(zfOrderNo);
 			txWxOrder.setZfOrderFee(Integer.valueOf(orderfee));
 			txWxOrderService.insertTxWxOrder(txWxOrder);
-			otherService.setOrderMsgToSession(serviceType, accNo, txWxUser, cityCode, Integer.valueOf(orderfee), loopID, zfOrderNo, paynumber);
+			otherService.setOrderMsgToSession(serviceType, accNo, txWxUser, cityCode, Integer.valueOf(orderfee), loopID, zfOrderNo, paynumber,centerSerial);
 			String html = otherService.getUnionPayToken(map.get("orderNo"), map.get("orderNoTime"), accNo, txWxUser);
 			PrintWriter pw = null;
 			try {

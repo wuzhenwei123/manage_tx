@@ -107,6 +107,7 @@
    				orderType:'${orderType}',
    				isFive:'${isFive}',
    				shopCode:'${shopCode}',
+   				centerSerial:'${centerSerial}',
    				ranNum:Math.random()
    			},
    	       	function(data){
