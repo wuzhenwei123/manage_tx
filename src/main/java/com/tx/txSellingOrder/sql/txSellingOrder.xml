@@ -34,11 +34,11 @@
 	<!-- 查询参数 -->
     <sql id="txSellingOrder_column_body">
          a.id,a.code,a.money,a.createTime,a.accNo,a.endTime,a.state,a.queryId,a.promoterId,a.twoPromoterId,a.wxUserName,a.one_rate,a.two_rate,a.dev_rate,a.wxUserId,a.profitManey,a.profits,a.backCard,a.refundState,a.refundQueryId,a.refundAccNo,a.refundCode,
-         b.realName as promoterName,c.realName as twoPromoterName,a.selTime
+         b.realName as promoterName,c.realName as twoPromoterName,a.selTime,a.refundTime
     </sql>
     <sql id="txSellingOrder_column_body1">
          a.id,a.code,a.money,a.createTime,a.accNo,a.endTime,a.state,a.queryId,a.promoterId,a.twoPromoterId,a.wxUserName,a.one_rate,a.two_rate,a.dev_rate,a.wxUserId,a.profitManey,a.profits,a.backCard,a.refundState,a.refundQueryId,a.refundAccNo,a.refundCode,
-         a.selTime
+         a.selTime,a.refundTime
     </sql>
     <!-- 查询条件 -->
     <sql id="txSellingOrder_select_body">

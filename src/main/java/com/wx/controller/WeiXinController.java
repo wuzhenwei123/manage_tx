@@ -1666,7 +1666,7 @@ public class WeiXinController extends BaseController{
 			Integer rowCount = RequestHandler.getPageSize(request, "rowCount");
 			int from = RequestHandler.getFromByPage(pageNo, rowCount);
 			
-			
+			txWxOrder.setState(1);
 			txWxOrder.setOffset(from);
 			txWxOrder.setLimit(rowCount);
 			
@@ -1683,7 +1683,7 @@ public class WeiXinController extends BaseController{
 //					jsons.put("orderCode", obj.getOrderCode());
 					jsons.put("money", super.getMoney(obj.getMoney()));
 					jsons.put("accNo", obj.getAccNo());
-					if(obj.getRefundState().intValue()==1){
+					if(obj.getRefundState()!=null&&obj.getRefundState().intValue()==1){
 						if(obj.getRefundTime().before(obj.getEndTime())){
 							jsons.put("state", "已提前退款");
 						}else{
