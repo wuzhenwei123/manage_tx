@@ -296,7 +296,6 @@
     <select id="getSellingOrderByTwoPromoter" parameterType="com.tx.txSellingOrder.model.TxSellingOrder" resultMap="baseResultMap">
         SELECT if(sum(money) is null,0,sum(money)) as money,if(sum(one_rate) is null,0,sum(one_rate)) as oneRate,if(sum(two_rate) is null,0,sum(two_rate)) as twoRate
         FROM tx_selling_order a
-        left join manage_admin_user b on a.twoPromoterId = b.adminId
 		<include refid="txSellingOrder_select_body1" />
     </select>
 </mapper>

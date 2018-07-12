@@ -1324,4 +1324,105 @@ public class TxWxUserBankNoServiceImpl implements TxWxUserBankNoService{
     	}
     	return rspData;
     }
+    /**
+     * 交易
+     * @param request
+     * @return
+     */
+    public Map<String, String> xwDFTQ(TxWxUser wxUser,String orderId,String merOrderTime,TxWxUserBankNo txWxUserBankNo,String txnAmt,String merOrderId,Integer backCard,Integer flag,Integer xwDFFee){
+    	Map<String, String> rspData = null;
+    	try{
+    		
+    		Map<String, String> contentData = new HashMap<String, String>();
+    		
+    		/***银联全渠道系统，产品参数，除了encoding自行选择外其他不需修改***/
+    		contentData.put("txnType", "01");                              //交易类型 01-消费
+    		contentData.put("settType", "0");                           //交易子类型 01-消费
+    		contentData.put("settType", flag+""); 
+    		
+    		/***商户接入参数***/
+    		contentData.put("backUrl", ConfigConstants.XW_BACKURL);
+    		contentData.put("merId", ConfigConstants.MER_ID);                   //商户号码（本商户号码仅做为测试调通交易使用，该商户号配置了需要对敏感信息加密）测试时请改成自己申请的商户号，【自己注册的测试777开头的商户号不支持代收产品】
+    		
+    		contentData.put("xwMerId", wxUser.getMerId());                   //商户号码（本商户号码仅做为测试调通交易使用，该商户号配置了需要对敏感信息加密）测试时请改成自己申请的商户号，【自己注册的测试777开头的商户号不支持代收产品】
+    		contentData.put("orderId", orderId);             			   //商户订单号，8-40位数字字母，不能含“-”或“_”，可以自行定制规则	
+    		contentData.put("merOrderTime", merOrderTime);         				   //订单发送时间，格式为YYYYMMDDhhmmss，必须取当前时间，否则会报txnTime无效
+    		contentData.put("txnAmt", AcpService.encryptData(txnAmt, DemoBase.encoding));							   //交易金额，单位分，不要带小数点
+    		
+    		contentData.put("bankNo", AcpService.encryptData(txWxUserBankNo.getAccNo(), DemoBase.encoding));                              //账号类型
+    		contentData.put("BankName", txWxUserBankNo.getAccName());                              //账号类型
+    		
+    		contentData.put("ppType", "0");
+    		contentData.put("xwDFFee", xwDFFee+"");//手续费
+    		
+    		Map<String, String> reqData = AcpService.sign(contentData,DemoBase.encoding);				//报文中certId,signature的值是在signData方法中获取并自动赋值的，只要证书配置正确即可。
+    		logger.info("消费&代付交易");
+    		logger.info("http:// 114.113.238.50:54041/XW/Trans");
+    		logger.info("发送报文");
+    		logger.info("--------支付发送报文------------>"+reqData);
+    		rspData = AcpService.post(reqData,ConfigConstants.XW_DF_URL,DemoBase.encoding);	//发送请求报文并接受同步应答（默认连接超时时间30秒，读取返回结果超时时间30秒）;这里调用signData之后，调用submitUrl之前不能对submitFromData中的键值对做任何修改，如果修改会导致验签不通过
+    		logger.info("同步接收报文");
+    		logger.info("--------支付接收报文------------>"+rspData);
+    		logger.info("--------订单号------------>"+orderId);
+//    		StringBuffer parseStr = new StringBuffer("");
+    		logger.info(URLDecoder.decode(rspData.get("respMsg"),"UTF-8"));
+    		if(!rspData.isEmpty()){
+    			
+    			if(("00").equals(rspData.get("respCode"))){
+    				//写入库
+    				TxSellingOrder txSellingOrder = txSellingOrderDAO.getTxSellingOrderByRefundCode(orderId);
+    				if(txSellingOrder!=null&&txSellingOrder.getId()>0){
+    					txSellingOrder.setRefundQueryId(rspData.get("queryID"));
+    					txSellingOrder.setRefundAccNo(txWxUserBankNo.getAccNo());
+    					txSellingOrderDAO.updateTxSellingOrderById(txSellingOrder);
+    				}
+    			}else if("S90004".equals(rspData.get("respCode"))){
+    				
+    				Calendar calendar = Calendar.getInstance();
+    				calendar.setTime(new Date());
+    				calendar.add(Calendar.SECOND, 10);
+    				SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    				String datastr = sf.format(calendar.getTime());
+    				String ss = datastr.substring(datastr.length()-2, datastr.length());
+    				String mm = datastr.substring(datastr.length()-5, datastr.length()-3);
+    				String hh = datastr.substring(datastr.length()-8, datastr.length()-6);
+    				String dd = datastr.substring(8, 10);
+    				String MM = datastr.substring(5, 7);
+    				QuartzManager.addJob(orderId+"_"+flag+"_"+wxUser.getMerId(), QuartzJobDFService.class, ss+" "+mm+" "+hh+" "+dd+" "+MM+" ?");  
+    			}else if("E00099".equals(rspData.get("respCode"))){
+    				
+    				Calendar calendar = Calendar.getInstance();
+    				calendar.setTime(new Date());
+    				calendar.add(Calendar.SECOND, 10);
+    				SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    				String datastr = sf.format(calendar.getTime());
+    				String ss = datastr.substring(datastr.length()-2, datastr.length());
+    				String mm = datastr.substring(datastr.length()-5, datastr.length()-3);
+    				String hh = datastr.substring(datastr.length()-8, datastr.length()-6);
+    				String dd = datastr.substring(8, 10);
+    				String MM = datastr.substring(5, 7);
+    				QuartzManager.addJob(orderId+"_"+flag+"_"+wxUser.getMerId(), QuartzJobDFService.class, ss+" "+mm+" "+hh+" "+dd+" "+MM+" ?");  
+    			}
+    		}else{
+//    			//调用查询接口
+    			Calendar calendar = Calendar.getInstance();
+    			calendar.setTime(new Date());
+    			calendar.add(Calendar.SECOND, 30);
+    			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    			String datastr = sf.format(calendar.getTime());
+    			String ss = datastr.substring(datastr.length()-2, datastr.length());
+    			String mm = datastr.substring(datastr.length()-5, datastr.length()-3);
+    			String hh = datastr.substring(datastr.length()-8, datastr.length()-6);
+    			String dd = datastr.substring(8, 10);
+    			String MM = datastr.substring(5, 7);
+    			QuartzManager.addJob(orderId+"_"+flag+"_"+wxUser.getMerId(), QuartzJobDFService.class, ss+" "+mm+" "+hh+" "+dd+" "+MM+" ?");  
+    		}
+//    		reqMessage = DemoBase.genHtmlResult(reqData);
+//    		String rspMessage = DemoBase.genHtmlResult(rspData);
+//    		logger.info("请求报文:<br/>"+reqMessage+"<br/>" + "应答报文:</br>"+rspMessage+parseStr);
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    	return rspData;
+    }
 }

@@ -2,6 +2,7 @@ package com.wx.controller;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
@@ -845,7 +846,7 @@ public class IndexController extends BaseController{
 					hOrder.setState(0);
 					txPayOrderService.updateTxPayOrderById(hOrder);
 				}
-				return "/wx/unionpay/payFail";
+				return "/wx/index/payFail";
 			}
 			
 			request.setAttribute("customerNumber", hOrder.getPayNumber());
@@ -986,5 +987,15 @@ public class IndexController extends BaseController{
 	@RequestMapping(value = "/toRecharge")
 	public String toRecharge(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
 		return  "/wx/index/recharge";
+	}
+	
+	public static void main(String args[]){
+		String s = "%e5%8d%a1%e4%b8%8a%e7%9a%84%e4%bd%99%e9%a2%9d%e4%b8%8d%e8%b6%b3%5b1000051%5d";
+		try {
+			System.out.println(URLDecoder.decode(s,"UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

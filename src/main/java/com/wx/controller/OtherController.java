@@ -33,11 +33,17 @@ import com.base.utils.RequestHandler;
 import com.base.utils.SessionName;
 import com.base.utils.HttpUtils;
 import com.tx.task.service.SendCodeCutter;
+import com.tx.txApplay.model.TxApplay;
+import com.tx.txApplay.service.TxApplayService;
 import com.tx.txBanner.model.TxBanner;
 import com.tx.txBanner.service.TxBannerService;
 import com.tx.txBusinessType.model.TxBusinessType;
 import com.tx.txBusinessType.service.TxBusinessTypeService;
+import com.tx.txPayOrder.model.TxPayOrder;
+import com.tx.txPayOrder.service.TxPayOrderService;
 import com.tx.txPaynumberMsg.service.TxPaynumberMsgService;
+import com.tx.txRecord.model.TxRecord;
+import com.tx.txRecord.service.TxRecordService;
 import com.tx.txSellingOrder.model.TxSellingOrder;
 import com.tx.txSellingOrder.service.TxSellingOrderService;
 import com.tx.txWxOrder.model.TxWxOrder;
@@ -76,6 +82,12 @@ public class OtherController extends BaseController{
 	private TxWxOrderService txWxOrderService = null;
 	@Autowired
 	private OtherService otherService = null;
+	@Autowired
+	private TxPayOrderService txPayOrderService = null;
+	@Autowired
+	private TxRecordService txRecordService = null;
+	@Autowired
+	private TxApplayService txApplayService = null;
 	
 	/**
 	 * 展业二维码
@@ -550,7 +562,7 @@ public class OtherController extends BaseController{
 				
 				if(SessionName.xzOrder.get(ordercode)==null){
 					SessionName.xzOrder.put(ordercode, ordercode);
-					Long id = indexService.createOrderOther(mapsss, null, txWxUser, null,txWxUserBankNo.getAccNo(),3,"002",null);
+					Long id = otherService.createOrderOther(mapsss, null, txWxUser, null,txWxUserBankNo.getAccNo(),3,"002",null);
 					
 					Map<String, String> rspData = otherService.pay(ordercode, txWxUserBankNo, smsCode, txWxUser, txnTime, "002",id);
 					if(("00").equals(rspData.get("respCode"))){
@@ -711,5 +723,105 @@ public class OtherController extends BaseController{
 	public String pay_backurl_other(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
 		otherService.paybackUrlOther(request,txBusinessTypeService.getTraceNo());
 		return  null;
+	}
+	
+	/**
+	 * 佣金
+	 * 
+	 * @param response
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/toMyYongjin")
+	public String toMyYongjin(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
+		try{
+			Long money = 0L;
+			TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+			//获取售电佣金
+			TxPayOrder txPayOrder = new TxPayOrder();
+			txPayOrder.setPromoterId(txWxUser.getId());
+			txPayOrder.setState(1);
+			txPayOrder = txPayOrderService.getTxPayOrderSumMoney(txPayOrder);
+			money = money + txPayOrder.getOneRate();
+			//获取提现佣金
+			TxSellingOrder txSellingOrder = new TxSellingOrder();
+			txSellingOrder.setPromoterId(txWxUser.getId());
+			txSellingOrder.setState(1);
+			txSellingOrder.setRefundState(1);
+			txSellingOrder = txSellingOrderService.getSellingOrderByTwoPromoter(txSellingOrder);
+			money = money + txSellingOrder.getOneRate();
+			
+			TxSellingOrder txSellingOrder1 = new TxSellingOrder();
+			txSellingOrder1.setTwoPromoterId(txWxUser.getId());
+			txSellingOrder1.setState(1);
+			txSellingOrder1.setRefundState(1);
+			txSellingOrder = txSellingOrderService.getSellingOrderByTwoPromoter(txSellingOrder);
+			money = money + txSellingOrder.getTwoRate();
+			
+			model.addAttribute("totalFee", super.getMoney(money));
+			//获取已经提取金额
+			TxRecord txRecord = new TxRecord();
+			txRecord.setState(1);
+			txRecord.setUserId(txWxUser.getId());
+			txRecord = txRecordService.getTxRecordMoney(txRecord);
+			
+			model.addAttribute("recordFee", super.getMoney(txRecord.getFee()));
+			
+			//申请金额
+			TxApplay txApplay = new TxApplay();
+			txApplay.setUserId(txWxUser.getId());
+			txApplay.setState(0);
+			txApplay = txApplayService.getTxApplayMoney(txApplay);
+			
+			model.addAttribute("applyFee", super.getMoney(txApplay.getFee()));
+			model.addAttribute("yuFee", super.getMoney((money-txRecord.getFee()-txApplay.getFee())));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return  "/wx/index/yongjin";
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/toUnionpay", method = RequestMethod.GET)
+	public String toUnionpay(HttpServletRequest request, HttpServletResponse response, Model model){
+		String fee = RequestHandler.getString(request, "fee");
+		String orderfee =  RequestHandler.getString(request, "fee");
+		String paynumber = RequestHandler.getString(request, "paynumber");
+		String cityCode = RequestHandler.getString(request, "cityCode");
+		String loopID = RequestHandler.getString(request, "loopID");
+		String centerSerial = RequestHandler.getString(request, "centerSerial");
+		String serviceType = RequestHandler.getString(request, "ServiceType");
+		try{
+			
+			TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+			
+			String orderNoTime = txPaynumberMsgService.getOrderNo().get("orderNoTime");
+			String ordercode =  txPaynumberMsgService.getOrderNo().get("orderNo");
+			
+			otherService.setOrderMsgToSession(serviceType, null, txWxUser, cityCode, Integer.valueOf(orderfee), loopID, ordercode, paynumber,centerSerial);
+			
+			SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmmss");
+			String html = otherService.toUnionpay(ordercode, fee,orderNoTime,txWxUser);
+			PrintWriter pw = null;
+			try {
+				pw = response.getWriter();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			pw.print(html);
+			pw.flush();
+			pw.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 }

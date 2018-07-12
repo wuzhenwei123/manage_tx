@@ -21,4 +21,6 @@ public interface TxPayOrderService {
     public int updateTxPayOrderById(TxPayOrder txPayOrder);
     
     public int deleteTxPayOrderById(long id);
+    
+    public TxPayOrder getTxPayOrderSumMoney(TxPayOrder txPayOrder);
 }

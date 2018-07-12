@@ -304,49 +304,6 @@ public class IndexService {
     	return id;
     }
     
-    /**
-     * 生成订单
-     * @param mapsss
-     */
-    public Long createOrderOther(Map<String,String> mapsss,String transaction_id,TxWxUser wxUser,String time_end,String accNo,Integer payWay,String orderType,String SettleDate){
-    	Long id = null;
-    	try{
-    		//生成订单
-    		TxPayOrder hOrder = new TxPayOrder();
-    		hOrder.setOrderNumber(mapsss.get("orderId"));
-    		hOrder.setAccNo(accNo);
-    		hOrder.setPayNumber(mapsss.get("paynumber"));
-    		hOrder.setQueryNumber(transaction_id);
-    		hOrder.setUserName(mapsss.get("userName"));
-    		hOrder.setCreateTime(new Date());
-    		logger.info("--------------->"+mapsss.get("money"));
-    		hOrder.setFee(Long.valueOf(mapsss.get("money")));
-    		hOrder.setShopCode(mapsss.get("shopCode"));
-    		hOrder.setRealFee(Long.valueOf(mapsss.get("money")));
-    		hOrder.setPayWay(payWay);
-    		SimpleDateFormat sf11 = new SimpleDateFormat("yyyy-MM-dd");
-    		SimpleDateFormat sf111 = new SimpleDateFormat("yyyy");
-    		if(StringUtils.isNotBlank(SettleDate)){
-    			String source = sf111.format(new Date()) + "-" + SettleDate.substring(0,2)+"-"+SettleDate.substring(2,4);
-    			hOrder.setSettleDate(sf11.parse(source));
-    		}
-    		hOrder.setOrderType(orderType);
-    		
-    		hOrder.setPromoterId(wxUser.getPromoterId());
-    		
-    		hOrder.setPromoterName(wxUser.getPromoterName());
-    		hOrder.setTwoPromoterId(wxUser.getTwoPromoterId());
-    		hOrder.setTwoPromoterName(wxUser.getTwoPromoterName());
-    		
-    		hOrder.setState(1);
-    		hOrder.setUserId(Integer.valueOf(mapsss.get("userId")));
-    		id = txPayOrderDAO.insertTxPayOrder(hOrder);
-    		id = hOrder.getId();
-    	}catch(Exception e){
-    		e.printStackTrace();
-    	}
-    	return id;
-    }
     
     /**
      * 获取银联token
@@ -370,11 +327,11 @@ public class IndexService {
     		contentData.put("channelType", "07");                          //渠道类型07-PC
     		
     		/***商户接入参数***/
-    		contentData.put("merId", ConfigConstants.PAY_MERID);                   			   //商户号码（本商户号码仅做为测试调通交易使用，该商户号配置了需要对敏感信息加密）测试时请改成自己申请的商户号，【自己注册的测试777开头的商户号不支持代收产品】
+    		contentData.put("merId", ConfigConstants.MER_ID);                   			   //商户号码（本商户号码仅做为测试调通交易使用，该商户号配置了需要对敏感信息加密）测试时请改成自己申请的商户号，【自己注册的测试777开头的商户号不支持代收产品】
     		contentData.put("accessType", "0");                            //接入类型，商户接入固定填0，不需修改	
     		contentData.put("orderId", orderId);             			   //商户订单号，8-40位数字字母，不能含“-”或“_”，可以自行定制规则	
     		contentData.put("txnTime", txnTime);         				   //订单发送时间，格式为YYYYMMDDhhmmss，必须取当前时间，否则会报txnTime无效
-    		contentData.put("tokenPayData", "{trId="+ConfigConstants.PAY_TRID+"&tokenType=01}");
+    		contentData.put("tokenPayData", "{trId="+ConfigConstants.TRID+"&tokenType=01}");
 
     		contentData.put("encryptCertId",AcpService.getEncryptCertId());       //加密证书的certId，配置在acp_sdk.properties文件 acpsdk.encryptCert.path属性下
     		

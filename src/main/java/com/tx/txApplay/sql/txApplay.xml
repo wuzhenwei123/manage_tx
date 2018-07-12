@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.txApplay.dao.TxApplayDAO">
+	<resultMap id="baseResultMap" type="com.tx.txApplay.model.TxApplay">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="userId" jdbcType="INTEGER" property="userId" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="fee" jdbcType="BIGINT" property="fee" />
+		<result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
+		<result column="state" jdbcType="INTEGER" property="state" />
+		<result column="batch" jdbcType="VARCHAR" property="batch" />
+		<result column="checkTime" jdbcType="TIMESTAMP" property="checkTime" />
+	</resultMap>
+
+	<!-- 查询参数 -->
+    <sql id="txApplay_column_body">
+         a.id,a.userId,a.name,a.fee,a.createTime,a.state,a.batch,a.checkTime
+    </sql>
+    <!-- 查询条件 -->
+    <sql id="txApplay_select_body">
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="id != null"> and a.id = #{id,jdbcType=BIGINT} </if>
+    		<if test="userId != null"> and a.userId = #{userId,jdbcType=INTEGER} </if>
+    		<if test="name != null"> and a.name = #{name,jdbcType=VARCHAR} </if>
+    		<if test="fee != null"> and a.fee = #{fee,jdbcType=BIGINT} </if>
+    		<if test="createTime != null"> and a.createTime = #{createTime,jdbcType=TIMESTAMP} </if>
+    		<if test="state != null"> and a.state = #{state,jdbcType=INTEGER} </if>
+    		<if test="batch != null"> and a.batch = #{batch,jdbcType=VARCHAR} </if>
+    		<if test="checkTime != null"> and a.checkTime = #{checkTime,jdbcType=TIMESTAMP} </if>
+		</trim>
+    </sql>
+    <select id="getTxApplayById" parameterType="java.lang.Long" resultMap="baseResultMap">
+        SELECT <include refid="txApplay_column_body" />
+        FROM tx_applay a
+		where a.id = #{id}
+    </select>
+    <select id="getTxApplayList" parameterType="com.tx.txApplay.model.TxApplay" resultMap="baseResultMap">
+        SELECT <include refid="txApplay_column_body" />
+        FROM tx_applay a
+		<include refid="txApplay_select_body" />
+    </select>
+    
+    <insert id="insertTxApplay" parameterType="com.tx.txApplay.model.TxApplay">
+        INSERT INTO tx_applay
+        <trim prefix="(" suffix=")" prefixOverrides=",">
+	        	<if test="userId != null"> ,userId </if>
+	        	<if test="name != null"> ,name </if>
+	        	<if test="fee != null"> ,fee </if>
+	        	<if test="createTime != null"> ,createTime </if>
+	        	<if test="state != null"> ,state </if>
+	        	<if test="batch != null"> ,batch </if>
+	        	<if test="checkTime != null"> ,checkTime </if>
+        </trim>
+        <trim prefix="values (" suffix=")" prefixOverrides=",">
+	        	<if test="userId != null"> ,#{userId,jdbcType=INTEGER} </if>
+	        	<if test="name != null"> ,#{name,jdbcType=VARCHAR} </if>
+	        	<if test="fee != null"> ,#{fee,jdbcType=BIGINT} </if>
+	        	<if test="createTime != null"> ,#{createTime,jdbcType=TIMESTAMP} </if>
+	        	<if test="state != null"> ,#{state,jdbcType=INTEGER} </if>
+	        	<if test="batch != null"> ,#{batch,jdbcType=VARCHAR} </if>
+	        	<if test="checkTime != null"> ,#{checkTime,jdbcType=TIMESTAMP} </if>
+		 </trim>
+        <selectKey keyProperty="id" resultType="long">
+			SELECT @@IDENTITY AS id 
+		</selectKey>
+    </insert>
+    <update id="updateTxApplayById" parameterType="com.tx.txApplay.model.TxApplay">
+        UPDATE tx_applay
+        <set>
+        		<if test="userId != null"> userId = #{userId,jdbcType=INTEGER}, </if>
+        		<if test="name != null"> name = #{name,jdbcType=VARCHAR}, </if>
+        		<if test="fee != null"> fee = #{fee,jdbcType=BIGINT}, </if>
+        		<if test="createTime != null"> createTime = #{createTime,jdbcType=TIMESTAMP}, </if>
+        		<if test="state != null"> state = #{state,jdbcType=INTEGER}, </if>
+        		<if test="batch != null"> batch = #{batch,jdbcType=VARCHAR}, </if>
+        		<if test="checkTime != null"> checkTime = #{checkTime,jdbcType=TIMESTAMP}, </if>
+        </set>
+    	where id = #{id}
+    </update>
+    <delete id="deleteTxApplayById">
+        delete from tx_applay where id = #{id}
+    </delete>
+    
+    <select id="getTxApplayMoney" parameterType="com.tx.txApplay.model.TxApplay" resultMap="baseResultMap">
+        SELECT if(sun(a.fee) is null,0,sun(a.fee)) as fee
+        FROM tx_applay a
+		<include refid="txApplay_select_body" />
+    </select>
+</mapper>

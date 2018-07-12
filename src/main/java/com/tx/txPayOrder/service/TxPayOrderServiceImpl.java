@@ -43,4 +43,8 @@ public class TxPayOrderServiceImpl implements TxPayOrderService{
     public int deleteTxPayOrderById(long id){
         return txPayOrderDAO.deleteTxPayOrderById(id);
     }
+    
+    public TxPayOrder getTxPayOrderSumMoney(TxPayOrder txPayOrder){
+    	return txPayOrderDAO.getTxPayOrderSumMoney(txPayOrder);
+    }
 }

@@ -13,6 +13,8 @@ public interface TxPayOrderDAO{
 
 	public TxPayOrder getTxPayOrderById(long id);
 	
+	public TxPayOrder getTxPayOrderSumMoney(TxPayOrder txPayOrder);
+	
 	public TxPayOrder getTxPayOrderByOrderNumber(String orderNumber);
 
     public long insertTxPayOrder(TxPayOrder txPayOrder);

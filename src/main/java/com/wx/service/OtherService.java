@@ -33,7 +33,6 @@ import com.unionpay.acp.demo.DemoBase;
 import com.unionpay.acp.sdk.AcpService;
 import com.unionpay.acp.sdk.LogUtil;
 import com.unionpay.acp.sdk.SDKConstants;
-import com.wx.service.IndexService.ThreadOrderExtends;
 
 @Service
 public class OtherService {
@@ -98,11 +97,11 @@ public class OtherService {
     		contentData.put("channelType", "07");                          //渠道类型07-PC
     		
     		/***商户接入参数***/
-    		contentData.put("merId", ConfigConstants.PAY_MERID);                   			   //商户号码（本商户号码仅做为测试调通交易使用，该商户号配置了需要对敏感信息加密）测试时请改成自己申请的商户号，【自己注册的测试777开头的商户号不支持代收产品】
+    		contentData.put("merId", ConfigConstants.MER_ID);                   			   //商户号码（本商户号码仅做为测试调通交易使用，该商户号配置了需要对敏感信息加密）测试时请改成自己申请的商户号，【自己注册的测试777开头的商户号不支持代收产品】
     		contentData.put("accessType", "0");                            //接入类型，商户接入固定填0，不需修改	
     		contentData.put("orderId", orderId);             			   //商户订单号，8-40位数字字母，不能含“-”或“_”，可以自行定制规则	
     		contentData.put("txnTime", txnTime);         				   //订单发送时间，格式为YYYYMMDDhhmmss，必须取当前时间，否则会报txnTime无效
-    		contentData.put("tokenPayData", "{trId="+ConfigConstants.PAY_TRID+"&tokenType=01}");
+    		contentData.put("tokenPayData", "{trId="+ConfigConstants.TRID+"&tokenType=01}");
 
     		contentData.put("encryptCertId",AcpService.getEncryptCertId());       //加密证书的certId，配置在acp_sdk.properties文件 acpsdk.encryptCert.path属性下
     		
@@ -568,4 +567,261 @@ public class OtherService {
 			}
 			return map;
 		}
+		
+		/**
+	     * 跳转银联
+	     * @param merId
+	     * @param orderId
+	     * @param txnTime
+	     * @return
+	     */
+	    public String toUnionpay(String merOrderId, String merTxnAmt, String merTxnTime,TxWxUser txWxUser){
+	    	String reqMessage = null;
+	    	try{
+	    		Map<String, String> contentData = new HashMap<String, String>();
+
+	    		/***银联全渠道系统，产品参数，除了encoding自行选择外其他不需修改***/
+	    		contentData.put("version", "1.0.0");                  //版本号
+	    		contentData.put("encoding", DemoBase.encoding);            //字符集编码 可以使用UTF-8,GBK两种方式
+	    		contentData.put("signMethod", "01"); //签名方法
+	    		contentData.put("bizType", "000201");                           //交易子类型 00-默认开通
+	    		contentData.put("accessType", "0");                           //交易子类型 00-默认开通
+	    		
+	    		/***商户接入参数***/
+	    		contentData.put("merId", ConfigConstants.UNION_MERID);                   			   //商户号码（本商户号码仅做为测试调通交易使用，该商户号配置了需要对敏感信息加密）测试时请改成自己申请的商户号，【自己注册的测试777开头的商户号不支持代收产品】
+	    		contentData.put("merOrderId", merOrderId);             			   //商户订单号，8-40位数字字母，不能含“-”或“_”，可以自行定制规则	
+	    		contentData.put("merTxnTime", merTxnTime);         				   //订单发送时间，格式为YYYYMMDDhhmmss，必须取当前时间，否则会报txnTime无效
+	    		contentData.put("merTxnAmt", merTxnAmt);         				   //订单发送时间，格式为YYYYMMDDhhmmss，必须取当前时间，否则会报txnTime无效
+	    		contentData.put("currencyCode", "156");         				   //订单发送时间，格式为YYYYMMDDhhmmss，必须取当前时间，否则会报txnTime无效
+	    		contentData.put("tokenPayData", "{trId="+ConfigConstants.UNION_TRID+"&tokenType=01}");
+
+	    		contentData.put("encryptCertId",AcpService.getEncryptCertId());       //加密证书的certId，配置在acp_sdk.properties文件 acpsdk.encryptCert.path属性下
+	    		
+	    		contentData.put("frontUrl", ConfigConstants.UNION_FRONTURL);
+	    		
+	    		contentData.put("backUrl", ConfigConstants.UNION_BACKURL);
+	    	
+	    		/**请求参数设置完毕，以下对请求参数进行签名并生成html表单，将表单写入浏览器跳转打开银联页面**/
+	    		Map<String, String> reqData = AcpService.sign(contentData,DemoBase.encoding);  			 //报文中certId,signature的值是在signData方法中获取并自动赋值的，只要证书配置正确即可。
+	    		reqMessage = AcpService.createAutoFormHtml(ConfigConstants.UNION_FRONTREQ,reqData,DemoBase.encoding);     //生成自动跳转的Html表单
+	    		logger.info("跳转银联支付接口：");
+	    		logger.info("http://114.113.238.50:18123/trans/frontReq");
+	    		logger.info("发送报文");
+	    		logger.info(reqData);
+	    		logger.info("打印请求HTML，此为请求报文，为联调排查问题的依据："+reqMessage);
+	    		payLogCutter.filesMng(11, 1, reqData.toString(), txWxUser.getId(), txWxUser.getMobile(), txWxUser.getRealName(), null);
+	    	}catch(Exception e){
+	    		e.printStackTrace();
+	    	}
+	    	return reqMessage;
+	    }
+	    
+	    
+	    /**
+	     * 银联支付(无token)回调
+	     * @param request
+	     * @return
+	     */
+	    public String union_backurl_other(HttpServletRequest req,String traceNo){
+	    	String orderId = null;
+	    	try{
+	    		
+	    		String encoding = req.getParameter(SDKConstants.param_encoding);
+	    		// 获取银联通知服务器发送的后台通知参数
+	    		Map<String, String> reqParam = getAllRequestParam(req);
+	    		
+	    		LogUtil.printRequestLog(reqParam);
+	    		
+	    		Map<String, String> valideData = null;
+	    		if (null != reqParam && !reqParam.isEmpty()) {
+	    			Iterator<Entry<String, String>> it = reqParam.entrySet().iterator();
+	    			valideData = new HashMap<String, String>(reqParam.size());
+	    			while (it.hasNext()) {
+	    				Entry<String, String> e = it.next();
+	    				String key = (String) e.getKey();
+	    				String value = (String) e.getValue();
+	    				
+	    				valideData.put(key, value);
+	    			}
+	    		}
+	    		logger.info("--------------银联支付(无token)后台回调-------------->"+valideData);
+	    		if (!AcpService.validate(valideData, encoding)) {
+	    			logger.info("银联支付(无token)回调验证失败-------------》");
+	    			//验签失败，需解决验签问题
+	    		} else {
+	    			
+	    			orderId =valideData.get("merOrderId"); //获取后台通知的数据，其他字段也可用类似方式获取
+	        		
+	        		String accNo = valideData.get("accNo");
+	    			if(null!=accNo){
+	    				accNo = AcpService.decryptData(accNo, "UTF-8");
+	    				logger.info("accNo明文: "+ accNo);
+	    			}
+	    			
+	    			String merTxnTime = valideData.get("merTxnTime");
+	    			String queryId = valideData.get("queryId");
+	    			String txnType = valideData.get("txnType");
+	    			String settleDate = valideData.get("settleDate");
+	    			Map<String,String> mapsss = SessionName.maporder.get(orderId);
+	    			
+	    			String respCode = valideData.get("respCode");
+	    			if("00".equals(respCode)){
+	    				if("01".equals(txnType)){
+	    					String orderIdStr111 = SessionName.maporderNo.get(orderId);
+	        				System.out.println("-------------orderIdStr111--------------"+orderIdStr111);
+	    					if(!StringUtils.isNotBlank(orderIdStr111)){
+	    						SessionName.maporderNo.put(orderId, orderId);
+	    						logger.info("---------------创建订单---------->");
+	    						TxWxUser txWxUser = txWxUserDAO.getTxWxUserById(Integer.valueOf(mapsss.get("userId")));
+	    						Long id = createOrderOther(mapsss, queryId, txWxUser, settleDate,accNo,4,"002",settleDate);
+	    						logger.info("---------------创建订单---------->"+id);
+	    						if(id!=null&&id>0){
+	    							logger.info("------------------------->"+mapsss);
+	    	    					//启动多线程查单
+	    							ThreadOrderExtends thread1 = new ThreadOrderExtends(mapsss.get("paynumber"), mapsss.get("cityCode"), mapsss.get("orderId"), mapsss.get("loopID"), mapsss.get("serviceType"), mapsss.get("bankCardNo"), valideData.get("queryId"), traceNo, mapsss.get("money"), settleDate, 3,mapsss.get("centerSerial"));
+	    	    					thread1.start();
+	    						}
+	    						payLogCutter.filesMng(11, 2, valideData.toString(), null, null, null, valideData.get("accNo"));
+	    					}
+	    				}else if("04".equals(txnType)){
+	    					logger.info("退费回调-------------》"+valideData);
+	        				String origQryId = valideData.get("origQryId");
+	        				TxPayOrder hOrder = txPayOrderDAO.getTxPayOrderByOrderNumber(origQryId);
+	        				hOrder.setState(2);
+	        				txPayOrderDAO.updateTxPayOrderById(hOrder);
+	    				}
+	    			}else if(!"00".equals(respCode)){
+	    				if("01".equals(txnType)){
+	        				TxPayOrder hOrder = txPayOrderDAO.getTxPayOrderByOrderNumber(orderId);
+	        				if(hOrder!=null&&hOrder.getId()>0){
+	        					hOrder.setState(0);
+	            				txPayOrderDAO.updateTxPayOrderById(hOrder);
+	        				}
+	    				}
+	    			}
+	    		}
+	    		logger.info("异步银联支付(无token)回调后台接收报文");
+	    		logger.info("--------------银联支付(无token)回调后台回调-------------->"+valideData);
+	    	}catch(Exception e){
+	    		e.printStackTrace();
+	    	}
+	    	return orderId;
+	    }
+	    
+	    
+	    /**
+	     * 银联支付(无token)前台回调
+	     * @param request
+	     * @return
+	     */
+	    public String union_fronturl_other(HttpServletRequest req,String traceNo){
+	    	String orderId = null;
+	    	try{
+	    		
+	    		String encoding = req.getParameter(SDKConstants.param_encoding);
+	    		// 获取银联通知服务器发送的后台通知参数
+	    		Map<String, String> reqParam = getAllRequestParam(req);
+	    		
+	    		LogUtil.printRequestLog(reqParam);
+	    		
+	    		Map<String, String> valideData = null;
+	    		if (null != reqParam && !reqParam.isEmpty()) {
+	    			Iterator<Entry<String, String>> it = reqParam.entrySet().iterator();
+	    			valideData = new HashMap<String, String>(reqParam.size());
+	    			while (it.hasNext()) {
+	    				Entry<String, String> e = it.next();
+	    				String key = (String) e.getKey();
+	    				String value = (String) e.getValue();
+	    				
+	    				valideData.put(key, value);
+	    			}
+	    		}
+	    		logger.info("--------------银联支付(无token)前台回调-------------->"+valideData);
+	    		if (!AcpService.validate(valideData, encoding)) {
+	    			logger.info("银联支付(无token)回调验证失败-------------》");
+	    			//验签失败，需解决验签问题
+	    		} else {
+	    			orderId = valideData.get("merOrderId");
+	        		
+	        		String accNo = valideData.get("accNo");
+	    			if(null!=accNo){
+	    				accNo = AcpService.decryptData(accNo, "UTF-8");
+	    				logger.info("accNo明文: "+ accNo);
+	    			}
+	    			
+	    			String merTxnTime = valideData.get("merTxnTime");
+	    			String queryId = valideData.get("queryId");
+	    			String txnType = valideData.get("txnType");
+	    			String settleDate = valideData.get("settleDate");
+	    			Map<String,String> mapsss = SessionName.maporder.get(orderId);
+	    			
+	    			String respCode = valideData.get("respCode");
+	    			if("00".equals(respCode)&&"01".equals(txnType)){
+	    				String orderIdStr111 = SessionName.maporderNo.get(orderId);
+	    				System.out.println("-------------orderIdStr111--------------"+orderIdStr111);
+						if(!StringUtils.isNotBlank(orderIdStr111)){
+							SessionName.maporderNo.put(orderId, orderId);
+							TxWxUser txWxUser = txWxUserDAO.getTxWxUserById(Integer.valueOf(mapsss.get("userId")));
+							Long id = createOrderOther(mapsss, queryId, txWxUser, settleDate,accNo,4,"002",settleDate);
+							if(id!=null&&id>0){
+								logger.info("------------------------->"+mapsss);
+		    					//启动多线程查单
+								ThreadOrderExtends thread1 = new ThreadOrderExtends(mapsss.get("paynumber"), mapsss.get("cityCode"), mapsss.get("orderId"), mapsss.get("loopID"), mapsss.get("serviceType"), mapsss.get("bankCardNo"), valideData.get("queryId"), traceNo, mapsss.get("money"), settleDate, 3,mapsss.get("centerSerial"));
+		    					thread1.start();
+							}
+							payLogCutter.filesMng(11, 2, valideData.toString(), null, null, null, valideData.get("accNo"));
+						}
+	    			}
+	    		}
+	    		logger.info("异步银联支付(无token)前台接收报文");
+	    		logger.info("--------------银联支付(无token)前台回调-------------->"+valideData);
+	    	}catch(Exception e){
+	    		e.printStackTrace();
+	    	}
+	    	return orderId;
+	    }
+	    
+	    /**
+	     * 生成订单
+	     * @param mapsss
+	     */
+	    public Long createOrderOther(Map<String,String> mapsss,String transaction_id,TxWxUser wxUser,String time_end,String accNo,Integer payWay,String orderType,String SettleDate){
+	    	Long id = null;
+	    	try{
+	    		//生成订单
+	    		TxPayOrder hOrder = new TxPayOrder();
+	    		hOrder.setOrderNumber(mapsss.get("orderId"));
+	    		hOrder.setAccNo(accNo);
+	    		hOrder.setPayNumber(mapsss.get("paynumber"));
+	    		hOrder.setQueryNumber(transaction_id);
+	    		hOrder.setUserName(mapsss.get("userName"));
+	    		hOrder.setCreateTime(new Date());
+	    		logger.info("--------------->"+mapsss.get("money"));
+	    		hOrder.setFee(Long.valueOf(mapsss.get("money")));
+	    		hOrder.setShopCode(mapsss.get("shopCode"));
+	    		hOrder.setRealFee(Long.valueOf(mapsss.get("money")));
+	    		hOrder.setPayWay(payWay);
+	    		SimpleDateFormat sf11 = new SimpleDateFormat("yyyy-MM-dd");
+	    		SimpleDateFormat sf111 = new SimpleDateFormat("yyyy");
+	    		if(StringUtils.isNotBlank(SettleDate)){
+	    			String source = sf111.format(new Date()) + "-" + SettleDate.substring(0,2)+"-"+SettleDate.substring(2,4);
+	    			hOrder.setSettleDate(sf11.parse(source));
+	    		}
+	    		hOrder.setOrderType(orderType);
+	    		
+	    		hOrder.setPromoterId(wxUser.getPromoterId());
+	    		
+	    		hOrder.setPromoterName(wxUser.getPromoterName());
+	    		hOrder.setTwoPromoterId(wxUser.getTwoPromoterId());
+	    		hOrder.setTwoPromoterName(wxUser.getTwoPromoterName());
+	    		
+	    		hOrder.setState(1);
+	    		hOrder.setUserId(Integer.valueOf(mapsss.get("userId")));
+	    		id = txPayOrderDAO.insertTxPayOrder(hOrder);
+	    		id = hOrder.getId();
+	    	}catch(Exception e){
+	    		e.printStackTrace();
+	    	}
+	    	return id;
+	    }
 }

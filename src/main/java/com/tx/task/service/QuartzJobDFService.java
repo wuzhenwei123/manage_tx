@@ -69,7 +69,7 @@ public class QuartzJobDFService implements Job {
 		System.out.println("----->"+arg0.getJobDetail().getName());
 		orderNo = arg0.getJobDetail().getName().split("_")[0];
 		txnTime = arg0.getJobDetail().getName().split("_")[1];
-		String xwMerId = arg0.getJobDetail().getName().split("_")[3];
+		String xwMerId = arg0.getJobDetail().getName().split("_")[2];
 		QuartzManager.removeJob(arg0.getJobDetail().getName()); 
 		try {
 			Map<String, String> data = new HashMap<String, String>();

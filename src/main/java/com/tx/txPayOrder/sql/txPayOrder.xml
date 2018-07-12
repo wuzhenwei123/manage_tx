@@ -166,4 +166,10 @@
     <delete id="deleteTxPayOrderById">
         delete from tx_pay_order where id = #{id}
     </delete>
+    
+    <select id="getTxPayOrderSumMoney" parameterType="com.tx.txPayOrder.model.TxPayOrder" resultMap="baseResultMap">
+        SELECT if(sum(oneRate) is null,0,sum(oneRate)) as oneRate,if(sum(twoRate) is null,0,sum(twoRate)) as twoRate
+        FROM tx_pay_order a
+		<include refid="txPayOrder_select_body" />
+    </select>
 </mapper>

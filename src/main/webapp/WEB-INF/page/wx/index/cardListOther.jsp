@@ -16,7 +16,7 @@
             <ul>
             	<li class="clear" accNo="addcard">
                     <div class="fl">
-                        <img src="/images/wx/bank_logo.png" alt="">
+                        <img src="${ctx}/images/wx/bank_logo.png" alt="">
                        	 使用其他银行卡
                     </div>
                     <i class="fr"></i>
@@ -24,7 +24,7 @@
             	<c:forEach items="${list}" var="card">
             		<li class="clear" accNo="${card.accNo}">
 	                    <div class="fl">
-	                        <img src="/images/wx/bank_logo.png" alt="">
+	                        <img src="${ctx}/images/wx/bank_logo.png" alt="">
 	                        **** **** **** **** ${card.endCode}
 	                    </div>
 	                    <i class="fr"></i>

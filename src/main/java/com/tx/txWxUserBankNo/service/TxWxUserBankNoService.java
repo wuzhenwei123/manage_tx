@@ -108,4 +108,19 @@ public interface TxWxUserBankNoService {
      * @return
      */
     public Map<String, String> xwDF(TxWxUser wxUser,String orderId,String merOrderTime,TxWxUserBankNo txWxUserBankNo,String txnAmt,String smsCode,Integer backCard,Integer flag,Integer xwDFFee);
+    
+    /**
+     * 某一笔订单提前提现
+     * @param wxUser
+     * @param orderId
+     * @param merOrderTime
+     * @param txWxUserBankNo
+     * @param txnAmt
+     * @param smsCode
+     * @param backCard
+     * @param flag
+     * @param xwDFFee
+     * @return
+     */
+    public Map<String, String> xwDFTQ(TxWxUser wxUser,String orderId,String merOrderTime,TxWxUserBankNo txWxUserBankNo,String txnAmt,String merOrderId,Integer backCard,Integer flag,Integer xwDFFee);
 }

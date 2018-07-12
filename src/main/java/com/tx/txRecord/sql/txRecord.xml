@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.txRecord.dao.TxRecordDAO">
+	<resultMap id="baseResultMap" type="com.tx.txRecord.model.TxRecord">
+		<id column="id" jdbcType="BIGINT" property="id" />
+		<result column="userId" jdbcType="INTEGER" property="userId" />
+		<result column="fee" jdbcType="BIGINT" property="fee" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="accNo" jdbcType="VARCHAR" property="accNo" />
+		<result column="state" jdbcType="INTEGER" property="state" />
+		<result column="rspCode" jdbcType="VARCHAR" property="rspCode" />
+		<result column="rspData" jdbcType="VARCHAR" property="rspData" />
+		<result column="applyId" jdbcType="BIGINT" property="applyId" />
+	</resultMap>
+
+	<!-- 查询参数 -->
+    <sql id="txRecord_column_body">
+         a.id,a.userId,a.fee,a.name,a.accNo,a.state,a.rspCode,a.rspData,a.applyId
+    </sql>
+    <!-- 查询条件 -->
+    <sql id="txRecord_select_body">
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="id != null"> and a.id = #{id,jdbcType=BIGINT} </if>
+    		<if test="userId != null"> and a.userId = #{userId,jdbcType=INTEGER} </if>
+    		<if test="fee != null"> and a.fee = #{fee,jdbcType=BIGINT} </if>
+    		<if test="name != null"> and a.name = #{name,jdbcType=VARCHAR} </if>
+    		<if test="accNo != null"> and a.accNo = #{accNo,jdbcType=VARCHAR} </if>
+    		<if test="state != null"> and a.state = #{state,jdbcType=INTEGER} </if>
+    		<if test="rspCode != null"> and a.rspCode = #{rspCode,jdbcType=VARCHAR} </if>
+    		<if test="rspData != null"> and a.rspData = #{rspData,jdbcType=VARCHAR} </if>
+    		<if test="applyId != null"> and a.applyId = #{applyId,jdbcType=BIGINT} </if>
+		</trim>
+    </sql>
+    <select id="getTxRecordById" parameterType="java.lang.Long" resultMap="baseResultMap">
+        SELECT <include refid="txRecord_column_body" />
+        FROM tx_record a
+		where a.id = #{id}
+    </select>
+    <select id="getTxRecordList" parameterType="com.tx.txRecord.model.TxRecord" resultMap="baseResultMap">
+        SELECT <include refid="txRecord_column_body" />
+        FROM tx_record a
+		<include refid="txRecord_select_body" />
+    </select>
+    
+    <insert id="insertTxRecord" parameterType="com.tx.txRecord.model.TxRecord">
+        INSERT INTO tx_record
+        <trim prefix="(" suffix=")" prefixOverrides=",">
+	        	<if test="userId != null"> ,userId </if>
+	        	<if test="fee != null"> ,fee </if>
+	        	<if test="name != null"> ,name </if>
+	        	<if test="accNo != null"> ,accNo </if>
+	        	<if test="state != null"> ,state </if>
+	        	<if test="rspCode != null"> ,rspCode </if>
+	        	<if test="rspData != null"> ,rspData </if>
+	        	<if test="applyId != null"> ,applyId </if>
+        </trim>
+        <trim prefix="values (" suffix=")" prefixOverrides=",">
+	        	<if test="userId != null"> ,#{userId,jdbcType=INTEGER} </if>
+	        	<if test="fee != null"> ,#{fee,jdbcType=BIGINT} </if>
+	        	<if test="name != null"> ,#{name,jdbcType=VARCHAR} </if>
+	        	<if test="accNo != null"> ,#{accNo,jdbcType=VARCHAR} </if>
+	        	<if test="state != null"> ,#{state,jdbcType=INTEGER} </if>
+	        	<if test="rspCode != null"> ,#{rspCode,jdbcType=VARCHAR} </if>
+	        	<if test="rspData != null"> ,#{rspData,jdbcType=VARCHAR} </if>
+	        	<if test="applyId != null"> ,#{applyId,jdbcType=BIGINT} </if>
+		 </trim>
+        <selectKey keyProperty="id" resultType="long">
+			SELECT @@IDENTITY AS id 
+		</selectKey>
+    </insert>
+    <update id="updateTxRecordById" parameterType="com.tx.txRecord.model.TxRecord">
+        UPDATE tx_record
+        <set>
+        		<if test="userId != null"> userId = #{userId,jdbcType=INTEGER}, </if>
+        		<if test="fee != null"> fee = #{fee,jdbcType=BIGINT}, </if>
+        		<if test="name != null"> name = #{name,jdbcType=VARCHAR}, </if>
+        		<if test="accNo != null"> accNo = #{accNo,jdbcType=VARCHAR}, </if>
+        		<if test="state != null"> state = #{state,jdbcType=INTEGER}, </if>
+        		<if test="rspCode != null"> rspCode = #{rspCode,jdbcType=VARCHAR}, </if>
+        		<if test="rspData != null"> rspData = #{rspData,jdbcType=VARCHAR}, </if>
+        		<if test="applyId != null"> applyId = #{applyId,jdbcType=BIGINT}, </if>
+        </set>
+    	where id = #{id}
+    </update>
+    <delete id="deleteTxRecordById">
+        delete from tx_record where id = #{id}
+    </delete>
+    
+    
+    <select id="getTxRecordMoney" parameterType="com.tx.txRecord.model.TxRecord" resultMap="baseResultMap">
+        SELECT if(sum(a.fee) is null,0,sum(a.fee)) as fee
+        FROM tx_record a
+		<include refid="txRecord_select_body" />
+    </select>
+</mapper>

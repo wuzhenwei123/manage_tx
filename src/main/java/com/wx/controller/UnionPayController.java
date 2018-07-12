@@ -560,7 +560,7 @@ public class UnionPayController extends BaseController{
 					}
 					order.setBackCard(backCard);
 					txSellingOrderService.updateTxSellingOrderById(order);
-					Map<String, String> map = txWxUserBankNoService.xwDF(wxUser, orderId, merOrderTime, txWxUserBankNo, (order.getMoney()-txnAmtDF)+"", null, order.getBackCard(), listT.get(0).getTrem(),txnAmtDF);
+					Map<String, String> map = txWxUserBankNoService.xwDFTQ(wxUser, orderId, merOrderTime, txWxUserBankNo, (order.getMoney()-txnAmtDF)+"", order.getCode(), order.getBackCard(), listT.get(0).getTrem(),txnAmtDF);
 					if(map!=null&&"00".equals(map.get("respCode"))){
 						writeSuccessMsg("退卡成功！", null, response);
 					}else{

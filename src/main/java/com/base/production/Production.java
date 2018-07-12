@@ -31,9 +31,9 @@ public class Production {
 		JDBCTemplate.USERNAME = "root";
 		JDBCTemplate.PASSWORD = "Mievie6004";
 		
-		String projectRoot = "G:\\demo\\manage_tx";
-		String domainName = "txBanner";
-		String tableName = "tx_banner";
+		String projectRoot = "E:\\gitdemo\\manage_tx";
+		String domainName = "txApplay";
+		String tableName = "tx_applay";
 		String packName = "com.tx";
 		String description = "@author	wzw";
 		String encoding = "UTF-8";
