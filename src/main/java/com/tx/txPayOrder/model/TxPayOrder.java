@@ -62,7 +62,14 @@ public class TxPayOrder extends BaseModel implements java.io.Serializable{
 	private Date settleDate;
 	private String refundNumber;
 	private String shopCode;
+	private String cityCode;
 		
+	public String getCityCode() {
+		return cityCode;
+	}
+	public void setCityCode(String cityCode) {
+		this.cityCode = cityCode;
+	}
 	public String getShopCode() {
 		return shopCode;
 	}

@@ -74,7 +74,7 @@ public class IndexService {
 	 * @param mapresult
 	 * @param txWxUser
 	 */
-	public void setOrderMsgToSession(Map<String, Object> mapresult,TxWxUser txWxUser,String shopCode,Integer money2,String IpAddr,String PaymentInfo,String paynumber){
+	public void setOrderMsgToSession(Map<String, Object> mapresult,TxWxUser txWxUser,String shopCode,Integer money2,String IpAddr,String PaymentInfo,String paynumber,String cityCode){
 		Map<String,String> mapssss = new HashMap<String,String>();
 		mapssss.put("bujia", (String)mapresult.get("bujia"));
 		mapssss.put("tradeName", (String)mapresult.get("username1"));
@@ -82,7 +82,7 @@ public class IndexService {
 		mapssss.put("chajia", (String)mapresult.get("chajia"));
 		mapssss.put("customerNumber", (String)mapresult.get("customerNumber"));
 		mapssss.put("centerInfo", (String)mapresult.get("centerInfo"));
-	
+		mapssss.put("cityCode",cityCode);
 		mapssss.put("shopCode", shopCode);
 		mapssss.put("money", money2+"");
 		mapssss.put("orderId", PaymentInfo);
@@ -298,6 +298,7 @@ public class IndexService {
 			hOrder.setState(1);
 			hOrder.setUserId(Integer.valueOf(mapsss.get("userId")));
 			id = txPayOrderDAO.insertTxPayOrder(hOrder);
+			id = hOrder.getId();
     	}catch(Exception e){
     		e.printStackTrace();
     	}
@@ -641,7 +642,7 @@ public class IndexService {
 	 * @param request
 	 * @return
 	 */
-	public static Map<String, String> getAllRequestParam(final HttpServletRequest request) {
+	public Map<String, String> getAllRequestParam(final HttpServletRequest request) {
 		Map<String, String> res = new HashMap<String, String>();
 		Enumeration<?> temp = request.getParameterNames();
 		if (null != temp) {

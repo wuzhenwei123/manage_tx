@@ -9,8 +9,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,7 +45,11 @@ import com.tx.txWxUser.model.TxWxUser;
 import com.tx.txWxUser.service.TxWxUserService;
 import com.tx.txWxUserBankNo.model.TxWxUserBankNo;
 import com.tx.txWxUserBankNo.service.TxWxUserBankNoService;
+import com.unionpay.acp.sdk.AcpService;
+import com.unionpay.acp.sdk.LogUtil;
+import com.unionpay.acp.sdk.SDKConstants;
 import com.wx.service.IndexService;
+import com.wx.service.OtherService;
 
 @Controller
 @RequestMapping("/index")
@@ -68,6 +75,8 @@ public class IndexController extends BaseController{
 	private TxPayOrderService txPayOrderService = null;
 	@Autowired
 	private SendCodeDFCutter sendCodeDFCutter = null;
+	@Autowired
+	private OtherService otherService = null;
 	
 	
 	
@@ -274,7 +283,7 @@ public class IndexController extends BaseController{
 				}
 				model.addAttribute("mapresult", mapresult);
 				model.addAttribute("PaymentInfo", map.get("PaymentInfo"));
-				indexService.setOrderMsgToSession(mapresult, txWxUser, shopCode, money2, super.getIp(request), (String)map.get("PaymentInfo"),paynumber);
+				indexService.setOrderMsgToSession(mapresult, txWxUser, shopCode, money2, super.getIp(request), (String)map.get("PaymentInfo"),paynumber,"010");
 			}else{
 				model.addAttribute("shopCode", shopCode);
 				model.addAttribute("resultCode", map.get("resultCode"));
@@ -919,8 +928,35 @@ public class IndexController extends BaseController{
 	public String union_fronturl_wap(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
 		super.getJsticket(request);
 		try{
-			//获取订单流水号
-			String ordercode = indexService.union_fronturl(request);
+			String ordercode = null;
+			String encoding = request.getParameter(SDKConstants.param_encoding);
+    		// 获取银联通知服务器发送的后台通知参数
+    		Map<String, String> reqParam = indexService.getAllRequestParam(request);
+    		LogUtil.printRequestLog(reqParam);
+    		Map<String, String> valideData = null;
+    		if (null != reqParam && !reqParam.isEmpty()) {
+    			Iterator<Entry<String, String>> it = reqParam.entrySet().iterator();
+    			valideData = new HashMap<String, String>(reqParam.size());
+    			while (it.hasNext()) {
+    				Entry<String, String> e = it.next();
+    				String key = (String) e.getKey();
+    				String value = (String) e.getValue();
+    				
+    				valideData.put(key, value);
+    			}
+    		}
+    		logger.info("--------------银联支付(无token)前台回调-------------->"+valideData);
+    		if (!AcpService.validate(valideData, encoding)) {
+    			logger.info("银联支付(无token)回调验证失败-------------》");
+    		} else {
+    			String orderId = valideData.get("merOrderId");
+    			Map<String,String> mapsss = SessionName.maporder.get(orderId);
+    			if("010".equals(mapsss.get("cityCode"))){
+    				ordercode = indexService.union_fronturl(request);
+    			}else{
+    				ordercode = otherService.union_fronturl_other(request,txBusinessTypeService.getTraceNo());
+    			}
+    		}
 			if(StringUtils.isNotBlank(ordercode)){
 				
 				TxPayOrder hOrder = txPayOrderService.getTxPayOrderByOrderNumber(ordercode);
@@ -972,7 +1008,36 @@ public class IndexController extends BaseController{
 	 */
 	@RequestMapping(value = "/union_backurl")
 	public String union_backurl_wap(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
-		indexService.union_backurl(request);
+		try{
+			String encoding = request.getParameter(SDKConstants.param_encoding);
+    		Map<String, String> reqParam = indexService.getAllRequestParam(request);
+    		LogUtil.printRequestLog(reqParam);
+    		Map<String, String> valideData = null;
+    		if (null != reqParam && !reqParam.isEmpty()) {
+    			Iterator<Entry<String, String>> it = reqParam.entrySet().iterator();
+    			valideData = new HashMap<String, String>(reqParam.size());
+    			while (it.hasNext()) {
+    				Entry<String, String> e = it.next();
+    				String key = (String) e.getKey();
+    				String value = (String) e.getValue();
+    				valideData.put(key, value);
+    			}
+    		}
+    		logger.info("--------------银联支付(无token)后台回调-------------->"+valideData);
+    		if (!AcpService.validate(valideData, encoding)) {
+    			logger.info("银联支付(无token)回调验证失败-------------》");
+    		} else {
+    			String orderId =valideData.get("merOrderId");
+    			Map<String,String> mapsss = SessionName.maporder.get(orderId);
+    			if("010".equals(mapsss.get("cityCode"))){
+    				indexService.union_backurl(request);
+    			}else{
+    				otherService.union_backurl_other(request,txBusinessTypeService.getTraceNo());
+    			}
+    		}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 		return  null;
 	}
 	

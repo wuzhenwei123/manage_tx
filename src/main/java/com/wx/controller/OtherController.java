@@ -824,4 +824,74 @@ public class OtherController extends BaseController{
 		
 		return null;
 	}
+	
+	
+	/**
+	 * wep支付前台回调
+	 * 
+	 * @param response
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/union_fronturl_other")
+	public String union_fronturl_wap(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
+		super.getJsticket(request);
+		try{
+			//获取订单流水号
+			String ordercode = otherService.union_fronturl_other(request,txBusinessTypeService.getTraceNo());
+			if(StringUtils.isNotBlank(ordercode)){
+				
+				TxPayOrder hOrder = txPayOrderService.getTxPayOrderByOrderNumber(ordercode);
+				
+				Map<String,String> mapssss = SessionName.maporder.get(ordercode);
+				model.addAttribute("shopCode", mapssss.get("shopCode"));
+				
+				SimpleDateFormat sf11 = new SimpleDateFormat("yyyyMMddHHmmss");
+				Map<String, String> rspData = indexService.queryPay_wap(ordercode, sf11.format(hOrder.getCreateTime()));
+				System.out.println(rspData.get("respCode"));
+				System.out.println(rspData.get("origRespCode"));
+				if(rspData!=null&&"00".equals(rspData.get("respCode"))&&"00".equals(rspData.get("origRespCode"))){
+					String transaction_id = rspData.get("queryId");
+					model.addAttribute("transaction_id", transaction_id);
+				}else{
+					model.addAttribute("msg", "交易失败");
+					model.addAttribute("resultCode", rspData.get("origRespCode"));
+					return "/wx/index/payFail";
+				}
+				
+				request.setAttribute("customerNumber", hOrder.getOrderNumber());
+				if("3100".equals(mapssss.get("shopCode"))){
+					request.setAttribute("shopCode", "3102");
+				}else{
+					request.setAttribute("shopCode", "3202");
+				}
+				request.setAttribute("money", super.getMoney(hOrder.getRealFee()));
+				request.setAttribute("realmoney", super.getMoney(hOrder.getRealFee()));
+				request.setAttribute("orderId", ordercode);
+			
+			}else{
+				model.addAttribute("msg", "交易失败");
+				return "/wx/index/payFail";
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return "/wx/index/paysuccess";
+	}
+	
+	/**
+	 * 银联跳转支付回调（无token）
+	 * 
+	 * @param response
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/union_backurl_other")
+	public String union_backurl_wap(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
+		otherService.union_backurl_other(request,txBusinessTypeService.getTraceNo());
+		return  null;
+	}
 }

@@ -532,7 +532,11 @@ public class OtherService {
     		param.put("CityCode", cityCode);
     		param.put("ServiceType", serviceType);
     		param.put("PayNo", paynumber);
-    		param.put("BankCardNo", bankCardNo);
+    		if(StringUtils.isNotBlank(bankCardNo)){
+    			param.put("BankCardNo", bankCardNo);
+    		}else{
+    			param.put("BankCardNo", "");
+    		}
     		param.put("SettlementDate", settlementDate);
     		param.put("HostSerialNo", hostSerialNo);
     		param.put("LoopID", loopID);

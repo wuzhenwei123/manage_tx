@@ -137,6 +137,8 @@ public class ConfigConstants {
 	public static String UNIONPAYTOKEN_BACKURL_DF = null;
 	public static String UNIONPAYTOKEN_FRONTURL_OTHER = null;
 	public static String SY_URL = null;
+	public static String UNION_FRONTURL_OTHER = null;
+	public static String UNION_BACKURL_OTHER = null;
 	
 	
 	private static Properties prop = null;
@@ -231,6 +233,8 @@ public class ConfigConstants {
 				UNIONPAYTOKEN_BACKURL_DF = (String) prop.get("unionpaytoken_backurl_df");
 				SY_URL = (String) prop.get("sy_url");
 				PAY_BACKURL_OTHER = (String) prop.get("pay_backurl_other");
+				UNION_FRONTURL_OTHER = (String) prop.get("union_fronturl_other");
+				UNION_BACKURL_OTHER = (String) prop.get("union_backurl_other");
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
