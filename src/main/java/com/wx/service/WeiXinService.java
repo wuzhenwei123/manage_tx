@@ -962,6 +962,86 @@ public class WeiXinService {
   		}
   		return null;
   	}
+  	/**
+  	 * 获取开户行行号
+  	 * @param cardNumber
+  	 * @return
+  	 */
+  	@SuppressWarnings("unchecked")
+  	public String getKHBankName(String cardNumber){
+  		try{
+  			//获取开户行行号
+//	     	Object mapObj = MemcacheUtil.get(SessionName.LIST_BANK);
+//	     	Map<String,String> map = null;
+//	     	if(mapObj==null){
+//	     		map = new HashMap<String,String>();
+//	     		List<TxBank> list = txBankDAO.getTxBankList(new TxBank());
+//	     		if(list!=null&&list.size()>0){
+//					map = new HashMap<String,String>();
+//					for(TxBank bank:list){
+//						map.put(bank.getVerifyCode(), bank.getBankNumber());
+//					}
+//					MemcacheUtil.set(SessionName.LIST_BANK, 0, map);
+//				}
+//	     	}else{
+//	     		map = (Map<String,String>)mapObj;
+//	     	}
+  			TxBank txBank = new TxBank();
+  			List<TxBank> list = txBankDAO.getTxBankList(txBank);
+  			Map<String,String> map = null;
+  			if(list!=null&&list.size()>0){
+  				map = new HashMap<String,String>();
+  				for(TxBank bank:list){
+  					map.put(bank.getVerifyCode(), bank.getName());
+  				}
+  			}
+  			if(!map.isEmpty()){
+  				//先获取10位
+  				String val10 = cardNumber.substring(0, 10);
+  				if(StringUtils.isNotBlank(map.get(val10))){
+  					return map.get(val10);
+  				}
+  				//获取9位
+  				String val9 = cardNumber.substring(0, 9);
+  				if(StringUtils.isNotBlank(map.get(val9))){
+  					return map.get(val9);
+  				}
+  				//获取8位
+  				String val8 = cardNumber.substring(0, 8);
+  				if(StringUtils.isNotBlank(map.get(val8))){
+  					return map.get(val8);
+  				}
+  				//获取7位
+  				String val7 = cardNumber.substring(0, 7);
+  				if(StringUtils.isNotBlank(map.get(val7))){
+  					return map.get(val7);
+  				}
+  				//获取6位
+  				String val6 = cardNumber.substring(0, 6);
+  				if(StringUtils.isNotBlank(map.get(val6))){
+  					return map.get(val6);
+  				}
+  				//获取5位
+  				String val5 = cardNumber.substring(0, 5);
+  				if(StringUtils.isNotBlank(map.get(val5))){
+  					return map.get(val5);
+  				}
+  				//获取5位
+  				String val4 = cardNumber.substring(0, 4);
+  				if(StringUtils.isNotBlank(map.get(val4))){
+  					return map.get(val4);
+  				}
+  				//获取3位
+  				String val3 = cardNumber.substring(0, 3);
+  				if(StringUtils.isNotBlank(map.get(val3))){
+  					return map.get(val3);
+  				}
+  			}
+  		}catch(Exception e){
+  			e.printStackTrace();
+  		}
+  		return null;
+  	}
   	
   	public String chineseName(String fullName) {
         if (StringUtils.isBlank(fullName)) {

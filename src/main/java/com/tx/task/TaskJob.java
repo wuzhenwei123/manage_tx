@@ -34,6 +34,7 @@ import com.tx.txWxUser.model.TxWxUser;
 import com.tx.txWxUser.service.TxWxUserService;
 import com.tx.txWxUserBankNo.model.TxWxUserBankNo;
 import com.tx.txWxUserBankNo.service.TxWxUserBankNoService;
+import com.wx.service.WeiXinService;
 import com.wx.utils.https.HttpRequest;
 
 
@@ -58,6 +59,8 @@ public class TaskJob {
 	private TxRefundFlagService txRefundFlagService = null;
 	@Autowired
 	private TxWxUserService txWxUserService = null;
+	@Autowired
+	private WeiXinService weiXinService;
 	
     public void cut(){
     	try {
@@ -275,7 +278,15 @@ public class TaskJob {
 						
 						TxWxUser wxUser = txWxUserService.getTxWxUserById(order.getWxUserId());
 						//调用接口退费
-						TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(order.getAccNo());
+//						TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(order.getAccNo());
+						
+						//调用接口退费
+						TxWxUserBankNo txWxUserBankNo = new TxWxUserBankNo();
+						//查询开户行名称
+					 	String accNo = wxUser.getCardNumber();
+					 	String accName = weiXinService.getKHBankName(accNo);
+					 	txWxUserBankNo.setAccName(accName);
+					 	txWxUserBankNo.setAccNo(accNo);
 						
 						BigDecimal bg = new BigDecimal(order.getMoney());
 						BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.PAY_RATE));

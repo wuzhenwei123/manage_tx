@@ -531,7 +531,12 @@ public class UnionPayController extends BaseController{
 			if(wxUser.getId().intValue()==order.getWxUserId().intValue()&&order.getRefundState().intValue()==0){
 //				if(order.getBackCard().intValue()==1){
 					//调用接口退费
-					TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(order.getAccNo());
+					TxWxUserBankNo txWxUserBankNo = new TxWxUserBankNo();
+					//查询开户行名称
+				 	String accNo = wxUser.getCardNumber();
+				 	String accName = weiXinService.getKHBankName(accNo);
+				 	txWxUserBankNo.setAccName(accName);
+				 	txWxUserBankNo.setAccNo(accNo);
 					
 					BigDecimal bg = new BigDecimal(order.getMoney());
 					BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE));
@@ -680,7 +685,15 @@ public class UnionPayController extends BaseController{
 					//调用查询接口
 					TxWxUser wxUser = txWxUserService.getTxWxUserById(txRefundOrder.getUserId());
 					//调用接口退费
-					TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(order.getAccNo());
+//					TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(order.getAccNo());
+					
+					//调用接口退费
+					TxWxUserBankNo txWxUserBankNo = new TxWxUserBankNo();
+					//查询开户行名称
+				 	String accNo = wxUser.getCardNumber();
+				 	String accName = weiXinService.getKHBankName(accNo);
+				 	txWxUserBankNo.setAccName(accName);
+				 	txWxUserBankNo.setAccNo(accNo);
 					
 					BigDecimal bg = new BigDecimal(order.getMoney());
 					BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE));
