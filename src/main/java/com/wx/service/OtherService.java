@@ -54,7 +54,7 @@ public class OtherService {
 	 * @param mapresult
 	 * @param txWxUser
 	 */
-	public void setOrderMsgToSession(String serviceType,String bankCardNo,TxWxUser txWxUser,String cityCode,Integer money2,String loopID,String PaymentInfo,String paynumber,String centerSerial){
+	public void setOrderMsgToSession(String serviceType,String bankCardNo,TxWxUser txWxUser,String cityCode,Integer money2,String loopID,String PaymentInfo,String paynumber,String centerSerial,String sel_time){
 		Map<String,String> mapssss = new HashMap<String,String>();
 		mapssss.put("money", money2+"");
 		mapssss.put("orderId", PaymentInfo);
@@ -64,6 +64,7 @@ public class OtherService {
 		mapssss.put("paynumber", paynumber);
 		mapssss.put("cityCode",cityCode);
 		mapssss.put("loopID",loopID);
+		mapssss.put("sel_time",sel_time);
 		mapssss.put("serviceType",serviceType);
 		mapssss.put("bankCardNo",bankCardNo);
 		mapssss.put("centerSerial",centerSerial);
@@ -398,7 +399,7 @@ public class OtherService {
 				data.put("bizType", "000902");
 				data.put("accessType", "0");
 				data.put("channelType", "07");
-				data.put("merId", ConfigConstants.PAY_MERID);                  			   //商户号码，请改成自己申请的商户号或者open上注册得来的777商户号测试
+				data.put("merId", ConfigConstants.MER_ID);                  			   //商户号码，请改成自己申请的商户号或者open上注册得来的777商户号测试
 				
 				/***要调通交易以下字段必须修改***/
 				String txnTime = this.getOrderNo().get("orderNoTime");

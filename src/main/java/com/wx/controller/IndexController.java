@@ -131,15 +131,15 @@ public class IndexController extends BaseController{
 					return "/wx/index/selDepartment";
 				}
 			}
-			TxPaynumberMsg txPaynumberMsg = new TxPaynumberMsg();
-			txPaynumberMsg.setUserId(txWxUser.getId());
-			txPaynumberMsg.setBillType(billType);
-			txPaynumberMsg.setStatus(1);
-			List<TxPaynumberMsg> list = txPaynumberMsgService.getTxPaynumberMsgList(txPaynumberMsg);
-			if(list!=null&&list.size()>0){
-				model.addAttribute("list", list);
-				return "/wx/index/payNumberList";
-			}
+//			TxPaynumberMsg txPaynumberMsg = new TxPaynumberMsg();
+//			txPaynumberMsg.setUserId(txWxUser.getId());
+//			txPaynumberMsg.setBillType(billType);
+//			txPaynumberMsg.setStatus(1);
+//			List<TxPaynumberMsg> list = txPaynumberMsgService.getTxPaynumberMsgList(txPaynumberMsg);
+//			if(list!=null&&list.size()>0){
+//				model.addAttribute("list", list);
+//				return "/wx/index/payNumberList";
+//			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -915,6 +915,46 @@ public class IndexController extends BaseController{
 		
 		return null;
 	}
+	/**
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/toUnionpayDF", method = RequestMethod.GET)
+	public String toUnionpayDF(HttpServletRequest request, HttpServletResponse response, Model model){
+		String merOrderId = RequestHandler.getString(request, "PaymentInfo");
+		String money = RequestHandler.getString(request, "money");
+		String sel_time = RequestHandler.getString(request, "sel_time");
+		try{
+			
+			BigDecimal bg = new BigDecimal(money);
+			BigDecimal f = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
+			int money2 = f.multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+			
+			String orderNoTime = txPaynumberMsgService.getOrderNo().get("orderNoTime");
+			String ordercode =  txPaynumberMsgService.getOrderNo().get("orderNo");
+			TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+			
+			otherService.setOrderMsgToSession(null, null, txWxUser, null, money2, null, ordercode, null,null,sel_time);
+			
+			String html = indexService.toUnionpay(ordercode, money2+"",orderNoTime,txWxUser);
+			PrintWriter pw = null;
+			try {
+				pw = response.getWriter();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			pw.print(html);
+			pw.flush();
+			pw.close();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+		return null;
+	}
 	
 	/**
 	 * 获取token前台回调
@@ -929,6 +969,7 @@ public class IndexController extends BaseController{
 		super.getJsticket(request);
 		try{
 			String ordercode = null;
+			String sel_time = null;
 			String encoding = request.getParameter(SDKConstants.param_encoding);
     		// 获取银联通知服务器发送的后台通知参数
     		Map<String, String> reqParam = indexService.getAllRequestParam(request);
@@ -951,53 +992,48 @@ public class IndexController extends BaseController{
     		} else {
     			String orderId = valideData.get("merOrderId");
     			Map<String,String> mapsss = SessionName.maporder.get(orderId);
-    			if("010".equals(mapsss.get("cityCode"))){
-    				ordercode = indexService.union_fronturl(request);
+    			sel_time = mapsss.get("sel_time");
+    			if(StringUtils.isNotBlank(sel_time)){
+    				ordercode = indexService.union_fronturl_df(request);
     			}else{
-    				ordercode = otherService.union_fronturl_other(request,txBusinessTypeService.getTraceNo());
+    				if("010".equals(mapsss.get("cityCode"))){
+        				ordercode = indexService.union_fronturl(request);
+        			}else{
+        				ordercode = otherService.union_fronturl_other(request,txBusinessTypeService.getTraceNo());
+        			}
     			}
     		}
 			if(StringUtils.isNotBlank(ordercode)){
-				
-				TxPayOrder hOrder = txPayOrderService.getTxPayOrderByOrderNumber(ordercode);
-				
-				Map<String,String> mapssss = SessionName.maporder.get(ordercode);
-				model.addAttribute("shopCode", mapssss.get("shopCode"));
-				
-//				SimpleDateFormat sf11 = new SimpleDateFormat("yyyyMMddHHmmss");
-				
-				if("010".equals(mapssss.get("cityCode"))){
-					model.addAttribute("chargeUnit", "国网北京电力公司");
-				}else{
-					TxBusinessType txBusinessType = new TxBusinessType();
-					txBusinessType.setServiceType(mapssss.get("serviceType"));
-					txBusinessType.setCityCode(mapssss.get("cityCode"));
-					List<TxBusinessType> listType = txBusinessTypeService.getTxBusinessTypeList(txBusinessType);
-					model.addAttribute("chargeUnit", listType.get(0).getChargeUnit());
-				}
-				
-//				Map<String, String> rspData = indexService.queryPay_wap(ordercode, sf11.format(hOrder.getCreateTime()));
-//				System.out.println(rspData.get("respCode"));
-//				System.out.println(rspData.get("origRespCode"));
-//				if(rspData!=null&&"00".equals(rspData.get("respCode"))&&"00".equals(rspData.get("origRespCode"))){
-//					String transaction_id = rspData.get("queryId");
+				if(StringUtils.isNotBlank(sel_time)){
+					return  "redirect:/unionpay/toPayResult?orderNo="+ordercode+"&backCard=1";
+	    		}else{
+	    			TxPayOrder hOrder = txPayOrderService.getTxPayOrderByOrderNumber(ordercode);
+					
+					Map<String,String> mapssss = SessionName.maporder.get(ordercode);
+					model.addAttribute("shopCode", mapssss.get("shopCode"));
+					
+					if("010".equals(mapssss.get("cityCode"))){
+						model.addAttribute("chargeUnit", "国网北京电力公司");
+					}else{
+						TxBusinessType txBusinessType = new TxBusinessType();
+						txBusinessType.setServiceType(mapssss.get("serviceType"));
+						txBusinessType.setCityCode(mapssss.get("cityCode"));
+						List<TxBusinessType> listType = txBusinessTypeService.getTxBusinessTypeList(txBusinessType);
+						model.addAttribute("chargeUnit", listType.get(0).getChargeUnit());
+					}
+					
 					model.addAttribute("transaction_id", hOrder.getQueryNumber());
-//				}else{
-//					model.addAttribute("msg", "交易失败");
-//					model.addAttribute("resultCode", rspData.get("origRespCode"));
-//					return "/wx/index/payFail";
-//				}
-				
-				request.setAttribute("customerNumber", hOrder.getOrderNumber());
-				if("3100".equals(mapssss.get("shopCode"))){
-					request.setAttribute("shopCode", "3102");
-				}else{
-					request.setAttribute("shopCode", "3202");
-				}
-				request.setAttribute("money", super.getMoney(hOrder.getRealFee()));
-				request.setAttribute("realmoney", super.getMoney(hOrder.getRealFee()));
-				request.setAttribute("orderId", ordercode);
-			
+					
+					request.setAttribute("customerNumber", hOrder.getOrderNumber());
+					if("3100".equals(mapssss.get("shopCode"))){
+						request.setAttribute("shopCode", "3102");
+					}else{
+						request.setAttribute("shopCode", "3202");
+					}
+					request.setAttribute("money", super.getMoney(hOrder.getRealFee()));
+					request.setAttribute("realmoney", super.getMoney(hOrder.getRealFee()));
+					request.setAttribute("orderId", ordercode);
+	    		}
 			}else{
 				model.addAttribute("msg", "交易失败");
 				return "/wx/index/payFail";
@@ -1040,10 +1076,15 @@ public class IndexController extends BaseController{
     		} else {
     			String orderId =valideData.get("merOrderId");
     			Map<String,String> mapsss = SessionName.maporder.get(orderId);
-    			if("010".equals(mapsss.get("cityCode"))){
-    				indexService.union_backurl(request);
+    			String sel_time = mapsss.get("sel_time");
+    			if(StringUtils.isNotBlank(sel_time)){
+    				indexService.union_backurl_df(request);
     			}else{
-    				otherService.union_backurl_other(request,txBusinessTypeService.getTraceNo());
+    				if("010".equals(mapsss.get("cityCode"))){
+        				indexService.union_backurl(request);
+        			}else{
+        				otherService.union_backurl_other(request,txBusinessTypeService.getTraceNo());
+        			}
     			}
     		}
 		}catch(Exception e){

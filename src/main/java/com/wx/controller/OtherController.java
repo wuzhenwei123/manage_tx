@@ -514,7 +514,7 @@ public class OtherController extends BaseController{
 			String orderNoTime = txPaynumberMsgService.getOrderNo().get("orderNoTime");
 			String ordercode =  txPaynumberMsgService.getOrderNo().get("orderNo");
 			
-			otherService.setOrderMsgToSession(serviceType, accNo, txWxUser, cityCode, Integer.valueOf(orderfee), loopID, ordercode, paynumber,centerSerial);
+			otherService.setOrderMsgToSession(serviceType, accNo, txWxUser, cityCode, Integer.valueOf(orderfee), loopID, ordercode, paynumber,centerSerial,null);
 			
 			TxWxUserBankNo txWxUserBankNo = new TxWxUserBankNo();
 			txWxUserBankNo.setAccNo(accNo);
@@ -652,7 +652,7 @@ public class OtherController extends BaseController{
 			txWxOrder.setZfOrderNo(zfOrderNo);
 			txWxOrder.setZfOrderFee(Integer.valueOf(orderfee));
 			txWxOrderService.insertTxWxOrder(txWxOrder);
-			otherService.setOrderMsgToSession(serviceType, accNo, txWxUser, cityCode, Integer.valueOf(orderfee), loopID, zfOrderNo, paynumber,centerSerial);
+			otherService.setOrderMsgToSession(serviceType, accNo, txWxUser, cityCode, Integer.valueOf(orderfee), loopID, zfOrderNo, paynumber,centerSerial,null);
 			String html = otherService.getUnionPayToken(map.get("orderNo"), map.get("orderNoTime"), accNo, txWxUser);
 			PrintWriter pw = null;
 			try {
@@ -805,7 +805,7 @@ public class OtherController extends BaseController{
 			String orderNoTime = txPaynumberMsgService.getOrderNo().get("orderNoTime");
 			String ordercode =  txPaynumberMsgService.getOrderNo().get("orderNo");
 			
-			otherService.setOrderMsgToSession(serviceType, null, txWxUser, cityCode, Integer.valueOf(orderfee), loopID, ordercode, paynumber,centerSerial);
+			otherService.setOrderMsgToSession(serviceType, null, txWxUser, cityCode, Integer.valueOf(orderfee), loopID, ordercode, paynumber,centerSerial,null);
 			
 			SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmmss");
 			String html = otherService.toUnionpay(ordercode, fee,orderNoTime,txWxUser);

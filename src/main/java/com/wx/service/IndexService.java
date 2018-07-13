@@ -33,6 +33,8 @@ import com.tx.txDfRate.dao.TxDfRateDAO;
 import com.tx.txDfRate.model.TxDfRate;
 import com.tx.txPayOrder.dao.TxPayOrderDAO;
 import com.tx.txPayOrder.model.TxPayOrder;
+import com.tx.txSellingOrder.dao.TxSellingOrderDAO;
+import com.tx.txSellingOrder.model.TxSellingOrder;
 import com.tx.txWxOrder.dao.TxWxOrderDAO;
 import com.tx.txWxOrder.model.TxWxOrder;
 import com.tx.txWxUser.dao.TxWxUserDAO;
@@ -68,6 +70,8 @@ public class IndexService {
     private TxBankDAO txBankDAO;
 	@Autowired
 	private WeiXinService weiXinService;
+	@Resource
+    private TxSellingOrderDAO txSellingOrderDAO;
 	
 	/**
 	 * 装载预付费订单信息
@@ -289,8 +293,12 @@ public class IndexService {
 					hOrder.setOneRate((bg.multiply(oneRate)).setScale(1, BigDecimal.ROUND_HALF_UP).intValue());
 				}
 			}
-			hOrder.setDevRate((bg.multiply(devRate)).setScale(1, BigDecimal.ROUND_HALF_UP).intValue());
-			hOrder.setTotalRate((bg.multiply(totalRate)).setScale(1, BigDecimal.ROUND_HALF_UP).intValue());
+			if(devRate!=null){
+				hOrder.setDevRate((bg.multiply(devRate)).setScale(1, BigDecimal.ROUND_HALF_UP).intValue());
+			}
+			if(totalRate!=null){
+				hOrder.setTotalRate((bg.multiply(totalRate)).setScale(1, BigDecimal.ROUND_HALF_UP).intValue());
+			}
 			hOrder.setPromoterName(wxUser.getPromoterName());
 			hOrder.setTwoPromoterId(wxUser.getTwoPromoterId());
 			hOrder.setTwoPromoterName(wxUser.getTwoPromoterName());
@@ -1210,6 +1218,116 @@ public class IndexService {
     	}
     	return orderId;
     }
+    /**
+     * 银联支付(无token)回调
+     * @param request
+     * @return
+     */
+    public String union_backurl_df(HttpServletRequest req){
+    	String orderId = null;
+    	try{
+    		
+    		String encoding = req.getParameter(SDKConstants.param_encoding);
+    		// 获取银联通知服务器发送的后台通知参数
+    		Map<String, String> reqParam = getAllRequestParam(req);
+    		
+    		LogUtil.printRequestLog(reqParam);
+    		
+    		Map<String, String> valideData = null;
+    		if (null != reqParam && !reqParam.isEmpty()) {
+    			Iterator<Entry<String, String>> it = reqParam.entrySet().iterator();
+    			valideData = new HashMap<String, String>(reqParam.size());
+    			while (it.hasNext()) {
+    				Entry<String, String> e = it.next();
+    				String key = (String) e.getKey();
+    				String value = (String) e.getValue();
+    				
+    				valideData.put(key, value);
+    			}
+    		}
+    		logger.info("--------------银联支付(无token)后台回调-------------->"+valideData);
+    		if (!AcpService.validate(valideData, encoding)) {
+    			logger.info("银联支付(无token)回调验证失败-------------》");
+    			//验签失败，需解决验签问题
+    		} else {
+    			
+    			orderId =valideData.get("merOrderId"); //获取后台通知的数据，其他字段也可用类似方式获取
+    			
+    			String accNo = valideData.get("accNo");
+    			if(null!=accNo){
+    				accNo = AcpService.decryptData(accNo, "UTF-8");
+    				logger.info("accNo明文: "+ accNo);
+    			}
+    			
+    			String merTxnTime = valideData.get("merTxnTime");
+    			String queryId = valideData.get("queryId");
+    			String txnType = valideData.get("txnType");
+    			String settleDate = valideData.get("settleDate");
+    			Map<String,String> mapsss = SessionName.maporder.get(orderId);
+    			
+    			String respCode = valideData.get("respCode");
+    			if("00".equals(respCode)){
+    				if("01".equals(txnType)){
+    					String orderIdStr111 = SessionName.maporderNo.get(orderId);
+    					System.out.println("-------------orderIdStr111--------------"+orderIdStr111);
+    					if(!StringUtils.isNotBlank(orderIdStr111)){
+    						SessionName.maporderNo.put(orderId, orderId);
+    						logger.info("---------------创建订单---------->");
+    						TxWxUser wxUser = txWxUserDAO.getTxWxUserById(Integer.valueOf(mapsss.get("userId")));
+    						Calendar calendar = Calendar.getInstance();
+    						calendar.setTime(new Date());
+    						calendar.add(Calendar.MONTH, Integer.valueOf(mapsss.get("sel_time")));
+    						
+    						TxSellingOrder txSellingOrder = new TxSellingOrder();
+    						txSellingOrder.setCode(orderId);
+    						txSellingOrder.setBackCard(0);
+    						txSellingOrder.setSelTime(Integer.valueOf(mapsss.get("sel_time")));
+    						txSellingOrder.setAccNo(accNo);
+    						txSellingOrder.setCreateTime(new Date());
+    						txSellingOrder.setEndTime(calendar.getTime());
+    						txSellingOrder.setMoney(Long.valueOf(mapsss.get("fee")));
+    						txSellingOrder.setWxUserName(wxUser.getRealName());
+    						txSellingOrder.setWxUserId(wxUser.getId());
+    						txSellingOrder.setProfits(new BigDecimal(ConfigConstants.PAY_RATE));
+    						
+    						if(wxUser.getPromoterId()!=null){
+    							TxWxUser wxUserPromet = txWxUserDAO.getTxWxUserById(wxUser.getPromoterId());//上级代理
+    							if(wxUserPromet.getParentId()!=null){
+    								txSellingOrder.setPromoterId(wxUserPromet.getPromoterId());
+    								txSellingOrder.setTwoPromoterId(wxUser.getPromoterId());
+    							}else{
+    								txSellingOrder.setPromoterId(wxUser.getPromoterId());
+    							}
+    						}
+    						txSellingOrder.setQueryId(queryId);
+    						txSellingOrder.setState(1);
+    						txSellingOrderDAO.insertTxSellingOrder(txSellingOrder);
+    						payLogCutter.filesMng(11, 2, valideData.toString(), null, null, null, valideData.get("accNo"));
+    					}
+    				}else if("04".equals(txnType)){
+    					logger.info("退费回调-------------》"+valideData);
+    					String origQryId = valideData.get("origQryId");
+    					TxPayOrder hOrder = txPayOrderDAO.getTxPayOrderByOrderNumber(origQryId);
+    					hOrder.setState(2);
+    					txPayOrderDAO.updateTxPayOrderById(hOrder);
+    				}
+    			}else if(!"00".equals(respCode)){
+    				if("01".equals(txnType)){
+    					TxPayOrder hOrder = txPayOrderDAO.getTxPayOrderByOrderNumber(orderId);
+    					if(hOrder!=null&&hOrder.getId()>0){
+    						hOrder.setState(0);
+    						txPayOrderDAO.updateTxPayOrderById(hOrder);
+    					}
+    				}
+    			}
+    		}
+    		logger.info("异步银联支付(无token)回调后台接收报文");
+    		logger.info("--------------银联支付(无token)回调后台回调-------------->"+valideData);
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    	return orderId;
+    }
     
     
     /**
@@ -1274,6 +1392,103 @@ public class IndexService {
 						}
 						payLogCutter.filesMng(11, 2, valideData.toString(), null, null, null, valideData.get("accNo"));
 					}
+    			}
+    		}
+    		logger.info("异步银联支付(无token)前台接收报文");
+    		logger.info("--------------银联支付(无token)前台回调-------------->"+valideData);
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    	return orderId;
+    }
+    /**
+     * 银联支付(无token)前台回调
+     * @param request
+     * @return
+     */
+    public String union_fronturl_df(HttpServletRequest req){
+    	String orderId = null;
+    	try{
+    		
+    		String encoding = req.getParameter(SDKConstants.param_encoding);
+    		// 获取银联通知服务器发送的后台通知参数
+    		Map<String, String> reqParam = getAllRequestParam(req);
+    		
+    		LogUtil.printRequestLog(reqParam);
+    		
+    		Map<String, String> valideData = null;
+    		if (null != reqParam && !reqParam.isEmpty()) {
+    			Iterator<Entry<String, String>> it = reqParam.entrySet().iterator();
+    			valideData = new HashMap<String, String>(reqParam.size());
+    			while (it.hasNext()) {
+    				Entry<String, String> e = it.next();
+    				String key = (String) e.getKey();
+    				String value = (String) e.getValue();
+    				
+    				valideData.put(key, value);
+    			}
+    		}
+    		logger.info("--------------银联支付(无token)前台回调-------------->"+valideData);
+    		if (!AcpService.validate(valideData, encoding)) {
+    			logger.info("银联支付(无token)回调验证失败-------------》");
+    			//验签失败，需解决验签问题
+    		} else {
+    			orderId = valideData.get("merOrderId");
+    			
+    			String accNo = valideData.get("accNo");
+    			if(null!=accNo){
+    				accNo = AcpService.decryptData(accNo, "UTF-8");
+    				logger.info("accNo明文: "+ accNo);
+    			}
+    			
+    			String merTxnTime = valideData.get("merTxnTime");
+    			String queryId = valideData.get("queryId");
+    			String txnType = valideData.get("txnType");
+    			String settleDate = valideData.get("settleDate");
+    			Map<String,String> mapsss = SessionName.maporder.get(orderId);
+    			
+    			String respCode = valideData.get("respCode");
+    			if("00".equals(respCode)&&"01".equals(txnType)){
+    				String orderIdStr111 = SessionName.maporderNo.get(orderId);
+    				System.out.println("-------------orderIdStr111--------------"+orderIdStr111);
+    				if(!StringUtils.isNotBlank(orderIdStr111)){
+    					SessionName.maporderNo.put(orderId, orderId);
+    					TxWxUser wxUser = txWxUserDAO.getTxWxUserById(Integer.valueOf(mapsss.get("userId")));
+    					if("00".equals(respCode)){
+    						
+    						Calendar calendar = Calendar.getInstance();
+    						calendar.setTime(new Date());
+    						calendar.add(Calendar.MONTH, Integer.valueOf(mapsss.get("sel_time")));
+    						
+    						TxSellingOrder txSellingOrder = new TxSellingOrder();
+    						txSellingOrder.setCode(orderId);
+    						txSellingOrder.setBackCard(0);
+    						txSellingOrder.setSelTime(Integer.valueOf(mapsss.get("sel_time")));
+    						txSellingOrder.setAccNo(accNo);
+    						txSellingOrder.setCreateTime(new Date());
+    						txSellingOrder.setEndTime(calendar.getTime());
+    						txSellingOrder.setMoney(Long.valueOf(mapsss.get("fee")));
+    						txSellingOrder.setWxUserName(wxUser.getRealName());
+    						txSellingOrder.setWxUserId(wxUser.getId());
+    						txSellingOrder.setProfits(new BigDecimal(ConfigConstants.PAY_RATE));
+    						
+    						if(wxUser.getPromoterId()!=null){
+    							TxWxUser wxUserPromet = txWxUserDAO.getTxWxUserById(wxUser.getPromoterId());//上级代理
+    							if(wxUserPromet.getParentId()!=null){
+    								txSellingOrder.setPromoterId(wxUserPromet.getPromoterId());
+    								txSellingOrder.setTwoPromoterId(wxUser.getPromoterId());
+    							}else{
+    								txSellingOrder.setPromoterId(wxUser.getPromoterId());
+    							}
+    						}
+    						txSellingOrder.setQueryId(queryId);
+    						txSellingOrder.setState(1);
+    						txSellingOrderDAO.insertTxSellingOrder(txSellingOrder);
+    	    			}else{
+    	    				logger.info("============售卡支付回调失败=================");
+    	    			}
+    					payLogCutter.filesMng(11, 2, valideData.toString(), null, null, null, valideData.get("accNo"));
+    				}
     			}
     		}
     		logger.info("异步银联支付(无token)前台接收报文");

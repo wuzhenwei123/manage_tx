@@ -105,7 +105,6 @@
 	        	<if test="payWay != null"> ,payWay </if>
 	        	<if test="settleDate != null"> ,settleDate </if>
 	        	<if test="refundNumber != null"> ,refundNumber </if>
-	        	<if test="shopCode != null"> ,shopCode </if>
 	        	<if test="cityCode != null"> ,cityCode </if>
         </trim>
         <trim prefix="values (" suffix=")" prefixOverrides=",">
@@ -131,7 +130,6 @@
 	        	<if test="payWay != null"> ,#{payWay,jdbcType=INTEGER} </if>
 	        	<if test="settleDate != null"> ,#{settleDate,jdbcType=TIMESTAMP} </if>
 	        	<if test="refundNumber != null"> ,#{refundNumber,jdbcType=VARCHAR} </if>
-	        	<if test="shopCode != null"> ,#{shopCode,jdbcType=VARCHAR} </if>
 	        	<if test="cityCode != null"> ,#{cityCode,jdbcType=VARCHAR} </if>
 		 </trim>
         <selectKey keyProperty="id" resultType="long">
@@ -163,7 +161,6 @@
         		<if test="payWay != null"> payWay = #{payWay,jdbcType=INTEGER}, </if>
         		<if test="settleDate != null"> settleDate = #{settleDate,jdbcType=TIMESTAMP}, </if>
         		<if test="refundNumber != null"> refundNumber = #{refundNumber,jdbcType=VARCHAR}, </if>
-        		<if test="shopCode != null"> shopCode = #{shopCode,jdbcType=VARCHAR}, </if>
         		<if test="cityCode != null"> cityCode = #{cityCode,jdbcType=VARCHAR}, </if>
         </set>
     	where id = #{id}

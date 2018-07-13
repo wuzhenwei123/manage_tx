@@ -259,7 +259,7 @@ public class WeiXinController extends BaseController{
 		super.getJsticket(request);
 		String openId = RequestHandler.getString(request, "openId");
 		boolean b = weiXinService.loginWxCust(openId, request);
-		return  "redirect:/other/toIndex?cityCode=010";
+		return  "redirect:/weixin/dbIndex?openId="+openId;
 	}
 	/**
 	 * 测试

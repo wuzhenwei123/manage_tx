@@ -60,7 +60,7 @@
 	            </li>
 	            <li class="clear">
 	                <label>欠费金额</label>
-	                <p>${mapresult["应缴金额"]}元</p>
+	                <p>${mapresult["yingjiao"]}元</p>
 	            </li>
             </c:if>
         </ul>

@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="${ctx}/css/unionpay/index.css?t=<%=Math.random()%>">
 </head>
 <body>
-<%@ include file="/WEB-INF/page/common/share.jsp" %>
 <div class="pay_top" style="background: #0c8ee6;">
     <a href="javascript:history.back(-1)" class="back_btn"></a>
     	银行卡快捷支付
