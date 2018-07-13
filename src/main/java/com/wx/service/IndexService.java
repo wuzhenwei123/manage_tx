@@ -1285,7 +1285,7 @@ public class IndexService {
     						txSellingOrder.setAccNo(accNo);
     						txSellingOrder.setCreateTime(new Date());
     						txSellingOrder.setEndTime(calendar.getTime());
-    						txSellingOrder.setMoney(Long.valueOf(mapsss.get("fee")));
+    						txSellingOrder.setMoney(Long.valueOf(mapsss.get("money")));
     						txSellingOrder.setWxUserName(wxUser.getRealName());
     						txSellingOrder.setWxUserId(wxUser.getId());
     						txSellingOrder.setProfits(new BigDecimal(ConfigConstants.PAY_RATE));
@@ -1467,7 +1467,7 @@ public class IndexService {
     						txSellingOrder.setAccNo(accNo);
     						txSellingOrder.setCreateTime(new Date());
     						txSellingOrder.setEndTime(calendar.getTime());
-    						txSellingOrder.setMoney(Long.valueOf(mapsss.get("fee")));
+    						txSellingOrder.setMoney(Long.valueOf(mapsss.get("money")));
     						txSellingOrder.setWxUserName(wxUser.getRealName());
     						txSellingOrder.setWxUserId(wxUser.getId());
     						txSellingOrder.setProfits(new BigDecimal(ConfigConstants.PAY_RATE));
