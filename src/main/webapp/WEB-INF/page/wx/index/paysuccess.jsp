@@ -57,7 +57,7 @@
 			</p>
 			<p class="pline">
 				<label>销账机构</label>
-				<span>国网北京电力公司</span>
+				<span>${chargeUnit}</span>
 			</p>
 			<p>
 				实际到账时间以销帐机构处理为准，充值金额可能分多笔入表。客服电话：010-96199

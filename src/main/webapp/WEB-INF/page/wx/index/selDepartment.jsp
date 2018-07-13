@@ -21,7 +21,6 @@
 </head>
 <body class="body">
 <div class="box">
-	<%@ include file="/WEB-INF/page/common/share1.jsp" %>
     <div class="topBox" style="background: #0c8ee6;">选择缴费结构</div>
      <c:forEach items="${listType}" var="buss">
      	<div class="ch_ui_box marginTop16">

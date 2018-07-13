@@ -964,18 +964,29 @@ public class IndexController extends BaseController{
 				Map<String,String> mapssss = SessionName.maporder.get(ordercode);
 				model.addAttribute("shopCode", mapssss.get("shopCode"));
 				
-				SimpleDateFormat sf11 = new SimpleDateFormat("yyyyMMddHHmmss");
-				Map<String, String> rspData = indexService.queryPay_wap(ordercode, sf11.format(hOrder.getCreateTime()));
-				System.out.println(rspData.get("respCode"));
-				System.out.println(rspData.get("origRespCode"));
-				if(rspData!=null&&"00".equals(rspData.get("respCode"))&&"00".equals(rspData.get("origRespCode"))){
-					String transaction_id = rspData.get("queryId");
-					model.addAttribute("transaction_id", transaction_id);
+//				SimpleDateFormat sf11 = new SimpleDateFormat("yyyyMMddHHmmss");
+				
+				if("010".equals(mapssss.get("cityCode"))){
+					model.addAttribute("chargeUnit", "国网北京电力公司");
 				}else{
-					model.addAttribute("msg", "交易失败");
-					model.addAttribute("resultCode", rspData.get("origRespCode"));
-					return "/wx/index/payFail";
+					TxBusinessType txBusinessType = new TxBusinessType();
+					txBusinessType.setServiceType(mapssss.get("serviceType"));
+					txBusinessType.setCityCode(mapssss.get("cityCode"));
+					List<TxBusinessType> listType = txBusinessTypeService.getTxBusinessTypeList(txBusinessType);
+					model.addAttribute("chargeUnit", listType.get(0).getChargeUnit());
 				}
+				
+//				Map<String, String> rspData = indexService.queryPay_wap(ordercode, sf11.format(hOrder.getCreateTime()));
+//				System.out.println(rspData.get("respCode"));
+//				System.out.println(rspData.get("origRespCode"));
+//				if(rspData!=null&&"00".equals(rspData.get("respCode"))&&"00".equals(rspData.get("origRespCode"))){
+//					String transaction_id = rspData.get("queryId");
+					model.addAttribute("transaction_id", hOrder.getQueryNumber());
+//				}else{
+//					model.addAttribute("msg", "交易失败");
+//					model.addAttribute("resultCode", rspData.get("origRespCode"));
+//					return "/wx/index/payFail";
+//				}
 				
 				request.setAttribute("customerNumber", hOrder.getOrderNumber());
 				if("3100".equals(mapssss.get("shopCode"))){
