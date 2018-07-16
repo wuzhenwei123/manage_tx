@@ -77,6 +77,7 @@
             <mvc:exclude-mapping path="/other/pay_backurl_other"/>
             <mvc:exclude-mapping path="/other/union_fronturl_other"/>
             <mvc:exclude-mapping path="/other/union_backurl_other"/>
+            <mvc:exclude-mapping path="/other/fenrun_back_url"/>
             <ref bean="systemInterceptor" />
         </mvc:interceptor>
     </mvc:interceptors>  

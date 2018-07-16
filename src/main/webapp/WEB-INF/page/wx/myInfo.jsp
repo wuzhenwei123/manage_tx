@@ -39,7 +39,7 @@
         </a>
     </div>
      <div class="ch_ui_box marginTop16">
-        <a href="${ctx}/weixin/toMyQRcodeFriend?openId=${openId}" class="ui_cell ui_cells">
+        <a href="${ctx}/other/toMyYongjin?openId=${openId}" class="ui_cell ui_cells">
         	<div style="background-image:url('${ctx}/images/wx/user_icon_!13.png');" class="ui_cell_icon_box"></div>
             <div class="ui_center ui_cell_flex">查看和提取佣金</div>
             <div class="ui_cell_link"></div>

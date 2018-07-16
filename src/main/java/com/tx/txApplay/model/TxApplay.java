@@ -32,7 +32,14 @@ public class TxApplay extends BaseModel implements java.io.Serializable{
 	private String batch;
 	/** 审核时间 **/
 	private Date checkTime;
+	private String orderCode;
 		
+	public String getOrderCode() {
+		return orderCode;
+	}
+	public void setOrderCode(String orderCode) {
+		this.orderCode = orderCode;
+	}
 	/**
 	 * 
 	 * @return id

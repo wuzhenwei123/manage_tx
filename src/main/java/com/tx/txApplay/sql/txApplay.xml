@@ -11,11 +11,12 @@
 		<result column="state" jdbcType="INTEGER" property="state" />
 		<result column="batch" jdbcType="VARCHAR" property="batch" />
 		<result column="checkTime" jdbcType="TIMESTAMP" property="checkTime" />
+		<result column="orderCode" jdbcType="VARCHAR" property="orderCode" />
 	</resultMap>
 
 	<!-- 查询参数 -->
     <sql id="txApplay_column_body">
-         a.id,a.userId,a.name,a.fee,a.createTime,a.state,a.batch,a.checkTime
+         a.id,a.userId,a.name,a.fee,a.createTime,a.state,a.batch,a.checkTime,a.orderCode
     </sql>
     <!-- 查询条件 -->
     <sql id="txApplay_select_body">
@@ -28,6 +29,7 @@
     		<if test="state != null"> and a.state = #{state,jdbcType=INTEGER} </if>
     		<if test="batch != null"> and a.batch = #{batch,jdbcType=VARCHAR} </if>
     		<if test="checkTime != null"> and a.checkTime = #{checkTime,jdbcType=TIMESTAMP} </if>
+    		<if test="orderCode != null"> and a.orderCode = #{orderCode,jdbcType=VARCHAR} </if>
 		</trim>
     </sql>
     <select id="getTxApplayById" parameterType="java.lang.Long" resultMap="baseResultMap">
@@ -51,6 +53,7 @@
 	        	<if test="state != null"> ,state </if>
 	        	<if test="batch != null"> ,batch </if>
 	        	<if test="checkTime != null"> ,checkTime </if>
+	        	<if test="orderCode != null"> ,orderCode </if>
         </trim>
         <trim prefix="values (" suffix=")" prefixOverrides=",">
 	        	<if test="userId != null"> ,#{userId,jdbcType=INTEGER} </if>
@@ -60,6 +63,7 @@
 	        	<if test="state != null"> ,#{state,jdbcType=INTEGER} </if>
 	        	<if test="batch != null"> ,#{batch,jdbcType=VARCHAR} </if>
 	        	<if test="checkTime != null"> ,#{checkTime,jdbcType=TIMESTAMP} </if>
+	        	<if test="orderCode != null"> ,#{orderCode,jdbcType=VARCHAR} </if>
 		 </trim>
         <selectKey keyProperty="id" resultType="long">
 			SELECT @@IDENTITY AS id 
@@ -75,6 +79,7 @@
         		<if test="state != null"> state = #{state,jdbcType=INTEGER}, </if>
         		<if test="batch != null"> batch = #{batch,jdbcType=VARCHAR}, </if>
         		<if test="checkTime != null"> checkTime = #{checkTime,jdbcType=TIMESTAMP}, </if>
+        		<if test="orderCode != null"> orderCode = #{orderCode,jdbcType=VARCHAR}, </if>
         </set>
     	where id = #{id}
     </update>

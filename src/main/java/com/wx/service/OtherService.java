@@ -7,6 +7,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Map.Entry;
@@ -24,8 +25,12 @@ import com.base.utils.HttpUtils;
 import com.base.utils.SessionName;
 import com.base.utils.Tinput;
 import com.tx.task.service.PayLogCutter;
+import com.tx.txApplay.dao.TxApplayDAO;
+import com.tx.txApplay.model.TxApplay;
 import com.tx.txPayOrder.dao.TxPayOrderDAO;
 import com.tx.txPayOrder.model.TxPayOrder;
+import com.tx.txRecord.dao.TxRecordDAO;
+import com.tx.txRecord.model.TxRecord;
 import com.tx.txWxUser.dao.TxWxUserDAO;
 import com.tx.txWxUser.model.TxWxUser;
 import com.tx.txWxUserBankNo.model.TxWxUserBankNo;
@@ -48,6 +53,10 @@ public class OtherService {
     private TxWxUserDAO txWxUserDAO;
 	@Autowired
 	private WxTemplateMsg wxTemplateMsg;
+	@Resource
+    private TxApplayDAO txApplayDAO;
+	@Resource
+    private TxRecordDAO txRecordDAO;
 	
 	/**
 	 * 装载预付费订单信息
@@ -703,6 +712,97 @@ public class OtherService {
 	            				txPayOrderDAO.updateTxPayOrderById(hOrder);
 	        				}
 	    				}
+	    			}
+	    		}
+	    		logger.info("异步银联支付(无token)回调后台接收报文");
+	    		logger.info("--------------银联支付(无token)回调后台回调-------------->"+valideData);
+	    	}catch(Exception e){
+	    		e.printStackTrace();
+	    	}
+	    	return orderId;
+	    }
+	    
+	    
+	    
+	    /**
+	     * 银联支付(无token)回调
+	     * @param request
+	     * @return
+	     */
+	    public String fenrun_back_url(HttpServletRequest req,String traceNo){
+	    	String orderId = null;
+	    	try{
+	    		
+	    		String encoding = req.getParameter(SDKConstants.param_encoding);
+	    		// 获取银联通知服务器发送的后台通知参数
+	    		Map<String, String> reqParam = getAllRequestParam(req);
+	    		
+	    		LogUtil.printRequestLog(reqParam);
+	    		
+	    		Map<String, String> valideData = null;
+	    		if (null != reqParam && !reqParam.isEmpty()) {
+	    			Iterator<Entry<String, String>> it = reqParam.entrySet().iterator();
+	    			valideData = new HashMap<String, String>(reqParam.size());
+	    			while (it.hasNext()) {
+	    				Entry<String, String> e = it.next();
+	    				String key = (String) e.getKey();
+	    				String value = (String) e.getValue();
+	    				
+	    				valideData.put(key, value);
+	    			}
+	    		}
+	    		logger.info("--------------提现分润后台回调-------------->"+valideData);
+	    		if (!AcpService.validate(valideData, encoding)) {
+	    			logger.info("提现分润后台回调验证失败-------------》");
+	    			//验签失败，需解决验签问题
+	    		} else {
+	    			
+	    			orderId =valideData.get("orderId"); //获取后台通知的数据，其他字段也可用类似方式获取
+	    			
+	    			String accNo = valideData.get("accNo");
+	    			if(null!=accNo){
+	    				accNo = AcpService.decryptData(accNo, "UTF-8");
+	    				logger.info("accNo明文: "+ accNo);
+	    			}
+	    			if(StringUtils.isNotBlank(orderId)){
+	    				TxApplay txApplay2 = new TxApplay();
+	    				txApplay2.setOrderCode(orderId);
+	    				List<TxApplay> list = txApplayDAO.getTxApplayList(txApplay2);
+		    			String respCode = valideData.get("respCode");
+		    			String respMsg = valideData.get("respMsg");
+		    			if("00".equals(respCode)){
+		    				if(list!=null&&list.size()>0){
+		    					txApplay2 = list.get(0);
+		    					txApplay2.setState(1);
+		    					int flag = txApplayDAO.updateTxApplayById(txApplay2);
+		    					if(flag>0){
+		    						TxRecord txRecord = new TxRecord();
+		    						txRecord.setAccNo(accNo);
+		    						txRecord.setApplyId(txApplay2.getId());
+		    						txRecord.setFee(txApplay2.getFee());
+		    						txRecord.setName(txApplay2.getName());
+		    						txRecord.setRspCode(respCode);
+		    						txRecord.setRspData(respMsg);
+		    						txRecord.setState(1);
+		    						txRecordDAO.insertTxRecord(txRecord);
+		    					}
+		    				}
+		    				
+		    			}else if(!"00".equals(respCode)){
+		    				if(list!=null&&list.size()>0){
+		    					txApplay2 = list.get(0);
+	    						TxRecord txRecord = new TxRecord();
+	    						txRecord.setAccNo(accNo);
+	    						txRecord.setApplyId(txApplay2.getId());
+	    						txRecord.setFee(txApplay2.getFee());
+	    						txRecord.setName(txApplay2.getName());
+	    						txRecord.setRspCode(respCode);
+	    						txRecord.setRspData(respMsg);
+	    						txRecord.setState(0);
+	    						txRecordDAO.insertTxRecord(txRecord);
+		    				}
+		    				logger.info("--------------提现分润后台回调失败-------------->"+orderId);
+		    			}
 	    			}
 	    		}
 	    		logger.info("异步银联支付(无token)回调后台接收报文");

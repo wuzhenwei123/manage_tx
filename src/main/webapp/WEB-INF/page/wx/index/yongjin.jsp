@@ -9,7 +9,16 @@
     <link rel="stylesheet" href="${ctx}/css/index/myindex.css">
     <script src="${ctx}/js/jquery.1.9.0.min.js"></script>
     <script src="${ctx}/js/lib/layer/layer.js"></script>
-
+	<style type="text/css">
+	input {
+	    height: 35px;
+	    width: 70%;
+	    border: 1px solid #757575;
+	    padding: 0 5%;
+	    font-size: 16px;
+	    color: #757575;
+	}
+	</style>
 </head>
 <body>
 <div class="wrap">
@@ -18,7 +27,7 @@
     </div>
     <div class="com_con">
 
-        <a href="javascript:;">提取佣金</a>
+        <a href="${ctx}/other/toApply?yuFee=${yuFee}">提取佣金</a>
 
         <div class="com_detail clear">
             <a href="#" style="border-radius: 4px;color: #fff;background: #0c8ee6;">查看明细</a>
@@ -30,7 +39,7 @@
         </div>
         <div class="clear">
             <label>提取审核金额：</label>
-            <i><input type="text" id="applyFee">元</i>
+            <i>${applyFee}元</i>
         </div>
     </div>
 

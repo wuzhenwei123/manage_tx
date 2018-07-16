@@ -32,6 +32,7 @@ import com.base.utils.ConfigConstants;
 import com.base.utils.RequestHandler;
 import com.base.utils.SessionName;
 import com.base.utils.HttpUtils;
+import com.tx.task.service.ApplyCutter;
 import com.tx.task.service.SendCodeCutter;
 import com.tx.txApplay.model.TxApplay;
 import com.tx.txApplay.service.TxApplayService;
@@ -76,6 +77,8 @@ public class OtherController extends BaseController{
 	private TxPaynumberMsgService txPaynumberMsgService = null;
 	@Autowired
 	private SendCodeCutter sendCodeCutter = null;
+	@Autowired
+	private ApplyCutter applyCutter = null;
 	@Autowired
 	private IndexService indexService = null;
 	@Autowired
@@ -893,5 +896,101 @@ public class OtherController extends BaseController{
 	public String union_backurl_wap(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
 		otherService.union_backurl_other(request,txBusinessTypeService.getTraceNo());
 		return  null;
+	}
+	/**
+	 * 分润提现回到
+	 * 
+	 * @param response
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/fenrun_back_url")
+	public String fenrun_back_url(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
+		otherService.fenrun_back_url(request,txBusinessTypeService.getTraceNo());
+		return  null;
+	}
+	
+	@RequestMapping(value = "/toApply", method = RequestMethod.GET)
+	public String toApply(HttpServletRequest request, HttpServletResponse response, Model model)
+	{
+		String yuFee = RequestHandler.getString(request, "yuFee");
+		model.addAttribute("yuFee", yuFee);
+		return "/wx/index/apply";
+	}
+	
+	@RequestMapping(value = "/apply", method = RequestMethod.POST)
+	public String apply(HttpServletRequest request, HttpServletResponse response, Model model)
+	{
+		String fee = RequestHandler.getString(request, "fee");
+		try{
+			Long money = 0L;
+			TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+			//获取售电佣金
+			TxPayOrder txPayOrder = new TxPayOrder();
+			txPayOrder.setPromoterId(txWxUser.getId());
+			txPayOrder.setState(1);
+			txPayOrder = txPayOrderService.getTxPayOrderSumMoney(txPayOrder);
+			money = money + txPayOrder.getOneRate();
+			//获取提现佣金
+			TxSellingOrder txSellingOrder = new TxSellingOrder();
+			txSellingOrder.setPromoterId(txWxUser.getId());
+			txSellingOrder.setState(1);
+			txSellingOrder.setRefundState(1);
+			txSellingOrder = txSellingOrderService.getSellingOrderByTwoPromoter(txSellingOrder);
+			money = money + txSellingOrder.getOneRate();
+			
+			TxSellingOrder txSellingOrder1 = new TxSellingOrder();
+			txSellingOrder1.setTwoPromoterId(txWxUser.getId());
+			txSellingOrder1.setState(1);
+			txSellingOrder1.setRefundState(1);
+			txSellingOrder = txSellingOrderService.getSellingOrderByTwoPromoter(txSellingOrder);
+			money = money + txSellingOrder.getTwoRate();
+			
+			model.addAttribute("totalFee", super.getMoney(money));
+			//获取已经提取金额
+			TxRecord txRecord = new TxRecord();
+			txRecord.setState(1);
+			txRecord.setUserId(txWxUser.getId());
+			txRecord = txRecordService.getTxRecordMoney(txRecord);
+			
+			model.addAttribute("recordFee", super.getMoney(txRecord.getFee()));
+			
+			//申请金额
+			TxApplay txApplay = new TxApplay();
+			txApplay.setUserId(txWxUser.getId());
+			txApplay.setState(0);
+			txApplay = txApplayService.getTxApplayMoney(txApplay);
+			
+			Long yu = money - txRecord.getFee() - txApplay.getFee();
+			
+			Double money1 = Double.valueOf(fee);
+			BigDecimal bg = new BigDecimal(money1);
+			BigDecimal f = bg.setScale(2, BigDecimal.ROUND_HALF_UP);
+			Long money2 = f.multiply(new BigDecimal(100)).setScale(0, BigDecimal.ROUND_HALF_UP).longValue();
+			if(yu>=money2){
+				String orderNoTime = txPaynumberMsgService.getOrderNo().get("orderNoTime");
+				String ordercode =  txPaynumberMsgService.getOrderNo().get("orderNo");
+				SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
+				TxApplay txApplay2 = new TxApplay();
+				txApplay2.setUserId(txWxUser.getId());
+				txApplay2.setBatch(sf.format(new Date()));
+				txApplay2.setCreateTime(new Date());
+				txApplay2.setFee(money2);
+				txApplay2.setName(txWxUser.getRealName());
+				txApplay2.setState(0);
+				txApplay2.setOrderCode(ordercode);
+				txApplayService.insertTxApplay(txApplay2);
+				//开始提现
+				if(txApplay2.getId().intValue()>0){
+					applyCutter.filesMng(money2, txWxUser,ordercode,orderNoTime);
+				}
+			}
+			writeSuccessMsg("成功", "", response);
+		}catch(Exception e){
+			writeErrorMsg("error", "提现失败，系统异常，请联系客服：010-96199", response);
+			e.printStackTrace();
+		}
+		return null;
 	}
 }
