@@ -88,7 +88,7 @@
     </delete>
     
     <select id="getTxApplayMoney" parameterType="com.tx.txApplay.model.TxApplay" resultMap="baseResultMap">
-        SELECT if(sun(a.fee) is null,0,sun(a.fee)) as fee
+        SELECT if(sum(a.fee) is null,0,sum(a.fee)) as fee
         FROM tx_applay a
 		<include refid="txApplay_select_body" />
     </select>
