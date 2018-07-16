@@ -12,6 +12,8 @@ public interface TxPayOrderService {
 	
 	public List<TxPayOrder> getTxPayOrderList(TxPayOrder txPayOrder);
 
+	public List<TxPayOrder> getTxPayOrderListMsg(TxPayOrder txPayOrder);
+	
 	public TxPayOrder getTxPayOrderById(long id);
 	
 	public TxPayOrder getTxPayOrderByOrderNumber(String orderNumber);

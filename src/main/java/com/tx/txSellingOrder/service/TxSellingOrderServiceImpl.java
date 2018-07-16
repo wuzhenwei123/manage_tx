@@ -28,6 +28,10 @@ public class TxSellingOrderServiceImpl implements TxSellingOrderService{
     public List<TxSellingOrder> orderAnalysis(TxSellingOrder txSellingOrder){
     	 return txSellingOrderDAO.orderAnalysis(txSellingOrder);
     }
+    
+    public List<TxSellingOrder> getTxSellingOrderListMsg(TxSellingOrder txSellingOrder){
+    	return txSellingOrderDAO.getTxSellingOrderListMsg(txSellingOrder);
+    }
 	
 	public List<TxSellingOrder> orderAnalysisState(TxSellingOrder txSellingOrder){
 		return txSellingOrderDAO.orderAnalysisState(txSellingOrder);

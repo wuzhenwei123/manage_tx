@@ -7,6 +7,7 @@ import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -53,6 +54,7 @@ import com.tx.txWxUser.model.TxWxUser;
 import com.tx.txWxUser.service.TxWxUserService;
 import com.tx.txWxUserBankNo.model.TxWxUserBankNo;
 import com.tx.txWxUserBankNo.service.TxWxUserBankNoService;
+import com.wx.model.YongJinModel;
 import com.wx.service.IndexService;
 import com.wx.service.OtherService;
 import com.wx.service.WeiXinService;
@@ -779,6 +781,11 @@ public class OtherController extends BaseController{
 			
 			model.addAttribute("applyFee", super.getMoney(txApplay.getFee()));
 			model.addAttribute("yuFee", super.getMoney((money-txRecord.getFee()-txApplay.getFee())));
+			
+			
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date(System.currentTimeMillis()));
+			model.addAttribute("week", cal.get(Calendar.DAY_OF_WEEK)-1);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -992,5 +999,75 @@ public class OtherController extends BaseController{
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	@RequestMapping(value = "/toApplyDetail", method = RequestMethod.GET)
+	public String toApplyDetail(HttpServletRequest request, HttpServletResponse response, Model model)
+	{
+		TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+		try{
+			//售电佣金
+			TxPayOrder txPayOrder = new TxPayOrder();
+			txPayOrder.setPromoterId(txWxUser.getId());
+			txPayOrder.setState(1);
+			txPayOrder.setOneRateFlag("0");
+			txPayOrder.setSort("createTime");
+			txPayOrder.setOrder("desc");
+			List<TxPayOrder> listPay = txPayOrderService.getTxPayOrderListMsg(txPayOrder);
+			//获取提现佣金
+			TxSellingOrder txSellingOrder = new TxSellingOrder();
+			txSellingOrder.setPromoterId(txWxUser.getId());
+			txSellingOrder.setState(1);
+			txSellingOrder.setRefundState(1);
+			txSellingOrder.setSort("createTime");
+			txSellingOrder.setOrder("desc");
+			List<TxSellingOrder> listSell1 = txSellingOrderService.getTxSellingOrderListMsg(txSellingOrder);
+			
+			TxSellingOrder txSellingOrder1 = new TxSellingOrder();
+			txSellingOrder1.setTwoPromoterId(txWxUser.getId());
+			txSellingOrder1.setState(1);
+			txSellingOrder1.setRefundState(1);
+			txSellingOrder1.setSort("createTime");
+			txSellingOrder1.setOrder("desc");
+			List<TxSellingOrder> listSell2 = txSellingOrderService.getTxSellingOrderListMsg(txSellingOrder1);
+			
+			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd");
+			
+			List<YongJinModel> list = new ArrayList<YongJinModel>();
+			if(listPay!=null&&listPay.size()>0){
+				for(TxPayOrder pay:listPay){
+					YongJinModel yongJinModel = new YongJinModel();
+					yongJinModel.setFee(super.getMoney(pay.getFee()));
+					yongJinModel.setNickName(pay.getNickName());
+					yongJinModel.setTime(sf.format(pay.getCreateTime()));
+					yongJinModel.setYongjin(super.getMoney(Long.valueOf(pay.getOneRate())));
+					list.add(yongJinModel);
+				}
+			}
+			if(listSell1!=null&&listSell1.size()>0){
+				for(TxSellingOrder sell:listSell1){
+					YongJinModel yongJinModel = new YongJinModel();
+					yongJinModel.setFee(super.getMoney(sell.getMoney()));
+					yongJinModel.setNickName(sell.getNickName());
+					yongJinModel.setTime(sf.format(sell.getCreateTime()));
+					yongJinModel.setYongjin(super.getMoney(Long.valueOf(sell.getOneRate())));
+					list.add(yongJinModel);
+				}
+			}
+			if(listSell2!=null&&listSell2.size()>0){
+				for(TxSellingOrder sell:listSell2){
+					YongJinModel yongJinModel = new YongJinModel();
+					yongJinModel.setFee(super.getMoney(sell.getMoney()));
+					yongJinModel.setNickName(sell.getNickName());
+					yongJinModel.setTime(sf.format(sell.getCreateTime()));
+					yongJinModel.setYongjin(super.getMoney(Long.valueOf(sell.getTwoRate())));
+					list.add(yongJinModel);
+				}
+			}
+			model.addAttribute("list", list);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return "/wx/index/applyDetail";
 	}
 }

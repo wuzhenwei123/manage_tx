@@ -15,6 +15,8 @@ public interface TxSellingOrderDAO{
 	
 	public List<TxSellingOrder> orderAnalysis(TxSellingOrder txSellingOrder);
 	
+	public List<TxSellingOrder> getTxSellingOrderListMsg(TxSellingOrder txSellingOrder);
+	
 	public List<TxSellingOrder> orderAnalysisState(TxSellingOrder txSellingOrder);
 	
 	public List<TxSellingOrder> getTxSellingOrderListBySY(TxSellingOrder txSellingOrder);

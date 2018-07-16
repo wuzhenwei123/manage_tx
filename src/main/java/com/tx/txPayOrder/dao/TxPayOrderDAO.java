@@ -10,6 +10,8 @@ import com.tx.txPayOrder.model.TxPayOrder;
 public interface TxPayOrderDAO{
 	
 	public List<TxPayOrder> getTxPayOrderList(TxPayOrder txPayOrder);
+	
+	public List<TxPayOrder> getTxPayOrderListMsg(TxPayOrder txPayOrder);
 
 	public TxPayOrder getTxPayOrderById(long id);
 	

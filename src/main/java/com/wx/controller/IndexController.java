@@ -1109,7 +1109,10 @@ public class IndexController extends BaseController{
 	public static void main(String args[]){
 		String s = "%e5%8d%a1%e4%b8%8a%e7%9a%84%e4%bd%99%e9%a2%9d%e4%b8%8d%e8%b6%b3%5b1000051%5d";
 		try {
+			Calendar cal = Calendar.getInstance();
+			cal.setTime(new Date(System.currentTimeMillis()));
 			System.out.println(URLDecoder.decode(s,"UTF-8"));
+			System.out.println(cal.get(Calendar.DAY_OF_WEEK));
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

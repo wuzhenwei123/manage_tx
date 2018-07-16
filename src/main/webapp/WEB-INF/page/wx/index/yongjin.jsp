@@ -26,11 +26,12 @@
         <p>佣金罐余额： <i>${yuFee}</i></p>
     </div>
     <div class="com_con">
-
-        <a href="${ctx}/other/toApply?yuFee=${yuFee}">提取佣金</a>
+		<c:if test="${week==1}">
+        	<a href="${ctx}/other/toApply?yuFee=${yuFee}">提取佣金</a>
+        </c:if>
 
         <div class="com_detail clear">
-            <a href="#" style="border-radius: 4px;color: #fff;background: #0c8ee6;">查看明细</a>
+            <a href="${ctx}/other/toApplyDetail" style="border-radius: 4px;color: #fff;background: #0c8ee6;">查看明细</a>
             <p>注：每周2之前提取 的佣金在当周5到账</p>
         </div>
         <div class="clear">

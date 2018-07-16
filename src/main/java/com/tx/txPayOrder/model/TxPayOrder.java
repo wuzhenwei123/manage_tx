@@ -63,7 +63,21 @@ public class TxPayOrder extends BaseModel implements java.io.Serializable{
 	private String refundNumber;
 	private String shopCode;
 	private String cityCode;
+	private String oneRateFlag;
+	private String nickName;
 		
+	public String getNickName() {
+		return nickName;
+	}
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
+	public String getOneRateFlag() {
+		return oneRateFlag;
+	}
+	public void setOneRateFlag(String oneRateFlag) {
+		this.oneRateFlag = oneRateFlag;
+	}
 	public String getCityCode() {
 		return cityCode;
 	}

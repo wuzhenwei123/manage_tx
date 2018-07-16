@@ -34,6 +34,9 @@
     <sql id="txPayOrder_column_body">
          a.id,a.orderType,a.payNumber,a.orderNumber,a.queryNumber,a.state,a.createTime,a.fee,a.realFee,a.userId,a.userName,a.promoterId,a.promoterName,a.twoPromoterId,a.twoPromoterName,a.oneRate,a.twoRate,a.devRate,a.totalRate,a.accNo,a.payWay,a.settleDate,a.refundNumber,a.cityCode
     </sql>
+    <sql id="txPayOrder_column_body1">
+         a.id,a.orderType,a.payNumber,a.orderNumber,a.queryNumber,a.state,a.createTime,a.fee,a.realFee,a.userId,a.userName,a.promoterId,a.promoterName,a.twoPromoterId,a.twoPromoterName,a.oneRate,a.twoRate,a.devRate,a.totalRate,a.accNo,a.payWay,a.settleDate,a.refundNumber,a.cityCode,b.nick_name as nickName
+    </sql>
     <!-- 查询条件 -->
     <sql id="txPayOrder_select_body">
     	<trim prefix="where" prefixOverrides="and | or">
@@ -62,6 +65,7 @@
     		<if test="refundNumber != null"> and a.refundNumber = #{refundNumber,jdbcType=VARCHAR} </if>
     		<if test="shopCode != null"> and a.shopCode = #{shopCode,jdbcType=VARCHAR} </if>
     		<if test="cityCode != null"> and a.cityCode = #{cityCode,jdbcType=VARCHAR} </if>
+    		<if test="oneRateFlag != null"> and a.oneRate > 0 </if>
 		</trim>
     </sql>
     <select id="getTxPayOrderById" parameterType="java.lang.Long" resultMap="baseResultMap">
@@ -78,6 +82,18 @@
         SELECT <include refid="txPayOrder_column_body" />
         FROM tx_pay_order a
 		<include refid="txPayOrder_select_body" />
+    </select>
+    
+     <sql id="txPayOrder_sort_body">
+    	<if test="sort!=null and order!=null"> order by a.${sort} ${order} </if>
+    </sql>
+    
+    <select id="getTxPayOrderListMsg" parameterType="com.tx.txPayOrder.model.TxPayOrder" resultMap="baseResultMap">
+        SELECT <include refid="txPayOrder_column_body1" />
+        FROM tx_pay_order a
+        left join tx_wx_user b on a.userId = b.id
+		<include refid="txPayOrder_select_body" />
+		<include refid="txPayOrder_sort_body" />
     </select>
     
     <insert id="insertTxPayOrder" parameterType="com.tx.txPayOrder.model.TxPayOrder">

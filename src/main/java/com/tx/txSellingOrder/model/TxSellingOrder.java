@@ -73,7 +73,14 @@ public class TxSellingOrder extends BaseModel implements java.io.Serializable{
 	private Integer promoter_state;
 	private Integer selTime;
 	private String xwMerId;
+	private String nickName;
 	
+	public String getNickName() {
+		return nickName;
+	}
+	public void setNickName(String nickName) {
+		this.nickName = nickName;
+	}
 	public String getXwMerId() {
 		return xwMerId;
 	}

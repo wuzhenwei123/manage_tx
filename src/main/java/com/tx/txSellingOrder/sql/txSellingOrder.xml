@@ -34,12 +34,29 @@
 	<!-- 查询参数 -->
     <sql id="txSellingOrder_column_body">
          a.id,a.code,a.money,a.createTime,a.accNo,a.endTime,a.state,a.queryId,a.promoterId,a.twoPromoterId,a.wxUserName,a.one_rate,a.two_rate,a.dev_rate,a.wxUserId,a.profitManey,a.profits,a.backCard,a.refundState,a.refundQueryId,a.refundAccNo,a.refundCode,
-         b.realName as promoterName,c.realName as twoPromoterName,a.selTime,a.refundTime
+         a.selTime,a.refundTime
     </sql>
     <sql id="txSellingOrder_column_body1">
          a.id,a.code,a.money,a.createTime,a.accNo,a.endTime,a.state,a.queryId,a.promoterId,a.twoPromoterId,a.wxUserName,a.one_rate,a.two_rate,a.dev_rate,a.wxUserId,a.profitManey,a.profits,a.backCard,a.refundState,a.refundQueryId,a.refundAccNo,a.refundCode,
          a.selTime,a.refundTime
     </sql>
+    <sql id="txSellingOrder_column_body2">
+         a.id,a.code,a.money,a.createTime,a.accNo,a.endTime,a.state,a.queryId,a.promoterId,a.twoPromoterId,a.wxUserName,a.one_rate,a.two_rate,a.dev_rate,a.wxUserId,a.profitManey,a.profits,a.backCard,a.refundState,a.refundQueryId,a.refundAccNo,a.refundCode,
+         a.selTime,a.refundTime,b.nick_name as nickName
+    </sql>
+    
+    
+    <!-- 分页 -->
+    <sql id="txSellingOrder_limit_body">
+    	<if test="offset!=null and limit!=null">
+    	limit ${offset} , ${limit} 
+    	</if>
+    </sql>
+    <!-- 排序 -->
+    <sql id="txSellingOrder_sort_body">
+    	<if test="sort!=null and order!=null"> order by a.${sort} ${order} </if>
+    </sql>
+    
     <!-- 查询条件 -->
     <sql id="txSellingOrder_select_body">
     	<trim prefix="where" prefixOverrides="and | or">
@@ -119,19 +136,15 @@
     <select id="getTxSellingOrderById" parameterType="java.lang.Long" resultMap="baseResultMap">
         SELECT <include refid="txSellingOrder_column_body" />
         FROM tx_selling_order a
-        left join manage_admin_user b on a.promoterId = b.adminId
-        left join manage_admin_user c on a.twoPromoterId = c.adminId
 		where a.id = #{id}
     </select>
     <select id="getTxSellingOrderByCode" parameterType="java.lang.String" resultMap="baseResultMap">
         SELECT <include refid="txSellingOrder_column_body" />
         FROM tx_selling_order a
-        left join manage_admin_user b on a.promoterId = b.adminId
-        left join manage_admin_user c on a.twoPromoterId = c.adminId
 		where a.code = #{code}
     </select>
     <select id="getTxSellingOrderByRefundCode" parameterType="java.lang.String" resultMap="baseResultMap">
-        SELECT <include refid="txSellingOrder_column_body1" />
+        SELECT <include refid="txSellingOrder_column_body" />
         FROM tx_selling_order a
 		where a.refundCode = #{refundCode}
     </select>
@@ -139,8 +152,15 @@
         SELECT <include refid="txSellingOrder_column_body" />
         FROM tx_selling_order a
         left join manage_admin_user b on a.promoterId = b.adminId
-        left join manage_admin_user c on a.twoPromoterId = c.adminId
 		<include refid="txSellingOrder_select_body" />
+    </select>
+    
+    <select id="getTxSellingOrderListMsg" parameterType="com.tx.txSellingOrder.model.TxSellingOrder" resultMap="baseResultMap">
+        SELECT <include refid="txSellingOrder_column_body2" />
+        FROM tx_selling_order a
+        left join tx_wx_user b on a.wxUserId = b.id
+		<include refid="txSellingOrder_select_body" />
+		<include refid="txSellingOrder_sort_body" />
     </select>
     
     <insert id="insertTxSellingOrder" parameterType="com.tx.txSellingOrder.model.TxSellingOrder">
@@ -248,17 +268,6 @@
 		<include refid="txSellingOrder_select_body" />
     </select>
     
-    
-    <!-- 分页 -->
-    <sql id="txSellingOrder_limit_body">
-    	<if test="offset!=null and limit!=null">
-    	limit ${offset} , ${limit} 
-    	</if>
-    </sql>
-    <!-- 排序 -->
-    <sql id="txSellingOrder_sort_body">
-    	<if test="sort!=null and order!=null"> order by a.${sort} ${order} </if>
-    </sql>
     
     <select id="getTxSellingOrderListByPage" parameterType="com.tx.txSellingOrder.model.TxSellingOrder" resultMap="baseResultMap">
         SELECT <include refid="txSellingOrder_column_body1" />

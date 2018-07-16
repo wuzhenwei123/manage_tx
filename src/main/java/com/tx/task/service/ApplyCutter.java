@@ -82,12 +82,13 @@ public class ApplyCutter {
 				logger.info("--------分润代付发送报文------------>"+reqData);
 				Map<String, String> rspData = AcpService.post(reqData,ConfigConstants.FENRUN_URL,DemoBase.encoding);
 				logger.info("--------分润代付接收报文------------>"+rspData);
-				logger.info(URLDecoder.decode(rspData.get("respMsg"),"UTF-8"));
+	
 				/**对应答码的处理，请根据您的业务逻辑来编写程序,以下应答码处理逻辑仅供参考------------->**/
 				
 				payLogCutter.filesMng(16, 1, reqData.toString(), wxUser.getId(), wxUser.getMobile(), wxUser.getRealName(), null);
 	    		payLogCutter.filesMng(16, 2, rspData.toString(), wxUser.getId(), wxUser.getMobile(), wxUser.getRealName(), null);
 				if(!rspData.isEmpty()){
+					logger.info(URLDecoder.decode(rspData.get("respMsg"),"UTF-8"));
 					logger.info(rspData.get("respCode"));
 				}else{
 					logger.info(rspData.get("未获取到返回报文或返回http状态码非200"));
