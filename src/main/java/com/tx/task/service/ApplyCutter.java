@@ -67,8 +67,8 @@ public class ApplyCutter {
 				data.put("backUrl", ConfigConstants.FENRUN_BACK_URL);
 				data.put("orderId", ordercode);
 				data.put("merOrderTime", orderNoTime);
-				data.put("txnAmt", money+"");
-				data.put("bankNo", wxUser.getCardNumber());
+				data.put("txnAmt", AcpService.encryptData(money+"", DemoBase.encoding));
+				data.put("bankNo", AcpService.encryptData(wxUser.getCardNumber(), DemoBase.encoding));
 				data.put("BankName", weiXinService.getKHBankName(wxUser.getCardNumber()));                  			   
 				
 				data.put("payName", wxUser.getRealName());

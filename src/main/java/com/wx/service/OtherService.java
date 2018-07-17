@@ -774,15 +774,18 @@ public class OtherService {
 		    				if(list!=null&&list.size()>0){
 		    					txApplay2 = list.get(0);
 		    					txApplay2.setState(1);
+		    					txApplay2.setCheckTime(new Date());
 		    					int flag = txApplayDAO.updateTxApplayById(txApplay2);
 		    					if(flag>0){
+		    						TxWxUser wxUser = txWxUserDAO.getTxWxUserById(txApplay2.getUserId());
 		    						TxRecord txRecord = new TxRecord();
-		    						txRecord.setAccNo(accNo);
+		    						txRecord.setAccNo(wxUser.getCardNumber());
 		    						txRecord.setApplyId(txApplay2.getId());
 		    						txRecord.setFee(txApplay2.getFee());
 		    						txRecord.setName(txApplay2.getName());
 		    						txRecord.setRspCode(respCode);
 		    						txRecord.setRspData(respMsg);
+		    						txRecord.setUserId(txApplay2.getUserId());
 		    						txRecord.setState(1);
 		    						txRecordDAO.insertTxRecord(txRecord);
 		    					}
@@ -798,6 +801,7 @@ public class OtherService {
 	    						txRecord.setName(txApplay2.getName());
 	    						txRecord.setRspCode(respCode);
 	    						txRecord.setRspData(respMsg);
+	    						txRecord.setUserId(txApplay2.getUserId());
 	    						txRecord.setState(0);
 	    						txRecordDAO.insertTxRecord(txRecord);
 		    				}

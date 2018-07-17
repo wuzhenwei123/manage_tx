@@ -33,20 +33,20 @@
      
     <div class="ch_ui_box marginTop16">
         <a href="${ctx}/other/toMyEmq" class="ui_cell ui_cells">
-        	<div style="background-image:url('${ctx}/images/wx/user_icon_!13.png');" class="ui_cell_icon_box"></div>
+        	<div style="background-image:url('${ctx}/images/wx/user_icon_!14.png');" class="ui_cell_icon_box"></div>
             <div class="ui_center ui_cell_flex">领取展业二维码</div>
             <div class="ui_cell_link"></div>
         </a>
     </div>
      <div class="ch_ui_box marginTop16">
         <a href="${ctx}/other/toMyYongjin?openId=${openId}" class="ui_cell ui_cells">
-        	<div style="background-image:url('${ctx}/images/wx/user_icon_!13.png');" class="ui_cell_icon_box"></div>
+        	<div style="background-image:url('${ctx}/images/wx/bank_logo.png');" class="ui_cell_icon_box"></div>
             <div class="ui_center ui_cell_flex">查看和提取佣金</div>
             <div class="ui_cell_link"></div>
         </a>
     </div>  
     <div class="ch_ui_box marginTop16">
-        <a href="${ctx}/weixin/toMyFriend?openId=${openId}" class="ui_cell ui_cells">
+        <a href="${ctx}/other/toMyTeam" class="ui_cell ui_cells">
         	<div style="background-image:url('${ctx}/images/wx/user_icon_!.png');" class="ui_cell_icon_box"></div>
             <div class="ui_center ui_cell_flex">我的团队</div>
             <div class="ui_cell_link"></div>

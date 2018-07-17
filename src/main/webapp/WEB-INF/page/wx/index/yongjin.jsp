@@ -26,7 +26,7 @@
         <p>佣金罐余额： <i>${yuFee}</i></p>
     </div>
     <div class="com_con">
-		<c:if test="${week==1}">
+		<c:if test="${week==2}">
         	<a href="${ctx}/other/toApply?yuFee=${yuFee}">提取佣金</a>
         </c:if>
 

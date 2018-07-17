@@ -33,6 +33,7 @@ import com.base.utils.ConfigConstants;
 import com.base.utils.RequestHandler;
 import com.base.utils.SessionName;
 import com.base.utils.HttpUtils;
+import com.github.pagehelper.PageHelper;
 import com.tx.task.service.ApplyCutter;
 import com.tx.task.service.SendCodeCutter;
 import com.tx.txApplay.model.TxApplay;
@@ -1069,5 +1070,78 @@ public class OtherController extends BaseController{
 			e.printStackTrace();
 		}
 		return "/wx/index/applyDetail";
+	}
+	@RequestMapping(value = "/toMyTeam", method = RequestMethod.GET)
+	public String toMyTeam(HttpServletRequest request, HttpServletResponse response, Model model)
+	{
+		TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+		try{
+			Long money = 0L;
+			Long moneyAll = 0L;
+			Long chengjiao = 0L;
+			//查粉丝
+			TxWxUser txWxUserF = new TxWxUser();
+			txWxUserF.setPromoterId(txWxUser.getId());
+			txWxUserF.setState(1);
+			txWxUserF.setCheckState(1);
+			int countF = txWxUserService.getTxWxUserListCount(txWxUserF);
+			//获取售电佣金
+			TxPayOrder txPayOrder = new TxPayOrder();
+			txPayOrder.setPromoterId(txWxUser.getId());
+			txPayOrder.setState(1);
+			txPayOrder = txPayOrderService.getTxPayOrderSumMoney(txPayOrder);
+			money = money + txPayOrder.getOneRate();
+			moneyAll = moneyAll + txPayOrder.getFee();
+			//获取提现佣金
+			TxSellingOrder txSellingOrder = new TxSellingOrder();
+			txSellingOrder.setPromoterId(txWxUser.getId());
+			txSellingOrder.setState(1);
+			txSellingOrder.setRefundState(1);
+			txSellingOrder = txSellingOrderService.getSellingOrderByTwoPromoter(txSellingOrder);
+			money = money + txSellingOrder.getOneRate();
+			moneyAll = moneyAll + txSellingOrder.getMoney();
+			
+			model.addAttribute("moneySelf", super.getMoney(money));
+			
+			TxSellingOrder txSellingOrder1 = new TxSellingOrder();
+			txSellingOrder1.setTwoPromoterId(txWxUser.getId());
+			txSellingOrder1.setState(1);
+			txSellingOrder1.setRefundState(1);
+			txSellingOrder = txSellingOrderService.getSellingOrderByTwoPromoter(txSellingOrder);
+			money = money + txSellingOrder.getTwoRate();
+			moneyAll = moneyAll + txSellingOrder.getMoney();
+			
+			
+			model.addAttribute("money", super.getMoney(money));
+			model.addAttribute("countF", countF);
+			model.addAttribute("moneyAll",super.getMoney(moneyAll));
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return "/wx/index/myTeam";
+	}
+	@RequestMapping(value = "/toMyFans", method = RequestMethod.GET)
+	public String toMyFans(HttpServletRequest request, HttpServletResponse response, Model model)
+	{
+		TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+		try{
+			//查粉丝
+			TxWxUser txWxUserF = requst2Bean(request,TxWxUser.class);;
+			txWxUserF.setPromoterId(txWxUser.getId());
+			txWxUserF.setState(1);
+			txWxUserF.setCheckState(1);
+			int allCount = txWxUserService.getTxWxUserListCount(txWxUserF);
+			PageHelper.offsetPage(txWxUserF.getOffset(), 10);
+			PageHelper.orderBy("a.create_time desc ");
+			List<TxWxUser> list = txWxUserService.getTxWxUserList(txWxUserF);
+			
+			
+			model.addAttribute("list",list);
+			model.addAttribute("page",txWxUserF.getOffset());
+			model.addAttribute("allCount",allCount);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return "/wx/index/myTeam";
 	}
 }
