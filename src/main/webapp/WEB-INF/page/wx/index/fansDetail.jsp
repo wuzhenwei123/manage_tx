@@ -25,6 +25,7 @@
 	    width: 25%;
 	    text-align: center;
 	}
+	
 	.topBox {
 	    height: 40px;
 	    position: relative;

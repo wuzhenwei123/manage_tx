@@ -24,6 +24,7 @@ import com.wx.service.WeiXinService;
 @Component
 public class ApplyCutter {
 	
+	
 	private static Logger logger = Logger.getLogger(ApplyCutter.class);
 
 	@Autowired

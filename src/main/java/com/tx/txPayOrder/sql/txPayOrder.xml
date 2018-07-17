@@ -185,6 +185,7 @@
         delete from tx_pay_order where id = #{id}
     </delete>
     
+    
     <select id="getTxPayOrderSumMoney" parameterType="com.tx.txPayOrder.model.TxPayOrder" resultMap="baseResultMap">
         SELECT if(sum(oneRate) is null,0,sum(oneRate)) as oneRate,if(sum(twoRate) is null,0,sum(twoRate)) as twoRate,if(sum(fee) is null,0,sum(fee)) as fee
         FROM tx_pay_order a

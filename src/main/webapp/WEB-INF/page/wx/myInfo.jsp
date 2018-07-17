@@ -52,6 +52,7 @@
             <div class="ui_cell_link"></div>
         </a>
     </div>
+    
     <div class="ch_ui_box marginTop16">
         <a href="${ctx}/index/toRecharge?openId=${openId}" class="ui_cell ui_cells">
         	<div style="background-image:url('${ctx}/images/wx/user_icon_!13.png');" class="ui_cell_icon_box"></div>

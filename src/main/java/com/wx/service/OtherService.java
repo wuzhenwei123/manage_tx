@@ -809,6 +809,7 @@ public class OtherService {
 		    			}
 	    			}
 	    		}
+	    		
 	    		logger.info("异步银联支付(无token)回调后台接收报文");
 	    		logger.info("--------------银联支付(无token)回调后台回调-------------->"+valideData);
 	    	}catch(Exception e){

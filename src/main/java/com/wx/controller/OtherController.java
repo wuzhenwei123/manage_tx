@@ -148,6 +148,7 @@ public class OtherController extends BaseController{
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
+		
 	}
 	
 	/**
