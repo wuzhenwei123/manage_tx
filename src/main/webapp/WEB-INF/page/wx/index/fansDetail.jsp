@@ -57,30 +57,31 @@
             	<dl>
                     <dt>
                         <ul class="clearfix">
-                            <li>团队成员</li>
-                            <li>注册时间</li>
+                            <li style="width: 50%;">团队成员</li>
+                            <li style="width: 50%;">注册时间</li>
                         </ul>
                     </dt>
                     <div id="zd-item">
                     	<c:forEach items="${list }" var="order">
 							<dd>
 								<ul class="clearfix">
-									<li>${order.nickName}</li>
-									<li><fmt:formatDate value="${order.createTime}" pattern="yyyy-MM-dd"/> </li>
+									<li style="width: 50%;">${order.nickName}</li>
+									<li style="width: 50%;"><fmt:formatDate value="${order.createTime}" pattern="yyyy-MM-dd"/> </li>
 								</ul>
 							</dd>
 						</c:forEach>
                     </div>
                 </dl>
             </div>
-            <div class="page_box">
-                <ul class="clearfix">
-                    <li onclick="searchDate(1)">首页</li>
-                    <li onclick="pro()">上一页</li>
-                    <li onclick="next()">下一页</li>
-                    <li onclick="end()">尾页</li>
-                </ul>
-            </div>
+            	<div class="page_box">
+	                <ul class="clearfix">
+	                    <li onclick="searchDate(0)">首页</li>
+	                    <li onclick="pro()">上一页</li>
+	                    <li onclick="next()">下一页</li>
+	                    <li onclick="end()">尾页</li>
+	                </ul>
+	            </div>
+            
         </div>
     </div>
    	<script type="text/javascript">
@@ -88,22 +89,36 @@
    	var allCount = '${allCount}';
    	function next(){
            page = parseInt(page)+1;
+           var totals = parseInt(parseInt(allCount)/10);
+      	   var yu = parseInt(allCount)%10;
+      	   if(parseInt(allCount)>10){
+      		 if(page>=(totals+1)){
+          	   page = totals+1;
+             }
+      	   }else{
+      		 page = 0;
+      	   }
            searchDate(page);
    	}
    	function pro(){
            page = parseInt(page)-1;
            if(page<=0){
-           	page = 1;
+           	page = 0;
            }
            searchDate(page);
    	}
    	function end(){
    		var totals = parseInt(parseInt(allCount)/10);
    		var yu = parseInt(allCount)%10;
-   		if(yu>0){
-   	        page = totals+1;
+   		if(parseInt(allCount)>10){
+   			if(yu>0){
+   	   	        page = totals+1;
+   	   		}
+   		}else{
+   			page = 0;
    		}
-           searchDate(page);
+   		
+        searchDate(page);
    	}
    	
    	function searchDate(page){

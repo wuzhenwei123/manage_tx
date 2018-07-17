@@ -1143,6 +1143,6 @@ public class OtherController extends BaseController{
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		return "/wx/index/myTeam";
+		return "/wx/index/fansDetail";
 	}
 }
