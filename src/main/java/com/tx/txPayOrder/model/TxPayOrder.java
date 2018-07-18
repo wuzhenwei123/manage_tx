@@ -65,7 +65,21 @@ public class TxPayOrder extends BaseModel implements java.io.Serializable{
 	private String cityCode;
 	private String oneRateFlag;
 	private String nickName;
+	private String Year_str;
+	private String createTimeStr;
 		
+	public String getCreateTimeStr() {
+		return createTimeStr;
+	}
+	public void setCreateTimeStr(String createTimeStr) {
+		this.createTimeStr = createTimeStr;
+	}
+	public String getYear_str() {
+		return Year_str;
+	}
+	public void setYear_str(String year_str) {
+		Year_str = year_str;
+	}
 	public String getNickName() {
 		return nickName;
 	}

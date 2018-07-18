@@ -13,6 +13,8 @@ public interface TxPayOrderDAO{
 	
 	public List<TxPayOrder> getTxPayOrderListMsg(TxPayOrder txPayOrder);
 
+	public List<TxPayOrder> orderAnalysis(TxPayOrder txPayOrder);
+	
 	public TxPayOrder getTxPayOrderById(long id);
 	
 	public TxPayOrder getTxPayOrderSumMoney(TxPayOrder txPayOrder);

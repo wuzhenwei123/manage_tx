@@ -191,4 +191,8 @@
         FROM tx_pay_order a
 		<include refid="txPayOrder_select_body" />
     </select>
+    
+    <select id="orderAnalysis" parameterType="com.tx.txPayOrder.model.TxPayOrder" resultMap="baseResultMap">
+         select if(sum(fee) is null,0,sum(fee)) as fee,DATE_FORMAT(createTime, '%Y-%m') as createTimeStr,orderType from tx_pay_order where state = 1 and  DATE_FORMAT(createTime, '%Y')=#{year_str} group by DATE_FORMAT(createTime, '%Y-%m'),orderType
+    </select>
 </mapper>

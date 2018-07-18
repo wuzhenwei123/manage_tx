@@ -41,6 +41,8 @@
 													</div>
 													<div id="main1" style="width: 98%;height: 400px;">
 													</div>
+													<div id="main2" style="width: 98%;height: 400px;">
+													</div>
 												</div>
 											</div>
 										</div>
@@ -58,11 +60,13 @@
 	<script type="text/javascript">
 	var myChart = echarts.init(document.getElementById('main'));
 	var myChart1 = echarts.init(document.getElementById('main1'));
+	var myChart2 = echarts.init(document.getElementById('main2'));
 	$(document).ready(function(){
 		var roleId = '${admin_user.role_id}';
 		if(roleId=="1"){
 	    	searchData();
 	    	searchData1();
+	    	searchData2();
 		}
     });
 
@@ -113,6 +117,30 @@
             	option = option+ "series: [{name: '有效订单交易额(元)',label: {normal: {show: true,position: 'top'}},type: 'bar',data: ["+json.data_str+"]},";
             	option = option+ "{name: '退卡订单交易额(元)',label: {normal: {show: true,position: 'top'}},type: 'bar',data: ["+json.data_str1+"]}]}";
             	myChart1.setOption(eval("("+option+")"));
+            } else {
+            	tipError("系统异常!");
+            } 
+	    });
+	}
+	function searchData2(){
+		var index = layer.load(0, {shade: false});
+		var year_str = $("#fYear_str").val();
+		$.getJSON("${ctx}/txDataAnalysisController/payOrderCountAnalysis",
+    		{
+				year_str:year_str,
+				_t: Math.random()
+	        },function(data){
+            var result = data;
+            if (result.code == 1) {
+            	layer.close(index);
+            	var json = eval("("+result.rows+")");
+            	var option = "{title: {text: '"+json.year_str+"年生活缴费订单累计交易额(元)',align: 'auto'},tooltip: {trigger: 'axis',axisPointer: { type: 'shadow' }},legend: {data: ["+json.title+"]},";
+            	option = option+ " grid: {left: '3%',right: '4%',bottom: '3%',containLabel: true},toolbox: {feature: {saveAsImage: {}}},";
+            	option = option+ " xAxis: {type: 'category',name: '日期',boundaryGap: false,data: ["+json.mouthY_str+"]},";
+            	option = option+ "yAxis: {type: 'value'},";
+            	option = option+ "series: "+JSON.stringify(json.array).replace(/\"/g,"")+"}";
+            	console.log(JSON.stringify(json.array).replace(/\"/g,""));
+            	myChart2.setOption(eval("("+option+")"));
             } else {
             	tipError("系统异常!");
             } 
