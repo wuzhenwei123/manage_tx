@@ -55,14 +55,14 @@
     
     <div class="ch_ui_box marginTop16">
         <a href="${ctx}/index/toRecharge?openId=${openId}" class="ui_cell ui_cells">
-        	<div style="background-image:url('${ctx}/images/wx/user_icon_!13.png');" class="ui_cell_icon_box"></div>
+        	<div style="background-image:url('${ctx}/images/wx/money.png');" class="ui_cell_icon_box"></div>
             <div class="ui_center ui_cell_flex">预批电费，躺着赚</div>
             <div class="ui_cell_link"></div>
         </a>
     </div> 
     <div class="ch_ui_box marginTop16">
         <a href="${ctx}/other/toSellOrder" class="ui_cell ui_cells">
-        	<div style="background-image:url('${ctx}/images/wx/user_icon_!13.png');" class="ui_cell_icon_box"></div>
+        	<div style="background-image:url('${ctx}/images/wx/list.png');" class="ui_cell_icon_box"></div>
             <div class="ui_center ui_cell_flex">查看批电明细或退费</div>
             <div class="ui_cell_link"></div>
         </a>
