@@ -30,6 +30,7 @@
     		<if test="rspCode != null"> and a.rspCode = #{rspCode,jdbcType=VARCHAR} </if>
     		<if test="rspData != null"> and a.rspData = #{rspData,jdbcType=VARCHAR} </if>
     		<if test="applyId != null"> and a.applyId = #{applyId,jdbcType=BIGINT} </if>
+    		<if test="orderCode != null"> and b.orderCode = #{orderCode,jdbcType=VARCHAR} </if>
 		</trim>
     </sql>
     <select id="getTxRecordById" parameterType="java.lang.Long" resultMap="baseResultMap">
@@ -91,6 +92,12 @@
     <select id="getTxRecordMoney" parameterType="com.tx.txRecord.model.TxRecord" resultMap="baseResultMap">
         SELECT if(sum(a.fee) is null,0,sum(a.fee)) as fee
         FROM tx_record a
+		<include refid="txRecord_select_body" />
+    </select>
+    <select id="getTxRecordAndApply" parameterType="com.tx.txRecord.model.TxRecord" resultMap="baseResultMap">
+        SELECT a.*,b.orderCode
+        FROM tx_record a
+        left join tx_applay b on a.applyId = b.id
 		<include refid="txRecord_select_body" />
     </select>
 </mapper>

@@ -65,7 +65,7 @@ public class TxRecordController extends BaseController
 		if(txRecord.getSort() != null && txRecord.getOrder() != null){
 			PageHelper.orderBy(txRecord.getSort() +" "+ txRecord.getOrder());
 		}			
-		List<TxRecord> txRecordList = txRecordService.getTxRecordList(txRecord);
+		List<TxRecord> txRecordList = txRecordService.getTxRecordAndApply(txRecord);
 		PageInfo<TxRecord> pageInfo = new PageInfo<TxRecord>(txRecordList);
 		writeSuccessMsg("OK",pageInfo, response);
 	}

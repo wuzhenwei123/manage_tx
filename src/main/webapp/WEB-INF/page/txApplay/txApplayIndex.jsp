@@ -42,40 +42,20 @@
 													<form class="form-inline search-form" role="form" id="query_form">
 													<div class="panel-body">
 														<div class="form-group">
-															<label class="control-label" for="id">id：</label>
-															<input type="text" class="form-control" id="id" name="id">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="userId">userId：</label>
-															<input type="text" class="form-control" id="userId" name="userId">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="name">name：</label>
+															<label class="control-label" for="name">申请人：</label>
 															<input type="text" class="form-control" id="name" name="name">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="fee">fee：</label>
-															<input type="text" class="form-control" id="fee" name="fee">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="createTime">createTime：</label>
-															<input type="text" class="form-control" id="createTime" name="createTime">
 														</div>
 														<div class="form-group">
 															<label class="control-label" for="state">状态：</label>
 															<select class="form-control" id="state" name="state">
 																<option value="">--全部--</option>
-																<option value="1">正常</option>
-																<option value="0">禁用</option>
+																<option value="1">已提现</option>
+																<option value="0">审核中</option>
 															</select>
 														</div>
 														<div class="form-group">
-															<label class="control-label" for="batch">batch：</label>
+															<label class="control-label" for="batch">批次：</label>
 															<input type="text" class="form-control" id="batch" name="batch">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="checkTime">checkTime：</label>
-															<input type="text" class="form-control" id="checkTime" name="checkTime">
 														</div>
 														<div class="form-group">
 															<button type="reset" class="btn btn-default">重置</button>
@@ -125,14 +105,13 @@
 															    <thead>
 																    <tr>
 																        <th data-checkbox="true"></th>
-																        <th data-field="id" data-align="center">id</th>
-																        <th data-field="userId" data-align="center">userId</th>
-																        <th data-field="name" data-align="center">name</th>
-																        <th data-field="fee" data-align="center">fee</th>
-																        <th data-field="createTime" data-sort-name="createTime" data-align="center" data-formatter="formatterCreateTime" data-sortable="true">createTime</th>
-																        <th data-field="state" data-sort-name="state" data-align="center" data-formatter="formatterState" data-sortable="true">state</th>
-																        <th data-field="batch" data-align="center">batch</th>
-																        <th data-field="checkTime" data-sort-name="checkTime" data-align="center" data-formatter="formatterCheckTime" data-sortable="true">checkTime</th>
+																        <th data-field="orderCode" data-align="center">申请订单号</th>
+																        <th data-field="name" data-align="center">申请人</th>
+																        <th data-field="fee" data-align="center" data-formatter="formatterFee">提现金额</th>
+																        <th data-field="createTime" data-sort-name="createTime" data-align="center" data-formatter="formatterCreateTime" data-sortable="true">申请时间</th>
+																        <th data-field="state" data-sort-name="state" data-align="center" data-formatter="formatterState" data-sortable="true">状态</th>
+																        <th data-field="batch" data-align="center">批次</th>
+																        <th data-field="checkTime" data-sort-name="checkTime" data-align="center" data-formatter="formatterCheckTime" data-sortable="true">审批时间</th>
 																		<th data-align="center" data-formatter="actionFormatter" data-events="actionEvents">操作</th>
 																    </tr>
 															    </thead>
@@ -285,10 +264,10 @@
 	    	var s = "-";
 	    	if(state!=null){
 	    		if(state == '1'){
-	    			s = '正常';
+	    			s = '已提现';
 	    		}
 	    		if(state == '0'){
-	    			s = '禁用';
+	    			s = '审核中';
 	    		}
 	    	}
 	    	return s;	
@@ -304,6 +283,23 @@
 	        return $.map($table.bootstrapTable('getSelections'), function (row) {
 	            return row.id;
 	        });
+	    }
+	    
+	    function formatterFee(fee){
+	    	var totalFeeStr1 = null;
+			if(fee!=null&&fee>0){
+				var money1 = fee + "";
+				if(money1.length>2){
+					totalFeeStr1 = fee/100;
+				}else if(money1.length==1){
+					totalFeeStr1 = "0.0"+fee;
+				}else{
+					totalFeeStr1 = "0."+fee;
+				}
+			}else{
+				totalFeeStr1 = "0.00";
+			}
+	    	return totalFeeStr1;	
 	    }
     </script>
 </body>

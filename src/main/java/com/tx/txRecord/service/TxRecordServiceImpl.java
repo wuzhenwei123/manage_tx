@@ -22,6 +22,9 @@ public class TxRecordServiceImpl implements TxRecordService{
     public List<TxRecord> getTxRecordList(TxRecord txRecord) {
         return txRecordDAO.getTxRecordList(txRecord);
     }
+    public List<TxRecord> getTxRecordAndApply(TxRecord txRecord) {
+    	return txRecordDAO.getTxRecordAndApply(txRecord);
+    }
 
     public TxRecord getTxRecordById(long id) { 
         return txRecordDAO.getTxRecordById(id);

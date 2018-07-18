@@ -34,7 +34,14 @@ public class TxRecord extends BaseModel implements java.io.Serializable{
 	private String rspData;
 	/** 提现申请记录id **/
 	private Long applyId;
+	private String orderCode;
 		
+	public String getOrderCode() {
+		return orderCode;
+	}
+	public void setOrderCode(String orderCode) {
+		this.orderCode = orderCode;
+	}
 	/**
 	 * 
 	 * @return id

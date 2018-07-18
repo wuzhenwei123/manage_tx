@@ -10,6 +10,7 @@ import com.tx.txRecord.model.TxRecord;
 public interface TxRecordService {
 	
 	public List<TxRecord> getTxRecordList(TxRecord txRecord);
+	public List<TxRecord> getTxRecordAndApply(TxRecord txRecord);
 
 	public TxRecord getTxRecordById(long id);
 

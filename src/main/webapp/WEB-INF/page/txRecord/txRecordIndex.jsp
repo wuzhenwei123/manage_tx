@@ -42,44 +42,20 @@
 													<form class="form-inline search-form" role="form" id="query_form">
 													<div class="panel-body">
 														<div class="form-group">
-															<label class="control-label" for="id">id：</label>
-															<input type="text" class="form-control" id="id" name="id">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="userId">userId：</label>
-															<input type="text" class="form-control" id="userId" name="userId">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="fee">fee：</label>
-															<input type="text" class="form-control" id="fee" name="fee">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="name">name：</label>
+															<label class="control-label" for="name">提现人：</label>
 															<input type="text" class="form-control" id="name" name="name">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="accNo">accNo：</label>
-															<input type="text" class="form-control" id="accNo" name="accNo">
 														</div>
 														<div class="form-group">
 															<label class="control-label" for="state">状态：</label>
 															<select class="form-control" id="state" name="state">
 																<option value="">--全部--</option>
-																<option value="1">正常</option>
-																<option value="0">禁用</option>
+																<option value="1">成功</option>
+																<option value="0">失败</option>
 															</select>
 														</div>
 														<div class="form-group">
-															<label class="control-label" for="rspCode">rspCode：</label>
-															<input type="text" class="form-control" id="rspCode" name="rspCode">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="rspData">rspData：</label>
-															<input type="text" class="form-control" id="rspData" name="rspData">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="applyId">applyId：</label>
-															<input type="text" class="form-control" id="applyId" name="applyId">
+															<label class="control-label" for="orderCode">提现订单号：</label>
+															<input type="text" class="form-control" id="orderCode" name="orderCode">
 														</div>
 														<div class="form-group">
 															<button type="reset" class="btn btn-default">重置</button>
@@ -129,15 +105,12 @@
 															    <thead>
 																    <tr>
 																        <th data-checkbox="true"></th>
-																        <th data-field="id" data-align="center">id</th>
-																        <th data-field="userId" data-align="center">userId</th>
-																        <th data-field="fee" data-align="center">fee</th>
-																        <th data-field="name" data-align="center">name</th>
-																        <th data-field="accNo" data-align="center">accNo</th>
-																        <th data-field="state" data-sort-name="state" data-align="center" data-formatter="formatterState" data-sortable="true">state</th>
-																        <th data-field="rspCode" data-align="center">rspCode</th>
-																        <th data-field="rspData" data-align="center">rspData</th>
-																        <th data-field="applyId" data-align="center">applyId</th>
+																        <th data-field="orderCode" data-align="center">申请订单号</th>
+																        <th data-field="fee" data-align="center" data-formatter="formatterFee">申请金额</th>
+																        <th data-field="name" data-align="center">提现人</th>
+																        <th data-field="state" data-sort-name="state" data-align="center" data-formatter="formatterState" data-sortable="true">到账状态</th>
+																        <th data-field="rspCode" data-align="center">返回码</th>
+																        <th data-field="rspData" data-align="center">返回结果</th>
 																		<th data-align="center" data-formatter="actionFormatter" data-events="actionEvents">操作</th>
 																    </tr>
 															    </thead>
@@ -302,6 +275,22 @@
 	        return $.map($table.bootstrapTable('getSelections'), function (row) {
 	            return row.id;
 	        });
+	    }
+	    function formatterFee(fee){
+	    	var totalFeeStr1 = null;
+			if(fee!=null&&fee>0){
+				var money1 = fee + "";
+				if(money1.length>2){
+					totalFeeStr1 = fee/100;
+				}else if(money1.length==1){
+					totalFeeStr1 = "0.0"+fee;
+				}else{
+					totalFeeStr1 = "0."+fee;
+				}
+			}else{
+				totalFeeStr1 = "0.00";
+			}
+	    	return totalFeeStr1;	
 	    }
     </script>
 </body>
