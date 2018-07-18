@@ -83,6 +83,12 @@
         FROM tx_pay_order a
 		<include refid="txPayOrder_select_body" />
     </select>
+    <select id="getTxPayOrderListAndPromeat" parameterType="com.tx.txPayOrder.model.TxPayOrder" resultMap="baseResultMap">
+        SELECT a.id,a.orderType,a.payNumber,a.orderNumber,a.queryNumber,a.state,a.createTime,a.fee,a.realFee,a.userId,a.userName,a.promoterId,a.twoPromoterId,a.twoPromoterName,a.oneRate,a.twoRate,a.devRate,a.totalRate,a.accNo,a.payWay,a.settleDate,a.refundNumber,a.cityCode,b.real_name as promoterName
+        FROM tx_pay_order a
+        left join tx_wx_user b on a.promoterId = b.id
+		<include refid="txPayOrder_select_body" />
+    </select>
     
      <sql id="txPayOrder_sort_body">
     	<if test="sort!=null and order!=null"> order by a.${sort} ${order} </if>

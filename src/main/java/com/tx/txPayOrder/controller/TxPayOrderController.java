@@ -65,7 +65,7 @@ public class TxPayOrderController extends BaseController
 		if(txPayOrder.getSort() != null && txPayOrder.getOrder() != null){
 			PageHelper.orderBy(txPayOrder.getSort() +" "+ txPayOrder.getOrder());
 		}			
-		List<TxPayOrder> txPayOrderList = txPayOrderService.getTxPayOrderList(txPayOrder);
+		List<TxPayOrder> txPayOrderList = txPayOrderService.getTxPayOrderListAndPromeat(txPayOrder);
 		PageInfo<TxPayOrder> pageInfo = new PageInfo<TxPayOrder>(txPayOrderList);
 		writeSuccessMsg("OK",pageInfo, response);
 	}

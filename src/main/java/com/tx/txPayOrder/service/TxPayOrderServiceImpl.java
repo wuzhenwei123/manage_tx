@@ -23,6 +23,9 @@ public class TxPayOrderServiceImpl implements TxPayOrderService{
     public List<TxPayOrder> getTxPayOrderList(TxPayOrder txPayOrder) {
         return txPayOrderDAO.getTxPayOrderList(txPayOrder);
     }
+    public List<TxPayOrder> getTxPayOrderListAndPromeat(TxPayOrder txPayOrder) {
+    	return txPayOrderDAO.getTxPayOrderListAndPromeat(txPayOrder);
+    }
     
     public List<TxPayOrder> getTxPayOrderListMsg(TxPayOrder txPayOrder) {
     	return txPayOrderDAO.getTxPayOrderListMsg(txPayOrder);

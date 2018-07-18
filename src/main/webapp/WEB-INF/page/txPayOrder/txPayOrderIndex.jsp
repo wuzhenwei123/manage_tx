@@ -42,96 +42,28 @@
 													<form class="form-inline search-form" role="form" id="query_form">
 													<div class="panel-body">
 														<div class="form-group">
-															<label class="control-label" for="id">id：</label>
-															<input type="text" class="form-control" id="id" name="id">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="orderType">orderType：</label>
+															<label class="control-label" for="orderType">类型：</label>
 															<input type="text" class="form-control" id="orderType" name="orderType">
 														</div>
 														<div class="form-group">
-															<label class="control-label" for="payNumber">payNumber：</label>
+															<label class="control-label" for="payNumber">缴费号：</label>
 															<input type="text" class="form-control" id="payNumber" name="payNumber">
 														</div>
 														<div class="form-group">
-															<label class="control-label" for="orderNumber">orderNumber：</label>
+															<label class="control-label" for="orderNumber">订单编号：</label>
 															<input type="text" class="form-control" id="orderNumber" name="orderNumber">
 														</div>
 														<div class="form-group">
-															<label class="control-label" for="queryNumber">queryNumber：</label>
+															<label class="control-label" for="queryNumber">银联流水号：</label>
 															<input type="text" class="form-control" id="queryNumber" name="queryNumber">
 														</div>
 														<div class="form-group">
 															<label class="control-label" for="state">状态：</label>
 															<select class="form-control" id="state" name="state">
 																<option value="">--全部--</option>
-																<option value="1">正常</option>
-																<option value="0">禁用</option>
+																<option value="1">已支付</option>
+																<option value="0">未支付</option>
 															</select>
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="createTime">createTime：</label>
-															<input type="text" class="form-control" id="createTime" name="createTime">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="fee">fee：</label>
-															<input type="text" class="form-control" id="fee" name="fee">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="realFee">realFee：</label>
-															<input type="text" class="form-control" id="realFee" name="realFee">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="userId">userId：</label>
-															<input type="text" class="form-control" id="userId" name="userId">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="userName">userName：</label>
-															<input type="text" class="form-control" id="userName" name="userName">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="promoterId">promoterId：</label>
-															<input type="text" class="form-control" id="promoterId" name="promoterId">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="promoterName">promoterName：</label>
-															<input type="text" class="form-control" id="promoterName" name="promoterName">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="twoPromoterId">twoPromoterId：</label>
-															<input type="text" class="form-control" id="twoPromoterId" name="twoPromoterId">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="twoPromoterName">twoPromoterName：</label>
-															<input type="text" class="form-control" id="twoPromoterName" name="twoPromoterName">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="oneRate">oneRate：</label>
-															<input type="text" class="form-control" id="oneRate" name="oneRate">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="twoRate">twoRate：</label>
-															<input type="text" class="form-control" id="twoRate" name="twoRate">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="devRate">devRate：</label>
-															<input type="text" class="form-control" id="devRate" name="devRate">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="totalRate">totalRate：</label>
-															<input type="text" class="form-control" id="totalRate" name="totalRate">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="accNo">accNo：</label>
-															<input type="text" class="form-control" id="accNo" name="accNo">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="payWay">payWay：</label>
-															<input type="text" class="form-control" id="payWay" name="payWay">
-														</div>
-														<div class="form-group">
-															<label class="control-label" for="settleDate">settleDate：</label>
-															<input type="text" class="form-control" id="settleDate" name="settleDate">
 														</div>
 														<div class="form-group">
 															<button type="reset" class="btn btn-default">重置</button>
@@ -181,28 +113,17 @@
 															    <thead>
 																    <tr>
 																        <th data-checkbox="true"></th>
-																        <th data-field="id" data-align="center">id</th>
-																        <th data-field="orderType" data-align="center">orderType</th>
-																        <th data-field="payNumber" data-align="center">payNumber</th>
-																        <th data-field="orderNumber" data-align="center">orderNumber</th>
-																        <th data-field="queryNumber" data-align="center">queryNumber</th>
-																        <th data-field="state" data-sort-name="state" data-align="center" data-formatter="formatterState" data-sortable="true">state</th>
-																        <th data-field="createTime" data-sort-name="createTime" data-align="center" data-formatter="formatterCreateTime" data-sortable="true">createTime</th>
-																        <th data-field="fee" data-align="center">fee</th>
-																        <th data-field="realFee" data-align="center">realFee</th>
-																        <th data-field="userId" data-align="center">userId</th>
-																        <th data-field="userName" data-align="center">userName</th>
-																        <th data-field="promoterId" data-align="center">promoterId</th>
-																        <th data-field="promoterName" data-align="center">promoterName</th>
-																        <th data-field="twoPromoterId" data-align="center">twoPromoterId</th>
-																        <th data-field="twoPromoterName" data-align="center">twoPromoterName</th>
-																        <th data-field="oneRate" data-align="center">oneRate</th>
-																        <th data-field="twoRate" data-align="center">twoRate</th>
-																        <th data-field="devRate" data-align="center">devRate</th>
-																        <th data-field="totalRate" data-align="center">totalRate</th>
-																        <th data-field="accNo" data-align="center">accNo</th>
-																        <th data-field="payWay" data-align="center">payWay</th>
-																        <th data-field="settleDate" data-align="center">settleDate</th>
+																        <th data-field="orderType" data-align="center" data-formatter="formatterOrderType">缴费类型</th>
+																        <th data-field="payNumber" data-align="center">缴费号</th>
+																        <th data-field="orderNumber" data-align="center">订单编号</th>
+																        <th data-field="queryNumber" data-align="center">银联流水号</th>
+																        <th data-field="state" data-sort-name="state" data-align="center" data-formatter="formatterState" data-sortable="true">状态</th>
+																        <th data-field="createTime" data-sort-name="createTime" data-align="center" data-formatter="formatterCreateTime" data-sortable="true">下单时间</th>
+																        <th data-field="fee" data-align="center">订单金额</th>
+																        <th data-field="userName" data-align="center">用户</th>
+																        <th data-field="promoterName" data-align="center">推广员</th>
+																        <th data-field="payWay" data-formatter="formatterPayWay" data-align="center">支付方式</th>
+																        <th data-field="settleDate" data-align="center" data-formatter="formatterSettleDate">清算日期</th>
 																		<th data-align="center" data-formatter="actionFormatter" data-events="actionEvents">操作</th>
 																    </tr>
 															    </thead>
@@ -365,16 +286,43 @@
 	    	var s = "-";
 	    	if(state!=null){
 	    		if(state == '1'){
-	    			s = '正常';
+	    			s = '已支付';
 	    		}
 	    		if(state == '0'){
-	    			s = '禁用';
+	    			s = '未支付';
+	    		}
+	    	}
+	    	return s;	
+	    }
+	    function formatterOrderType(orderType){
+	    	var s = "-";
+	    	if(orderType!=null){
+	    		if(orderType == '001'){
+	    			s = '水费';
+	    		}
+	    		if(orderType == '002'){
+	    			s = '电费';
+	    		}
+	    	}
+	    	return s;	
+	    }
+	    function formatterPayWay(payWay){
+	    	var s = "-";
+	    	if(payWay!=null){
+	    		if(payWay == '3'){
+	    			s = '银联快捷支付';
+	    		}
+	    		if(payWay == '4'){
+	    			s = '银联wap支付';
 	    		}
 	    	}
 	    	return s;	
 	    }
 	    function formatterCreateTime(createTime){
 	    	return getFormatDateByLong(createTime,"yyyy-MM-dd");
+	    }
+	    function formatterSettleDate(settleDate){
+	    	return getFormatDateByLong(settleDate,"yyyy-MM-dd");
 	    }
 	    /**
 	     * 获取表格checkbox

@@ -11,6 +11,7 @@ import com.tx.txPayOrder.model.TxPayOrder;
 public interface TxPayOrderService {
 	
 	public List<TxPayOrder> getTxPayOrderList(TxPayOrder txPayOrder);
+	public List<TxPayOrder> getTxPayOrderListAndPromeat(TxPayOrder txPayOrder);
 
 	public List<TxPayOrder> getTxPayOrderListMsg(TxPayOrder txPayOrder);
 	
