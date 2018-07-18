@@ -69,7 +69,7 @@
 																        <th data-checkbox="true"></th>
 																        <th data-field="id" data-align="center">id</th>
 																        <th data-field="trem" data-align="center" data-formatter="formatterTrem">T+N</th>
-																        <th data-field="style" data-align="center" data-formatter="formatterStyle">类型</th>
+																        <th data-field="style" data-align="center" data-formatter="formatterStyle">提现类型</th>
 																		<th data-align="center" data-formatter="actionFormatter" data-events="actionEvents">操作</th>
 																    </tr>
 															    </thead>
@@ -228,9 +228,11 @@
     		var s = "-";
 	    	if(style!=null){
 	    		if(style=="1"){
-	    			s = '普通';
+	    			s = '立即退卡';
 	    		}else if(style=="2"){
-	    			s = '批卡';
+	    			s = '到期退卡';
+	    		}else if(style=="0"){
+	    			s = '提前退卡';
 	    		}
 	    	}
 	    	return s;	
