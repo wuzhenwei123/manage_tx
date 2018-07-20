@@ -35,7 +35,7 @@
     </style>
 </head>
 <body>
-
+<%@ include file="/WEB-INF/page/common/share2.jsp"%>
 <div class="wrap">
 	<div class="top" style="background: #3f9bfe">
     	合伙人团队

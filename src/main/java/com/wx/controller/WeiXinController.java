@@ -37,6 +37,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
@@ -45,6 +46,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
 
 
 
@@ -505,18 +507,17 @@ public class WeiXinController extends BaseController{
 		super.getJsticket(request);
 		String openId = RequestHandler.getString(request, "openId");
 		if(StringUtils.isNotBlank(openId)){
-			ManageAdminUser manageAdminUser = new ManageAdminUser();
-			manageAdminUser.setOpenId(openId);
-			manageAdminUser = manageadminuserService.getManageAdminUser(manageAdminUser);
-			if(manageAdminUser!=null&&manageAdminUser.getRole_id().intValue()==Integer.valueOf(ConfigConstants.DB_ROLE_ID).intValue()){
-				model.addAttribute("manageAdminUser", manageAdminUser);
+			TxWxUser wxUser = txWxUserService.getTxWxUserByOpenId(openId);
+			if(!StringUtils.isNotBlank(wxUser.getScanTicket())){
+				//生成二维码
+				Map<String,String> map  = weiXinService.getEWMYj(ConfigConstants.APPID, ConfigConstants.APPSECRET, wxUser.getOpenId());
+				wxUser.setQrCodeUrl(map.get("imgurl"));
+				wxUser.setScanTicket(map.get("ticket"));
+				txWxUserService.updateTxWxUserById(wxUser);
 			}
-			//生成临时二维码
-			String scene_id = "Friend_" + openId;
-			Map<String,String> map = weiXinService.getEWM(ConfigConstants.APPID, ConfigConstants.APPSECRET, scene_id);
-			model.addAttribute("imgurl", map.get("imgurl"));
+			model.addAttribute("wxUser", wxUser);
 		}
-		return "/wx/myQRcodeFriend";
+		return "/wx/index/share";
 	}
 	
 	

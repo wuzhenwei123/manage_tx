@@ -20,6 +20,7 @@
 	</script>
 </head>
 <body>
+	<%@ include file="/WEB-INF/page/common/share2.jsp"%>
 	<div class="suc-box box">
 		<div class="suc-top">
 			<i class="fa fa-check-circle"></i>

@@ -11,6 +11,7 @@
     <script src="${ctx}/js/lib/layer/layer.js"></script>
 </head>
 <body>
+<%@ include file="/WEB-INF/page/common/share2.jsp"%>
 <div class="wrap">
     <div class="charge_logo">电费</div>
     <div class="charge_con">

@@ -20,6 +20,7 @@
     <script src="${ctx}/js/zepto.min.js" ></script>
 </head>
 <body class="body">
+<%@ include file="/WEB-INF/page/common/share2.jsp"%>
 <div class="box">
     <div class="topBox" style="background: #0c8ee6;">选择缴费结构</div>
      <c:forEach items="${listType}" var="buss">

@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="${ctx}/css/wx/card.css?t=<%=Math.random()%>">
 </head>
 <body>
+<%@ include file="/WEB-INF/page/common/share2.jsp"%>
 <div class="wrap">
 	<div class="vm order-detail">
             <div class="deal_box">

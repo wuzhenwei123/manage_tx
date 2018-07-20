@@ -742,6 +742,7 @@ public class OtherController extends BaseController{
 	 */
 	@RequestMapping(value = "/toMyYongjin")
 	public String toMyYongjin(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
+		super.getJsticket(request);
 		try{
 			Long money = 0L;
 			TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
@@ -923,6 +924,7 @@ public class OtherController extends BaseController{
 	@RequestMapping(value = "/toApply", method = RequestMethod.GET)
 	public String toApply(HttpServletRequest request, HttpServletResponse response, Model model)
 	{
+		super.getJsticket(request);
 		String yuFee = RequestHandler.getString(request, "yuFee");
 		model.addAttribute("yuFee", yuFee);
 		return "/wx/index/apply";
@@ -1006,6 +1008,7 @@ public class OtherController extends BaseController{
 	@RequestMapping(value = "/toApplyDetail", method = RequestMethod.GET)
 	public String toApplyDetail(HttpServletRequest request, HttpServletResponse response, Model model)
 	{
+		super.getJsticket(request);
 		TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 		try{
 			//售电佣金
@@ -1075,6 +1078,7 @@ public class OtherController extends BaseController{
 	@RequestMapping(value = "/toMyTeam", method = RequestMethod.GET)
 	public String toMyTeam(HttpServletRequest request, HttpServletResponse response, Model model)
 	{
+		super.getJsticket(request);
 		TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 		try{
 			Long money = 0L;
@@ -1124,6 +1128,7 @@ public class OtherController extends BaseController{
 	@RequestMapping(value = "/toMyFans", method = RequestMethod.GET)
 	public String toMyFans(HttpServletRequest request, HttpServletResponse response, Model model)
 	{
+		super.getJsticket(request);
 		TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 		try{
 			//查粉丝

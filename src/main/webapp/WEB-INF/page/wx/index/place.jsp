@@ -11,6 +11,7 @@
 </head>
 <body>
 <div class="wrap">
+	<%@ include file="/WEB-INF/page/common/share2.jsp"%>
     <div class="search_box">
         <input type="text" id="name" value="合肥">
         <i>搜索</i>

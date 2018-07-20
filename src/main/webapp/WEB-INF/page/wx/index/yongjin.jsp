@@ -21,6 +21,7 @@
 	</style>
 </head>
 <body>
+<%@ include file="/WEB-INF/page/common/share2.jsp"%>
 <div class="wrap">
     <div class="com_top">
         <p>佣金罐余额： <i>${yuFee}</i></p>

@@ -18,6 +18,7 @@
 	<script src="${ctx}/js/jquery.1.9.0.min.js"></script>
 </head>
 <body>
+	<%@ include file="/WEB-INF/page/common/share2.jsp"%>
 	<div class="wrapper">
 		<div class="form-box box">
 			<div class="error-info">

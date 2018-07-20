@@ -12,7 +12,7 @@
 </head>
 <body>
 <div class="wrap">
-	<%@ include file="/WEB-INF/page/common/share.jsp" %>
+	<%@ include file="/WEB-INF/page/common/share2.jsp" %>
     <div class="share_title">
         <h3>吉云信网</h3>
         <p>国网北京市电力公司指定售电机构</p>

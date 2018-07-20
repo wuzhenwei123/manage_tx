@@ -21,7 +21,7 @@
 </head>
 <body class="body">
 <div class="box">
-<!-- 	<%@ include file="/WEB-INF/page/common/share1.jsp" %> -->
+<%@ include file="/WEB-INF/page/common/share2.jsp"%>
     <div class="topBox" style="background: #0c8ee6;">个人中心</div>
 <!--     <div class="ch_ui_box marginTop16"> -->
 <!--         <a href="${ctx}/weixin/toMyCustomer?openId=${openId}" class="ui_cell ui_cells"> -->
