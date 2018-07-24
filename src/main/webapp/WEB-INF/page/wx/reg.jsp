@@ -39,7 +39,7 @@
 					<li onclick="pai(1)">
 						<div class="card_z">
 							<img src="${ctx}/images/wx/card_f.png" alt="" id="card_z" style="width: 170px;height: 102px;"> 
-							<input type="hidden" id="IDUrl" value="1">
+							<input type="hidden" id="IDUrl" value="">
 						</div>
 						<p>
 							<i>*</i>身份证照片面
@@ -49,7 +49,7 @@
 					<li onclick="pai(2)">
 						<div class="card_f">
 							<img src="${ctx}/images/wx/card_z.png" alt="" id="card_f" style="width: 170px;height: 102px;">
-							<input type="hidden" id="IDFanUrl" value="1">
+							<input type="hidden" id="IDFanUrl" value="">
 						</div>
 						<p>
 							<i>*</i>身份证国徽面
@@ -58,7 +58,7 @@
 					<li onclick="pai(3)">
 						<div class="card_s">
 							<img src="${ctx}/images/wx/card_s.png" alt="" id="card_s" style="width: 170px;height: 102px;">
-							<input type="hidden" id="IDPersonUrl" value="1">
+							<input type="hidden" id="IDPersonUrl" value="">
 						</div>
 						<p>
 							<i>*</i>手持身份证照片
@@ -67,7 +67,7 @@
 					<li onclick="pai(4)">
 						<div class="card_b">
 							<img src="${ctx}/images/wx/card_b.png" alt="" id="card_b" style="width: 170px;height: 102px;"> 
-							<input type="hidden" id="cardUrl" value="1">
+							<input type="hidden" id="cardUrl" value="">
 						</div>
 						<p>
 							<i>*</i>结算卡正面
