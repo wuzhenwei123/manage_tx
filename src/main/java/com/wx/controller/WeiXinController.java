@@ -439,6 +439,7 @@ public class WeiXinController extends BaseController{
 			//判断是否已经验证
 			TxWxUser txWxUser = new TxWxUser();
 			txWxUser.setOpenId(openId);
+			txWxUser.setCheckState(1);
 			int count = txWxUserService.getTxWxUserListCount(txWxUser);
 			if(count==0){//未绑定
 				return  "/wx/db_login";
