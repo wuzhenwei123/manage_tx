@@ -64,7 +64,7 @@ public class ApplyCutter {
 				
 				data.put("txnType", "01"); 
 				data.put("settType", "1");                   
-				data.put("merId", ConfigConstants.MER_ID);         
+				data.put("merId", ConfigConstants.GR_MER_ID);         
 				data.put("backUrl", ConfigConstants.FENRUN_BACK_URL);
 				data.put("orderId", ordercode);
 				data.put("merOrderTime", orderNoTime);

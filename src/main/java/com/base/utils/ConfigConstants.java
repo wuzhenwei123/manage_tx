@@ -139,6 +139,7 @@ public class ConfigConstants {
 	public static String UNION_BACKURL_OTHER = null;
 	public static String FENRUN_URL = null;
 	public static String FENRUN_BACK_URL = null;
+	public static String GR_MER_ID = null;
 	
 	
 	private static Properties prop = null;
@@ -235,6 +236,7 @@ public class ConfigConstants {
 				UNION_BACKURL_OTHER = (String) prop.get("union_backurl_other");
 				FENRUN_URL = (String) prop.get("fenrun_url");
 				FENRUN_BACK_URL = (String) prop.get("fenrun_back_url");
+				GR_MER_ID = (String) prop.get("gr_mer_id");
 			} catch (Exception e) {
 				throw new RuntimeException(e);
 			}
