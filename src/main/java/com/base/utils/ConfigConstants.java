@@ -78,8 +78,6 @@ public class ConfigConstants {
 	public static String PAY_RATE = null;
 	public static String REDIRECT_BACKURLTRANS_SELL = null;
 	public static String REDIRECT_BACKURLDF_SELL = null;
-	public static String PK_MER_ID = null;
-	public static String PK_TRID = null;
 	public static String XW_DF_URL = null;
 	public static String XW_BACKURL = null;
 	public static String XW_DF_QUERY = null;
@@ -196,8 +194,6 @@ public class ConfigConstants {
 				PAY_RATE = (String) prop.get("pay_rate");
 				REDIRECT_BACKURLTRANS_SELL = (String) prop.get("redirect_backUrlTrans_sell");
 				REDIRECT_BACKURLDF_SELL = (String) prop.get("redirect_backUrlDF_sell");
-				PK_MER_ID = (String) prop.get("pk_mer_id");
-				PK_TRID = (String) prop.get("pk_trId");
 				XW_DF_URL = (String) prop.get("xw_df_url");
 				XW_BACKURL = (String) prop.get("xw_backUrl");
 				XW_DF_QUERY = (String) prop.get("xw_df_query");
