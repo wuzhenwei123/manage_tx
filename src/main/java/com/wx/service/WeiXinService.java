@@ -486,7 +486,7 @@ public class WeiXinService {
     		txWxUser.setOpenId(openId);
     		int count = txWxUserDAO.getTxWxUserListCount(txWxUser);
     		if(count==0){
-    			txWxUser.setState(0);
+    			txWxUser.setState(1);
     			txWxUser.setCreateTime(new Date());
     			int id = txWxUserDAO.insertTxWxUser(txWxUser);
     			//获取微信头像和昵称
