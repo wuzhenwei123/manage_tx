@@ -78,9 +78,6 @@ public class QuartzJobSellService implements Job {
 			data.put("version", DemoBase.version);                   //版本号
 			data.put("encoding", DemoBase.encoding);         
 			data.put("merId", ConfigConstants.MER_ID);                  			   //商户号码，请改成自己申请的商户号或者open上注册得来的777商户号测试
-			if("0".equals(backCard)){
-				data.put("merId", ConfigConstants.PK_MER_ID); 
-			}
 			
 			/***要调通交易以下字段必须修改***/
 			data.put("orderId", orderNo);                 //****商户订单号，每次发交易测试需修改为被查询的交易的订单号
