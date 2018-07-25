@@ -439,36 +439,38 @@ public class WeiXinService {
     				}
     			}
     		}
-    		//判断用书是否存在
-    		TxWxUser txWxUser = new TxWxUser();
-    		txWxUser.setOpenId(openId);
-    		int count = txWxUserDAO.getTxWxUserListCount(txWxUser);
-    		if(count==0){
-    			txWxUser.setState(0);
-    			txWxUser.setCreateTime(new Date());
-    			if(userBD!=null&&userBD.getId()!=null){
-    				txWxUser.setPromoterId(userBD.getId());//拓展员
-    			}
-    			int id = txWxUserDAO.insertTxWxUser(txWxUser);
-    			//获取微信头像和昵称
-    			if(id>0){
-    				ThreadWxMsgExtends th = new ThreadWxMsgExtends(txWxUser,this.getAccessToken(ConfigConstants.APPID, ConfigConstants.APPSECRET));
-    				th.start();
-    			}
-    			
-    		}else if(count==1){
-    			//判断是否有拓展员
-    			txWxUser = txWxUserDAO.getTxWxUserByOpenId(openId);
-    			if(txWxUser.getPromoterId()==null){
-    				if(userBD!=null&&userBD.getId()!=null){
+    		if(!openId.equals(userBD.getOpenId())){
+    			//判断用书是否存在
+        		TxWxUser txWxUser = new TxWxUser();
+        		txWxUser.setOpenId(openId);
+        		int count = txWxUserDAO.getTxWxUserListCount(txWxUser);
+        		if(count==0){
+        			txWxUser.setState(0);
+        			txWxUser.setCreateTime(new Date());
+        			if(userBD!=null&&userBD.getId()!=null){
         				txWxUser.setPromoterId(userBD.getId());//拓展员
         			}
-    			}
-    			ThreadWxMsgExtends th = new ThreadWxMsgExtends(txWxUser,this.getAccessToken(ConfigConstants.APPID, ConfigConstants.APPSECRET));
-    			th.start();
-    		}else{
-    			//存在多个相同的openid
-    			
+        			int id = txWxUserDAO.insertTxWxUser(txWxUser);
+        			//获取微信头像和昵称
+        			if(id>0){
+        				ThreadWxMsgExtends th = new ThreadWxMsgExtends(txWxUser,this.getAccessToken(ConfigConstants.APPID, ConfigConstants.APPSECRET));
+        				th.start();
+        			}
+        			
+        		}else if(count==1){
+        			//判断是否有拓展员
+        			txWxUser = txWxUserDAO.getTxWxUserByOpenId(openId);
+        			if(txWxUser.getPromoterId()==null){
+        				if(userBD!=null&&userBD.getId()!=null){
+            				txWxUser.setPromoterId(userBD.getId());//拓展员
+            			}
+        			}
+        			ThreadWxMsgExtends th = new ThreadWxMsgExtends(txWxUser,this.getAccessToken(ConfigConstants.APPID, ConfigConstants.APPSECRET));
+        			th.start();
+        		}else{
+        			//存在多个相同的openid
+        			
+        		}
     		}
     	}catch(Exception e){
     		e.printStackTrace();
