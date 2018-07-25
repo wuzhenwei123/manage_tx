@@ -38,6 +38,8 @@ import javax.servlet.http.HttpServletResponse;
 
 
 
+
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.log4j.Logger;
@@ -46,6 +48,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+
 
 
 
@@ -83,6 +87,8 @@ import com.base.utils.SessionName;
 import com.sys.manageAdminUser.model.ManageAdminUser;
 import com.sys.manageAdminUser.service.ManageAdminUserService;
 import com.tx.task.service.UserInfoCutter;
+import com.tx.txDfOrder.model.TxDfOrder;
+import com.tx.txDfOrder.service.TxDfOrderService;
 import com.tx.txPayRate.model.TxPayRate;
 import com.tx.txPayRate.service.TxPayRateService;
 import com.tx.txRate.model.TxRate;
@@ -132,6 +138,8 @@ public class WeiXinController extends BaseController{
 	private TxSellingOrderService txSellingOrderService = null;
 	@Autowired
 	private TxPayRateService txPayRateService = null;
+	@Autowired
+	private TxDfOrderService txDfOrderService = null;
 	
 	
 	@RequestMapping("/access")
@@ -1681,21 +1689,39 @@ public class WeiXinController extends BaseController{
 			
 			if(list!=null&&list.size()>0){
 				for(TxSellingOrder obj:list){
+					
+					TxDfOrder txDfOrder = new TxDfOrder();
+					txDfOrder.setOrderCode(obj.getCode());
+					List<TxDfOrder> listddd = txDfOrderService.getTxDfOrderList(txDfOrder);
+					if(listddd!=null&&listddd.size()>0){
+						txDfOrder = listddd.get(0);
+					}else{
+						txDfOrder = null;
+					}
+					
 					JSONObject jsons = new JSONObject();
 //					jsons.put("orderCode", obj.getOrderCode());
 					jsons.put("money", super.getMoney(obj.getMoney()));
 					jsons.put("accNo", obj.getAccNo());
-					if(obj.getRefundState()!=null&&obj.getRefundState().intValue()==1){
-						if(obj.getRefundTime().before(obj.getEndTime())){
-							jsons.put("state", "已提前退款");
+					if(txDfOrder!=null&&txDfOrder.getId()!=null){
+						if(txDfOrder.getState()==0){
+							jsons.put("state", "申请退款中");
 						}else{
-							jsons.put("state", "到期退款");
+							jsons.put("state", "已提前退款");
 						}
 					}else{
-						if(obj.getEndTime().after(new Date())){
-							jsons.put("state", "赚钱中");
+						if(obj.getRefundState()!=null&&obj.getRefundState().intValue()==1){
+							if(obj.getRefundTime().before(obj.getEndTime())){
+								jsons.put("state", "已提前退款");
+							}else{
+								jsons.put("state", "到期退款");
+							}
 						}else{
-							jsons.put("state", "已到期");
+							if(obj.getEndTime().after(new Date())){
+								jsons.put("state", "赚钱中");
+							}else{
+								jsons.put("state", "已到期");
+							}
 						}
 					}
 					jsons.put("createTimeStr", sf.format(obj.getCreateTime()));
