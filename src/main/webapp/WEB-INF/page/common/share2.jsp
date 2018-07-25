@@ -52,8 +52,8 @@ if (typeof WeixinJSBridge == "undefined"){
 
 function onBridgeReady(){
 		wx.onMenuShareTimeline({
-		    title: '【${manageAdminUser.realName}】邀您加入易付通购电', // 分享标题
-		    link: '${server_href}/weixin/toMyQRcodeFriend?openId=${manageAdminUser.openId}', // 分享链接
+		    title: '【${admin_user.nickName}】邀您加入易付通购电', // 分享标题
+		    link: '${server_href}/weixin/toMyQRcodeFriend?openId=${admin_user.openId}', // 分享链接
 		    imgUrl: '${server_href}/images/wx/k_logo_img.jpg', // 分享图标
 		    success: function () { 
 		    },
@@ -61,9 +61,9 @@ function onBridgeReady(){
 		    }
 		});
 		wx.onMenuShareAppMessage({
-		    title: '【${manageAdminUser.realName}】邀您加入易付通购电', // 分享标题
+		    title: '【${admin_user.nickName}】邀您加入易付通购电', // 分享标题
 		    desc: '', // 分享描述
-		    link: '${server_href}/weixin/toMyQRcodeFriend?openId=${manageAdminUser.openId}', // 分享链接
+		    link: '${server_href}/weixin/toMyQRcodeFriend?openId=${admin_user.openId}', // 分享链接
 		    imgUrl: '${server_href}/images/wx/k_logo_img.jpg', // 分享图标
 		    type: 'link', // 分享类型,music、video或link，不填默认为link
 		    dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
