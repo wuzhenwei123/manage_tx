@@ -84,6 +84,6 @@
     
      <select id="getTxDfOrderListByDF" parameterType="com.tx.txDfOrder.model.TxDfOrder" resultMap="baseResultMap">
         SELECT <include refid="txDfOrder_column_body" />
-        FROM tx_refund_order a where state = 0 and TO_DAYS(now())-TO_DAYS(a.createTime) = 9
+        FROM tx_df_order a where state = 0 and TO_DAYS(now())-TO_DAYS(a.createTime) = 9
     </select>
 </mapper>
