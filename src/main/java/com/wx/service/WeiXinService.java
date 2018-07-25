@@ -592,6 +592,7 @@ public class WeiXinService {
 				 txWxUser.setNickName(json.getString("nickname"));
 				 txWxUser.setHeadUrl(json.getString("headimgurl"));
 				 txWxUser.setSex(json.getInteger("sex"));
+				 txWxUser.setState(1);
 				 txWxUserDAO.updateTxWxUserById(txWxUser);
 			} catch (Exception e) {
 				e.printStackTrace();
