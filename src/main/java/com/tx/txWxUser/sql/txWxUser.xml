@@ -272,7 +272,7 @@
     </update>
     
     <update id="unBindWx" parameterType="java.lang.String">
-        UPDATE tx_wx_user set state = 0 where openId = #{openId}
+        UPDATE tx_wx_user set  openId = null,state = 0 where openId = #{openId}
     </update>
     
     

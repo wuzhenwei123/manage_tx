@@ -23,7 +23,7 @@
 
 	<%@ include file="/WEB-INF/page/common/share1.jsp" %>
 	<div class="box">
-    	<div class="topBox">
+    	<div class="topBox" style="background: #0c8ee6;">
         	<a class=" offen_back" href="javascript:closeWin()"></a>
             验证身份
         </div>
@@ -35,7 +35,7 @@
             	<input class="input" type="text" placeholder="请输入密码" id="pwd"/>
             </div>
             <div class="items">
-            	<a href="javascript:verify();" class="btn btn_primary">验证</a>
+            	<a href="javascript:verify();" class="btn btn_primary" style="background: #0c8ee6;">验证</a>
             </div>
             
         </div>
