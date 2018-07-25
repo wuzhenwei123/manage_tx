@@ -234,6 +234,7 @@ public class WeiXinController extends BaseController{
 						}else if("SCAN".equals(event)){
 							String content = "欢迎关注";
 							sendMsg = new WxSendTextMsg(sendMsg, content);
+							WeiXin.send(sendMsg, response.getOutputStream());
 							String ticket = m.getTicket();
 							weiXinService.bindMchAndBD(openId,ticket,super.getIp(request));
 						}else if("LOCATION".equals(event)){
