@@ -323,10 +323,10 @@ public class WeiXinController extends BaseController{
 			}else if(count==1){
 				List<TxWxUser> list = txWxUserService.getTxWxUserList(txWxUser);
 				txWxUser = list.get(0);
-				if(StringUtils.isNotBlank(txWxUser.getOpenId())){
-					writeSuccessMsg("-7", null, response);
-				}else{
-					txWxUser.setOpenId(openId);
+//				if(StringUtils.isNotBlank(txWxUser.getOpenId())){
+//					writeSuccessMsg("-7", null, response);
+//				}else{
+//					txWxUser.setOpenId(openId);
 					txWxUser.setState(1);
 					txWxUserService.updateTxWxUserById(txWxUser);
 					
@@ -334,7 +334,7 @@ public class WeiXinController extends BaseController{
 					request.getSession().setAttribute(SessionName.ADMIN_USER_ID, txWxUser.getId());
 					request.getSession().setAttribute(SessionName.ADMIN_USER_NAME, txWxUser.getNickName());
 					writeSuccessMsg("1", null, response);
-				}
+//				}
 			}else{
 				writeSuccessMsg("-5", null, response);
 				return null;
