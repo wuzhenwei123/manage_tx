@@ -1,14 +1,20 @@
 package com.tx.txDfOrder.controller;
 
+import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Date;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.log4j.Logger;
 import org.springframework.web.bind.annotation.PathVariable;
+
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,6 +25,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.base.perm.Permission;
 import com.tx.txDfOrder.model.TxDfOrder;
 import com.tx.txDfOrder.service.TxDfOrderService;
+import com.tx.txWxUser.model.TxWxUser;
+import com.tx.txWxUser.service.TxWxUserService;
+import com.tx.txWxUserBankNo.model.TxWxUserBankNo;
+import com.tx.txWxUserBankNo.service.TxWxUserBankNoService;
+import com.wx.service.WeiXinService;
+import com.base.utils.MakeImei;
 import com.base.utils.RequestHandler;
 import com.base.controller.BaseController;
 import com.base.exception.BaseException;
@@ -31,16 +43,58 @@ import com.base.exception.BaseException;
 public class TxDfOrderController extends BaseController
 {
 	
-	//private static Logger logger = Logger.getLogger(TxDfOrderController.class); //Logger
+	private static Logger logger = Logger.getLogger(TxDfOrderController.class); //Logger
 	
 	@Autowired
 	private TxDfOrderService txDfOrderService = null;
+	@Autowired
+	private TxWxUserService txWxUserService = null;
+	@Autowired
+	private WeiXinService weiXinService;
+	@Autowired
+	private TxWxUserBankNoService txWxUserBankNoService = null;
 	
 	/*****************页面中转*********************/
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public String init(HttpServletRequest request, HttpServletResponse response, Model model)
 	{
 		return "/txDfOrder/txDfOrderIndex";
+	}
+	@RequestMapping(value = "/test", method = RequestMethod.GET)
+	public void test(HttpServletRequest request, HttpServletResponse response, Model model)
+	{
+		try {
+    		
+    		TxDfOrder txDfOrder = new TxDfOrder();
+    		txDfOrder.setState(0);
+    		List<TxDfOrder> list = txDfOrderService.getTxDfOrderListByDF(txDfOrder);
+    		if(list!=null&&list.size()>0){
+    			for(TxDfOrder order:list){
+    				TxWxUser wxUser = txWxUserService.getTxWxUserById(order.getUserId());
+    				String orderId = new MakeImei().getCode();
+    				SimpleDateFormat sf = new SimpleDateFormat("yyyyMMddHHmmss");
+    				Date d = new Date();
+    				String merOrderTime = sf.format(d);
+					
+					
+					//调用接口退费
+					TxWxUserBankNo txWxUserBankNo = new TxWxUserBankNo();
+					//查询开户行名称
+				 	String accNo = wxUser.getCardNumber();
+				 	String accName = weiXinService.getKHBankName(accNo);
+				 	txWxUserBankNo.setAccName(accName);
+				 	txWxUserBankNo.setAccNo(accNo);
+    				Map<String, String>	map = txWxUserBankNoService.xwDFTQ(wxUser, orderId, merOrderTime, txWxUserBankNo, order.getFee()+"", order.getOrderCode(), 1, 1,0);
+    				if(map!=null&&"00".equals(map.get("respCode"))){
+    					logger.info(wxUser.getId()+"-----------"+order.getOrderCode()+"---------------"+merOrderTime+"------------成功");
+					}else{
+						logger.info(wxUser.getId()+"-----------"+order.getOrderCode()+"---------------"+merOrderTime+"------------失败"+URLDecoder.decode(map.get("respMsg"),"UTF-8"));
+					}
+    			}
+    		}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 	@Permission(value = "/txDfOrder/addTxDfOrder")
 	@RequestMapping(value = "/toAdd", method = RequestMethod.GET)
