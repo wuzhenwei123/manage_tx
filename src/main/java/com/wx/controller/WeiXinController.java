@@ -350,9 +350,9 @@ public class WeiXinController extends BaseController{
 	 */
 	@RequestMapping(value = "/unbind")
 	public String unbind(HttpServletRequest request, HttpServletResponse response, Model model){
-		ManageAdminUser adminUser = (ManageAdminUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
+		TxWxUser txWxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 		try{
-			manageadminuserService.unBindWx(adminUser);
+			txWxUserService.unBindWx(txWxUser.getOpenId());
 			writeSuccessMsg("success", null, response);
 		}catch(Exception e){
 			writeSuccessMsg("error", null, response);
