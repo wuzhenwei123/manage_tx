@@ -47,9 +47,9 @@ public class WxMenuUtils {
            
           String MENU = "{\"button\":[{\"type\":\"view\",\"name\":\"生活缴费\",\"url\":\""+getUrl("index")+"\"}," +
 			"{\"name\":\"门票和商品\",\"sub_button\":"+
-			"[{\"type\":\"view\",\"name\":\"国外门票\",\"url\":\"http://www.10111.com.cn/\"},"+
-			"{\"type\":\"view\",\"name\":\"精品购物\",\"url\":\"http://www.10111.com.cn/\"},"+
-			"{\"type\":\"view\",\"name\":\"我要开店\",\"url\":\"http://www.10111.com.cn/\"}]}," +
+			"[{\"type\":\"view\",\"name\":\"国外门票\",\"url\":\"https://www.tiqets.com/zh/\"},"+
+			"{\"type\":\"view\",\"name\":\"精品购物\",\"url\":\"https://ds.mievie.com/\"},"+
+			"{\"type\":\"view\",\"name\":\"我要开店\",\"url\":\"https://www.mievie.com/\"}]}," +
 			"{\"name\":\"关于我们\",\"sub_button\":"+
 			"[{\"type\":\"view\",\"name\":\"赚点钱\",\"url\":\""+getUrl("jb")+"\"},"+ 
 			"{\"type\":\"view\",\"name\":\"吉云信网\",\"url\":\"http://www.10111.com.cn/\"}]}" +
