@@ -439,17 +439,17 @@ public class WeiXinController extends BaseController{
 			//判断是否已经验证
 			TxWxUser txWxUser = new TxWxUser();
 			txWxUser.setOpenId(openId);
-			txWxUser.setCheckState(1);
+			txWxUser.setState(1);
 			int count = txWxUserService.getTxWxUserListCount(txWxUser);
 			if(count==0){//未绑定
-				return  "/wx/toReg";
+				return  "/wx/tip";
 			}else{
 				if(count==1){
 					txWxUser = txWxUserService.getTxWxUserByOpenId(openId);
 					request.getSession().setAttribute(SessionName.ADMIN_USER, txWxUser);
 					request.getSession().setAttribute(SessionName.ADMIN_USER_ID, txWxUser.getId());
 					request.getSession().setAttribute(SessionName.ADMIN_USER_NAME, txWxUser.getNickName());
-					if(txWxUser.getState()==1){
+					if(txWxUser.getCheckState()==1){
 						return  "/wx/myInfo";
 					}else{
 						return  "/wx/tx/regInfo";
