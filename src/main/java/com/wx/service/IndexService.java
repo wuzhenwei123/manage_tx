@@ -257,6 +257,7 @@ public class IndexService {
 			hOrder.setPayNumber(mapsss.get("paynumber"));
 			hOrder.setQueryNumber(transaction_id);
 			hOrder.setUserName(mapsss.get("userName"));
+			hOrder.setMerTxnTime(time_end);
 			hOrder.setCreateTime(new Date());
 			logger.info("--------------->"+mapsss.get("money"));
 			hOrder.setFee(Long.valueOf(mapsss.get("money")));
@@ -1524,7 +1525,7 @@ public class IndexService {
 			data.put("backUrl", ConfigConstants.UNION_BACKURL);                 //****订单发送时间，每次发交易测试需修改为被查询的交易的订单发送时间
 			data.put("merOrderId", origQryId);                 //****原订单号
 			data.put("merTxnAmt", txnAmt+"");                 //****退费金额
-			data.put("merTxnTime", sf.format(hOrder.getCreateTime()));                 //****退费金额
+			data.put("merTxnTime", hOrder.getMerTxnTime());                 //****退费金额
 			System.out.println("------------------hOrderqxx.getRemark3()-------------->"+sf.format(hOrder.getCreateTime()));
 			/**请求参数设置完毕，以下对请求参数进行签名并发送http post请求，接收同步应答报文------------->**/
 			

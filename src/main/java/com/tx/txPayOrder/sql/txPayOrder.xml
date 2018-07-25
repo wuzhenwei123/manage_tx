@@ -28,14 +28,15 @@
 		<result column="refundNumber" jdbcType="VARCHAR" property="refundNumber" />
 		<result column="shopCode" jdbcType="VARCHAR" property="shopCode" />
 		<result column="cityCode" jdbcType="VARCHAR" property="cityCode" />
+		<result column="merTxnTime" jdbcType="VARCHAR" property="merTxnTime" />
 	</resultMap>
 
 	<!-- 查询参数 -->
     <sql id="txPayOrder_column_body">
-         a.id,a.orderType,a.payNumber,a.orderNumber,a.queryNumber,a.state,a.createTime,a.fee,a.realFee,a.userId,a.userName,a.promoterId,a.promoterName,a.twoPromoterId,a.twoPromoterName,a.oneRate,a.twoRate,a.devRate,a.totalRate,a.accNo,a.payWay,a.settleDate,a.refundNumber,a.cityCode
+         a.id,a.orderType,a.payNumber,a.orderNumber,a.queryNumber,a.state,a.createTime,a.fee,a.realFee,a.userId,a.userName,a.promoterId,a.promoterName,a.twoPromoterId,a.twoPromoterName,a.oneRate,a.twoRate,a.devRate,a.totalRate,a.accNo,a.payWay,a.settleDate,a.refundNumber,a.cityCode,a.merTxnTime
     </sql>
     <sql id="txPayOrder_column_body1">
-         a.id,a.orderType,a.payNumber,a.orderNumber,a.queryNumber,a.state,a.createTime,a.fee,a.realFee,a.userId,a.userName,a.promoterId,a.promoterName,a.twoPromoterId,a.twoPromoterName,a.oneRate,a.twoRate,a.devRate,a.totalRate,a.accNo,a.payWay,a.settleDate,a.refundNumber,a.cityCode,b.nick_name as nickName
+         a.id,a.orderType,a.payNumber,a.orderNumber,a.queryNumber,a.state,a.createTime,a.fee,a.realFee,a.userId,a.userName,a.promoterId,a.promoterName,a.twoPromoterId,a.twoPromoterName,a.oneRate,a.twoRate,a.devRate,a.totalRate,a.accNo,a.payWay,a.settleDate,a.refundNumber,a.cityCode,b.nick_name as nickName,a.merTxnTime
     </sql>
     <!-- 查询条件 -->
     <sql id="txPayOrder_select_body">
@@ -65,6 +66,7 @@
     		<if test="refundNumber != null"> and a.refundNumber = #{refundNumber,jdbcType=VARCHAR} </if>
     		<if test="shopCode != null"> and a.shopCode = #{shopCode,jdbcType=VARCHAR} </if>
     		<if test="cityCode != null"> and a.cityCode = #{cityCode,jdbcType=VARCHAR} </if>
+    		<if test="merTxnTime != null"> and a.merTxnTime = #{merTxnTime,jdbcType=VARCHAR} </if>
     		<if test="oneRateFlag != null"> and a.oneRate > 0 </if>
 		</trim>
     </sql>
@@ -128,6 +130,7 @@
 	        	<if test="settleDate != null"> ,settleDate </if>
 	        	<if test="refundNumber != null"> ,refundNumber </if>
 	        	<if test="cityCode != null"> ,cityCode </if>
+	        	<if test="merTxnTime != null"> ,merTxnTime </if>
         </trim>
         <trim prefix="values (" suffix=")" prefixOverrides=",">
 	        	<if test="orderType != null"> ,#{orderType,jdbcType=VARCHAR} </if>
@@ -153,6 +156,7 @@
 	        	<if test="settleDate != null"> ,#{settleDate,jdbcType=TIMESTAMP} </if>
 	        	<if test="refundNumber != null"> ,#{refundNumber,jdbcType=VARCHAR} </if>
 	        	<if test="cityCode != null"> ,#{cityCode,jdbcType=VARCHAR} </if>
+	        	<if test="merTxnTime != null"> ,#{merTxnTime,jdbcType=VARCHAR} </if>
 		 </trim>
         <selectKey keyProperty="id" resultType="long">
 			SELECT @@IDENTITY AS id 
@@ -184,6 +188,7 @@
         		<if test="settleDate != null"> settleDate = #{settleDate,jdbcType=TIMESTAMP}, </if>
         		<if test="refundNumber != null"> refundNumber = #{refundNumber,jdbcType=VARCHAR}, </if>
         		<if test="cityCode != null"> cityCode = #{cityCode,jdbcType=VARCHAR}, </if>
+        		<if test="merTxnTime != null"> merTxnTime = #{merTxnTime,jdbcType=VARCHAR}, </if>
         </set>
     	where id = #{id}
     </update>

@@ -67,7 +67,14 @@ public class TxPayOrder extends BaseModel implements java.io.Serializable{
 	private String nickName;
 	private String Year_str;
 	private String createTimeStr;
+	private String merTxnTime;
 		
+	public String getMerTxnTime() {
+		return merTxnTime;
+	}
+	public void setMerTxnTime(String merTxnTime) {
+		this.merTxnTime = merTxnTime;
+	}
 	public String getCreateTimeStr() {
 		return createTimeStr;
 	}
