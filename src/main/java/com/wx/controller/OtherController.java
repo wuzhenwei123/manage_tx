@@ -42,6 +42,8 @@ import com.tx.txBanner.model.TxBanner;
 import com.tx.txBanner.service.TxBannerService;
 import com.tx.txBusinessType.model.TxBusinessType;
 import com.tx.txBusinessType.service.TxBusinessTypeService;
+import com.tx.txDfOrder.model.TxDfOrder;
+import com.tx.txDfOrder.service.TxDfOrderService;
 import com.tx.txPayOrder.model.TxPayOrder;
 import com.tx.txPayOrder.service.TxPayOrderService;
 import com.tx.txPaynumberMsg.service.TxPaynumberMsgService;
@@ -94,6 +96,8 @@ public class OtherController extends BaseController{
 	private TxRecordService txRecordService = null;
 	@Autowired
 	private TxApplayService txApplayService = null;
+	@Autowired
+	private TxDfOrderService txDfOrderService = null;
 	
 	/**
 	 * 展业二维码
@@ -185,20 +189,37 @@ public class OtherController extends BaseController{
 		Long id = RequestHandler.getLong(request, "id");
 		try{
 			TxSellingOrder txSellingOrder = txSellingOrderService.getTxSellingOrderById(id);
+			TxDfOrder txDfOrder = new TxDfOrder();
+			txDfOrder.setOrderCode(txSellingOrder.getCode());
+			List<TxDfOrder> list = txDfOrderService.getTxDfOrderList(txDfOrder);
+			if(list!=null&&list.size()>0){
+				txDfOrder = list.get(0);
+			}else{
+				txDfOrder = null;
+			}
 			SimpleDateFormat sf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			model.addAttribute("order", txSellingOrder);
 			model.addAttribute("wxUser", wxUser);
-			if(txSellingOrder.getRefundState().intValue()==1){
-				if(txSellingOrder.getRefundTime().before(txSellingOrder.getEndTime())){
-					model.addAttribute("state", "已提前退款");
+			model.addAttribute("txDfOrder", txDfOrder);
+			if(txDfOrder!=null&&txDfOrder.getId()!=null){
+				if(txDfOrder.getState()==0){
+					model.addAttribute("state", "申请退款中");
 				}else{
-					model.addAttribute("state", "到期退款");
+					model.addAttribute("state", "已提前退款");
 				}
 			}else{
-				if(txSellingOrder.getEndTime().after(new Date())){
-					model.addAttribute("state", "赚钱中");
+				if(txSellingOrder.getRefundState().intValue()==1){
+					if(txSellingOrder.getRefundTime().before(txSellingOrder.getEndTime())){
+						model.addAttribute("state", "已提前退款");
+					}else{
+						model.addAttribute("state", "到期退款");
+					}
 				}else{
-					model.addAttribute("state", "已到期");
+					if(txSellingOrder.getEndTime().after(new Date())){
+						model.addAttribute("state", "赚钱中");
+					}else{
+						model.addAttribute("state", "已到期");
+					}
 				}
 			}
 			model.addAttribute("time", sf.format(txSellingOrder.getCreateTime()));
