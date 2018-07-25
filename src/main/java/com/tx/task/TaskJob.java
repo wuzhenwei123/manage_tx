@@ -286,6 +286,8 @@ public class TaskJob {
 				 	txWxUserBankNo.setAccName(accName);
 				 	txWxUserBankNo.setAccNo(accNo);
     				Map<String, String>	map = txWxUserBankNoService.xwDFTQ(wxUser, orderId, merOrderTime, txWxUserBankNo, order.getFee()+"", order.getOrderCode(), 1, 1,0);
+    				order.setState(1);
+    				txDfOrderService.updateTxDfOrderById(txDfOrder);
     				if(map!=null&&"00".equals(map.get("respCode"))){
     					log.info(wxUser.getId()+"-----------"+order.getOrderCode()+"---------------"+merOrderTime+"------------成功");
 					}else{
@@ -297,66 +299,68 @@ public class TaskJob {
 			e.printStackTrace();
 		}
     }
-//    public void cut1(){
-//    	try {
-//    		
-//    		SimpleDateFormat sf111 = new SimpleDateFormat("yyyyMMddHHmmss");
-//    		TxSellingOrder txSellingOrder = new TxSellingOrder();
-//    		txSellingOrder.setState(1);
-//    		txSellingOrder.setRefundState(0);
-//    		txSellingOrder.setEndTime(new Date());
-//    		//判断T0还是T1
-//    		TxRefundFlag txRefundFlag = new TxRefundFlag();
-//    		txRefundFlag.setStyle(2);
-//    		List<TxRefundFlag> listT = txRefundFlagService.getTxRefundFlagList(txRefundFlag);
-//    		List<TxSellingOrder> list = txSellingOrderService.getTxSellingOrderListBySY1(txSellingOrder);
-//    		if(list!=null&&list.size()>0){
-//    			for(TxSellingOrder order:list){
-//    				if(order.getState().intValue()==1&&order.getRefundState().intValue()==0){
-//    					
-//    					TxWxUser wxUser = txWxUserService.getTxWxUserById(order.getWxUserId());
-//    					//调用接口退费
-////						TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(order.getAccNo());
-//    					
-//    					//调用接口退费
-//    					TxWxUserBankNo txWxUserBankNo = new TxWxUserBankNo();
-//    					//查询开户行名称
-//    					String accNo = wxUser.getCardNumber();
-//    					String accName = weiXinService.getKHBankName(accNo);
-//    					txWxUserBankNo.setAccName(accName);
-//    					txWxUserBankNo.setAccNo(accNo);
-//    					
-//    					BigDecimal bg = new BigDecimal(order.getMoney());
-//    					BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.PAY_RATE));
-//    					
-//    					int txnAmtDF = (bg.multiply(bgRate).divide(new BigDecimal(12).multiply(new BigDecimal(order.getSelTime())))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
-//    					
-//    					order.setProfitManey(order.getMoney()+txnAmtDF);
-//    					order.setProfits(bgRate);
-//    					
-//    					String orderId = new MakeImei().getCode();
-//    					Date d = new Date();
-//    					
-//    					String merOrderTime = sf111.format(d);
-//    					order.setRefundCode(orderId);
-//    					
-//    					if(order.getPromoterId()!=null&&order.getTwoPromoterId()!=null){
-//    						int two = (bg.multiply(new BigDecimal(0.0008))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
-//    						order.setTwoRate(two);
-//    					}else if(order.getPromoterId()!=null&&order.getTwoPromoterId()==null){
-//    						int one = (bg.multiply(new BigDecimal(0.0008))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
-//    						order.setOneRate(one);
-//    					}
-//    					
-////						order.setProfitManey(order.getMoney());
-////						order.setProfits(new BigDecimal(0));
-//    					txSellingOrderService.updateTxSellingOrderById(order);
-//    					txWxUserBankNoService.xwDF(wxUser, orderId, merOrderTime, txWxUserBankNo, order.getProfitManey()+"", null, order.getBackCard(), listT.get(0).getTrem(),0);
-//    				}
-//    			}
-//    		}
-//    	} catch (Exception e) {
-//    		e.printStackTrace();
-//    	}
-//    }
+    
+    
+    public void cut2(){
+    	try {
+    		
+    		SimpleDateFormat sf111 = new SimpleDateFormat("yyyyMMddHHmmss");
+    		TxSellingOrder txSellingOrder = new TxSellingOrder();
+    		txSellingOrder.setState(1);
+    		txSellingOrder.setRefundState(0);
+    		txSellingOrder.setEndTime(new Date());
+    		//判断T0还是T1
+    		TxRefundFlag txRefundFlag = new TxRefundFlag();
+    		txRefundFlag.setStyle(2);
+    		List<TxRefundFlag> listT = txRefundFlagService.getTxRefundFlagList(txRefundFlag);
+    		List<TxSellingOrder> list = txSellingOrderService.getTxSellingOrderListBySY1(txSellingOrder);
+    		if(list!=null&&list.size()>0){
+    			for(TxSellingOrder order:list){
+    				if(order.getState().intValue()==1&&order.getRefundState().intValue()==0){
+    					
+    					TxWxUser wxUser = txWxUserService.getTxWxUserById(order.getWxUserId());
+    					//调用接口退费
+//						TxWxUserBankNo txWxUserBankNo = txWxUserBankNoService.getTxWxUserBankNoByAccNo(order.getAccNo());
+    					
+    					//调用接口退费
+    					TxWxUserBankNo txWxUserBankNo = new TxWxUserBankNo();
+    					//查询开户行名称
+    					String accNo = wxUser.getCardNumber();
+    					String accName = weiXinService.getKHBankName(accNo);
+    					txWxUserBankNo.setAccName(accName);
+    					txWxUserBankNo.setAccNo(accNo);
+    					
+    					BigDecimal bg = new BigDecimal(order.getMoney());
+    					BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.PAY_RATE));
+    					
+    					int txnAmtDF = (bg.multiply(bgRate).divide(new BigDecimal(12).multiply(new BigDecimal(order.getSelTime())))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+    					
+    					order.setProfitManey(order.getMoney()+txnAmtDF);
+    					order.setProfits(bgRate);
+    					
+    					String orderId = new MakeImei().getCode();
+    					Date d = new Date();
+    					
+    					String merOrderTime = sf111.format(d);
+    					order.setRefundCode(orderId);
+    					
+    					if(order.getPromoterId()!=null&&order.getTwoPromoterId()!=null){
+    						int two = (bg.multiply(new BigDecimal(0.0008))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+    						order.setTwoRate(two);
+    					}else if(order.getPromoterId()!=null&&order.getTwoPromoterId()==null){
+    						int one = (bg.multiply(new BigDecimal(0.0008))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+    						order.setOneRate(one);
+    					}
+    					
+//						order.setProfitManey(order.getMoney());
+//						order.setProfits(new BigDecimal(0));
+    					txSellingOrderService.updateTxSellingOrderById(order);
+    					txWxUserBankNoService.xwDF(wxUser, orderId, merOrderTime, txWxUserBankNo, order.getProfitManey()+"", null, order.getBackCard(), listT.get(0).getTrem(),0);
+    				}
+    			}
+    		}
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    	}
+    }
 }
