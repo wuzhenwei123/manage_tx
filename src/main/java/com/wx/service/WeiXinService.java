@@ -724,7 +724,7 @@ public class WeiXinService {
   	public boolean loginWxCust(String openId,HttpServletRequest request){
   		try{
   			TxWxUser txWxUser = txWxUserDAO.getTxWxUserByOpenId(openId);
-			if(txWxUser!=null&&txWxUser.getState().intValue()==1){
+			if(txWxUser!=null){
 				// 正常
 				request.getSession().setAttribute(SessionName.ADMIN_USER_NAME, txWxUser.getRealName());
 				request.getSession().setAttribute(SessionName.ADMIN_USER_ID, txWxUser.getId());
