@@ -579,13 +579,19 @@ public class UnionPayController extends BaseController{
 				}else{
 					//入库，等待管理员操作
 					TxDfOrder txRefundOrder = new TxDfOrder();
-					txRefundOrder.setUserId(wxUser.getId());
-					txRefundOrder.setRealName(wxUser.getRealName());
-					txRefundOrder.setCreateTime(new Date());
-					txRefundOrder.setFee(order.getMoney());
 					txRefundOrder.setOrderCode(order.getCode());
-					txRefundOrder.setOrderTime(order.getCreateTime());
-					txDfOrderService.insertTxDfOrder(txRefundOrder);
+					List<TxDfOrder> list = txDfOrderService.getTxDfOrderList(txRefundOrder);
+					if(list!=null&&list.size()>0){
+						
+					}else{
+						txRefundOrder.setUserId(wxUser.getId());
+						txRefundOrder.setRealName(wxUser.getRealName());
+						txRefundOrder.setCreateTime(new Date());
+						txRefundOrder.setFee(order.getMoney());
+						txRefundOrder.setOrderCode(order.getCode());
+						txRefundOrder.setOrderTime(order.getCreateTime());
+						txDfOrderService.insertTxDfOrder(txRefundOrder);
+					}
 					writeSuccessMsg("申请成功！", null, response);
 				}
 			}else{
