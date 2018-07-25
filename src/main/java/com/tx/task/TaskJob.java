@@ -286,7 +286,7 @@ public class TaskJob {
 				 	txWxUserBankNo.setAccName(accName);
 				 	txWxUserBankNo.setAccNo(accNo);
 				 	order.setState(1);
-				 	txDfOrderService.updateTxDfOrderById(txDfOrder);
+				 	txDfOrderService.updateTxDfOrderById(order);
     				Map<String, String>	map = txWxUserBankNoService.xwDFTQ(wxUser, orderId, merOrderTime, txWxUserBankNo, order.getFee()+"", order.getOrderCode(), 1, 1,0);
     				if(map!=null&&"00".equals(map.get("respCode"))){
     					log.info(wxUser.getId()+"-----------"+order.getOrderCode()+"---------------"+merOrderTime+"------------成功");
