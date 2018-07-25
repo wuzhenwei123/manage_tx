@@ -30,6 +30,8 @@ import com.base.utils.SessionName;
 import com.sys.manageAdminUser.model.ManageAdminUser;
 import com.sys.manageAdminUser.service.ManageAdminUserService;
 import com.tx.task.service.ManageUserCutter;
+import com.tx.txDfOrder.model.TxDfOrder;
+import com.tx.txDfOrder.service.TxDfOrderService;
 import com.tx.txDfRate.model.TxDfRate;
 import com.tx.txDfRate.service.TxDfRateService;
 import com.tx.txPayRate.model.TxPayRate;
@@ -73,6 +75,8 @@ public class UnionPayController extends BaseController{
 	private TxWxUserService txWxUserService = null;
 	@Autowired
 	private TxDfRateService txDfRateService = null;
+	@Autowired
+	private TxDfOrderService txDfOrderService = null;
 	
 	/**
 	 * 转向注册前说明页
@@ -529,7 +533,7 @@ public class UnionPayController extends BaseController{
 			TxWxUser wxUser = (TxWxUser)request.getSession().getAttribute(SessionName.ADMIN_USER);
 			TxSellingOrder order = txSellingOrderService.getTxSellingOrderById(id);
 			if(wxUser.getId().intValue()==order.getWxUserId().intValue()&&order.getRefundState().intValue()==0){
-//				if(order.getBackCard().intValue()==1){
+				if(order.getBackCard().intValue()==1){
 					//调用接口退费
 					TxWxUserBankNo txWxUserBankNo = new TxWxUserBankNo();
 					//查询开户行名称
@@ -565,29 +569,25 @@ public class UnionPayController extends BaseController{
 					}
 					order.setBackCard(backCard);
 					txSellingOrderService.updateTxSellingOrderById(order);
-					Map<String, String> map = null;
-					if(backCard.intValue()==1){//立即退
-						map = txWxUserBankNoService.xwDFTQ(wxUser, orderId, merOrderTime, txWxUserBankNo, (order.getMoney()-txnAmtDF)+"", order.getCode(), order.getBackCard(), listT.get(0).getTrem(),txnAmtDF);
-					}else{
-						map = txWxUserBankNoService.xwDFTQ(wxUser, orderId, merOrderTime, txWxUserBankNo, order.getMoney()+"", order.getCode(), order.getBackCard(), listT.get(0).getTrem(),0);
-					}
+
+					Map<String, String>	map = txWxUserBankNoService.xwDFTQ(wxUser, orderId, merOrderTime, txWxUserBankNo, (order.getMoney()-txnAmtDF)+"", order.getCode(), order.getBackCard(), listT.get(0).getTrem(),txnAmtDF);
 					if(map!=null&&"00".equals(map.get("respCode"))){
 						writeSuccessMsg("退卡成功！", null, response);
 					}else{
 						writeErrorMsg(URLDecoder.decode(map.get("respMsg"),"UTF-8"), "", response);
 					}
-//				}else{
-//					//入库，等待管理员操作
-//					TxRefundOrder txRefundOrder = new TxRefundOrder();
-//					txRefundOrder.setUserId(wxUser.getId());
-//					txRefundOrder.setRealName(wxUser.getRealName());
-//					txRefundOrder.setCreateTime(new Date());
-//					txRefundOrder.setFee(order.getMoney());
-//					txRefundOrder.setOrderCode(order.getCode());
-//					txRefundOrder.setOrderTime(order.getCreateTime());
-//					txRefundOrderService.insertTxRefundOrder(txRefundOrder);
-//					writeSuccessMsg("申请成功！", null, response);
-//				}
+				}else{
+					//入库，等待管理员操作
+					TxDfOrder txRefundOrder = new TxDfOrder();
+					txRefundOrder.setUserId(wxUser.getId());
+					txRefundOrder.setRealName(wxUser.getRealName());
+					txRefundOrder.setCreateTime(new Date());
+					txRefundOrder.setFee(order.getMoney());
+					txRefundOrder.setOrderCode(order.getCode());
+					txRefundOrder.setOrderTime(order.getCreateTime());
+					txDfOrderService.insertTxDfOrder(txRefundOrder);
+					writeSuccessMsg("申请成功！", null, response);
+				}
 			}else{
 				writeSuccessMsg("退卡失败！", null, response);
 			}
