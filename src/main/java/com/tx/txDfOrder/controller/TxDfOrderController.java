@@ -84,7 +84,7 @@ public class TxDfOrderController extends BaseController
 				 	String accName = weiXinService.getKHBankName(accNo);
 				 	txWxUserBankNo.setAccName(accName);
 				 	txWxUserBankNo.setAccNo(accNo);
-    				Map<String, String>	map = txWxUserBankNoService.xwDFTQ(wxUser, orderId, merOrderTime, txWxUserBankNo, order.getFee()+"", order.getOrderCode(), 1, 1,0);
+    				Map<String, String>	map = txWxUserBankNoService.xwDFTQ(wxUser, orderId, merOrderTime, txWxUserBankNo, order.getFee()+"", order.getOrderCode(), 1, 0,0);
     				if(map!=null&&"00".equals(map.get("respCode"))){
     					logger.info(wxUser.getId()+"-----------"+order.getOrderCode()+"---------------"+merOrderTime+"------------成功");
 					}else{
