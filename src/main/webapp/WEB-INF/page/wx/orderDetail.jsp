@@ -56,8 +56,10 @@
     </div>
 </div>
 <div class="btn_box btns">
-	<c:if test="${order.refundState==0}"><a href="javascript:tuika(${order.id},1);">立即退款</a></c:if>
-	<c:if test="${order.refundState==0}"><a href="javascript:tuika(${order.id},0);">申请退款</a></c:if>
+	<c:if test="${empty txDfOrder}">
+		<c:if test="${order.refundState==0}"><a href="javascript:tuika(${order.id},1);">立即退款</a></c:if>
+		<c:if test="${order.refundState==0}"><a href="javascript:tuika(${order.id},0);">申请退款</a></c:if>
+	</c:if>
 </div>
 <script src="${ctx}/js/jquery.min.js"></script>
 <script src="${ctx}/js/lib/layer/layer.js"></script>
