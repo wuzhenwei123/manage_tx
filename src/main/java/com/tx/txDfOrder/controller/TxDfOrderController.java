@@ -64,7 +64,7 @@ public class TxDfOrderController extends BaseController
 	public void test(HttpServletRequest request, HttpServletResponse response, Model model)
 	{
 		try {
-    		
+    		System.out.println("-------kaishi -------");
     		TxDfOrder txDfOrder = new TxDfOrder();
     		txDfOrder.setState(0);
     		List<TxDfOrder> list = txDfOrderService.getTxDfOrderListByDF(txDfOrder);
