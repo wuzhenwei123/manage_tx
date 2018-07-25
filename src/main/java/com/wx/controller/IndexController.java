@@ -1103,6 +1103,7 @@ public class IndexController extends BaseController{
 	 */
 	@RequestMapping(value = "/toRecharge")
 	public String toRecharge(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
+		super.getJsticket(request);
 		return  "/wx/index/recharge";
 	}
 	
