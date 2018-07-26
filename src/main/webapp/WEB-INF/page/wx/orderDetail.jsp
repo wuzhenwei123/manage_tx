@@ -96,7 +96,7 @@ function tuika(id,backCard){
 			    			}else{
 			    				layer.msg("退卡成功");
 			    			}
-			    			setTimeout("window.location.href ='${ctx}/unionpay/toMyOrder'",2000);
+			    			setTimeout("window.location.href ='${ctx}/other/toSellOrder'",2000);
 			    		}else{
 			    			layer.close(index);
 			    			layer.msg(result.message);
