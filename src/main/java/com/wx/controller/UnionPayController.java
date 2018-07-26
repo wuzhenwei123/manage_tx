@@ -227,7 +227,7 @@ public class UnionPayController extends BaseController{
 				
 				if(wxUser.getPromoterId()!=null){
 					TxWxUser wxUserPromet = txWxUserService.getTxWxUserById(wxUser.getPromoterId());//上级代理
-					if(wxUserPromet.getParentId()!=null){
+					if(wxUserPromet.getPromoterId()!=null){
 						txSellingOrder.setPromoterId(wxUserPromet.getPromoterId());
 						txSellingOrder.setTwoPromoterId(wxUser.getPromoterId());
 					}else{
