@@ -74,11 +74,11 @@
             }else if(parseFloat(money) > 20000){
             	layer.msg("最大充值金额不能超过20000");
    				return false;
-            }else if(money%1000 > 0){
-            	layer.msg("请输入1000的整数倍");
-   				return false;
             }else if(parseFloat(money) < 5000){
             	layer.msg("最大充值金额不能低于5000");
+   				return false;
+            }else if(money%1000 > 0){
+            	layer.msg("请输入1000的整数倍");
    				return false;
             }
             var sel_time = $(".sel_time").val();
