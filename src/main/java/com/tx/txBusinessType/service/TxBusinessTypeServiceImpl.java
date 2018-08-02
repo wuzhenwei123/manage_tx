@@ -465,6 +465,7 @@ public class TxBusinessTypeServiceImpl implements TxBusinessTypeService{
 		}
 		return map;
 	}
+	
 	/**
 	 * 解析智能充电账户信息
 	 * @param customerNumber
@@ -487,6 +488,74 @@ public class TxBusinessTypeServiceImpl implements TxBusinessTypeService{
 //				String chajiayue = resultInfos[5];
 //				map.put("chajia", chajia.split(":")[1]);
 //				map.put("chajiayue", chajiayue.split(":")[1]);
+				String TotalFeestr = String.valueOf(TotalFee);
+				if(TotalFeestr.length()>2){
+					int fen = TotalFee%100;
+					if(fen>0&&fen<10){
+						TotalFeestr = TotalFee/100 + ".0" + fen;
+					}else if(fen>=10){
+						TotalFeestr = TotalFee/100 + "." + fen;
+					}else{
+						TotalFeestr = TotalFee/100 + ".00";
+					}
+					map.put("qianfei", TotalFeestr);
+				}else if(TotalFeestr.length()==1){
+					map.put("qianfei", "0.0"+TotalFeestr);
+				}else{
+					map.put("qianfei", "0."+TotalFeestr);
+				}
+			}else{
+				map.put("qianfei", "0.00");
+				map.put("chajia", "0.00");
+			}
+			map.put("customerNumber", customerNumber);
+			if(userAddress.indexOf("。")!=-1){
+				map.put("userAddress", userAddress.split(":")[1].subSequence(0, userAddress.split(":")[1].indexOf("。")));
+			}else{
+				map.put("userAddress", userAddress.split(":")[1]);
+			}
+			String str = username.split(":")[1];
+			if(StringUtils.isNotBlank(str)){
+				map.put("username1", str);
+				if(str.length()>2){
+					str = str.substring(str.length()-2, str.length());
+				}else{
+					map.put("username", "*");
+				}
+				map.put("username", "*"+str);
+			}else{
+				map.put("username", "*");
+			}
+			map.put("bujia", bujia.split(":")[1]);
+			map.put("koujian", koujian.split(":")[1]);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return map;
+	}
+	
+	/**
+	 * 解析智能充电账户信息
+	 * @param customerNumber
+	 * @param openId
+	 * @param shopCode
+	 * @param resultInfo
+	 * @param TotalFee
+	 * @return
+	 */
+	public Map<String, Object> getCustomerMsg2(String customerNumber,String resultInfo,Integer TotalFee){
+		Map<String, Object> map = new HashMap<String, Object>();
+		try{
+			String[] resultInfos = resultInfo.split(",");
+			String userAddress = resultInfos[2];
+			String username = resultInfos[1];
+			String bujia = resultInfos[5];
+			String koujian = resultInfos[6];
+			if(TotalFee>0){//有欠费
+				String chajia = resultInfos[4];
+				String chajiayue = resultInfos[5];
+				map.put("chajia", chajia.split(":")[1]);
+				map.put("chajiayue", chajiayue.split(":")[1]);
 				String TotalFeestr = String.valueOf(TotalFee);
 				if(TotalFeestr.length()>2){
 					int fen = TotalFee%100;

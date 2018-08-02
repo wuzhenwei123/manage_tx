@@ -97,4 +97,14 @@ public interface TxBusinessTypeService {
 	 * @return
 	 */
 	public Map<String, Object> getCustomerMsg1(String customerNumber,String resultInfo,Integer TotalFee);
+	/**
+	 * 解析智能充电账户信息
+	 * @param customerNumber
+	 * @param openId
+	 * @param shopCode
+	 * @param resultInfo
+	 * @param TotalFee
+	 * @return
+	 */
+	public Map<String, Object> getCustomerMsg2(String customerNumber,String resultInfo,Integer TotalFee);
 }
