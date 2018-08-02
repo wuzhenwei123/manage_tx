@@ -277,7 +277,7 @@ public class IndexController extends BaseController{
 				String resultInfo = (String)map.get("resultInfo");
 				Integer QFee = Integer.valueOf((String)map.get("QFee"));
 				if("3202".equals(shopCode)){
-					mapresult = txBusinessTypeService.getCustomerMsg1(paynumber, resultInfo, QFee);
+					mapresult = txBusinessTypeService.getCustomerMsg2(paynumber, resultInfo, QFee);
 				}else{
 					mapresult = txBusinessTypeService.getCustomerMsgCB(paynumber, resultInfo,QFee);
 				}
