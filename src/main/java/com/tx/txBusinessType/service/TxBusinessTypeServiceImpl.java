@@ -552,9 +552,9 @@ public class TxBusinessTypeServiceImpl implements TxBusinessTypeService{
 			String bujia = resultInfos[5];
 			String koujian = resultInfos[6];
 			if(TotalFee>0){//有欠费
-//				String chajia = resultInfos[4];
+				String chajia = resultInfos[4];
 //				String chajiayue = resultInfos[5];
-//				map.put("chajia", chajia.split(":")[1]);
+				map.put("chajia", chajia.split(":")[1]);
 //				map.put("chajiayue", chajiayue.split(":")[1]);
 				String TotalFeestr = String.valueOf(TotalFee);
 				if(TotalFeestr.length()>2){
