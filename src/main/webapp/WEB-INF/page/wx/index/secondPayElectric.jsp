@@ -110,6 +110,9 @@
 			if(moneys%100 > 0){
 				layer.msg("请输入100的整数倍");
 				return false;
+			}else if(moneys<=0){
+				layer.msg("请输入大于"+qianfei+"元的100元的整数倍");
+				return false;
 			}
 		}else{
 			var reg = /^\d+(?:.\d{1,2})?$/;
