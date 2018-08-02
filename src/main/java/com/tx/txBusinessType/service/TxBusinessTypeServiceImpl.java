@@ -618,8 +618,8 @@ public class TxBusinessTypeServiceImpl implements TxBusinessTypeService{
 			String[] resultInfos = resultInfo.split(";");
 			String userAddress = resultInfos[1];
 			String username = resultInfos[0];
-			String zhangdan = resultInfos[3];
-			String zhina = resultInfos[4];
+			String zhangdan = resultInfos[2];
+			String zhina = resultInfos[3];
 			if(TotalFee>0){//有欠费
 				String TotalFeestr = String.valueOf(TotalFee);
 				if(TotalFeestr.length()>2){
