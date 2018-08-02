@@ -45,10 +45,6 @@
 	                <label>扣减金额</label>
 	                <p>${mapresult["koujian"]}</p>
 	            </li>
-	            <li class="clear">
-	                <label>补交阶梯差价金额</label>
-	                <p>${mapresult["chajia"]}<c:if test="${mapresult['chajia']=='0.00'}">元</c:if>	</p>
-	            </li>
             </c:if>
             <c:if test="${shopCode=='3102'}">
             	<li class="clear">
