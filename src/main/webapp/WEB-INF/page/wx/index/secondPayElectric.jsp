@@ -107,10 +107,10 @@
 			return false;
 		}
 		if(shopCode=="3202"){
-// 			if(moneys%100 > 0){
-// 				layer.msg("请输入100的整数倍");
-// 				return false;
-// 			}
+			if(moneys%100 > 0){
+				layer.msg("请输入100的整数倍");
+				return false;
+			}
 		}else{
 			var reg = /^\d+(?:.\d{1,2})?$/;
 			if(!reg.test(moneys)){
