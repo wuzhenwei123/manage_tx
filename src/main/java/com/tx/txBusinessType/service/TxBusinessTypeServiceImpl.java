@@ -478,15 +478,15 @@ public class TxBusinessTypeServiceImpl implements TxBusinessTypeService{
 		Map<String, Object> map = new HashMap<String, Object>();
 		try{
 			String[] resultInfos = resultInfo.split(",");
-			String userAddress = resultInfos[2];
-			String username = resultInfos[1];
-			String bujia = resultInfos[5];
-			String koujian = resultInfos[6];
+			String userAddress = resultInfos[1];
+			String username = resultInfos[0];
+			String bujia = resultInfos[2];
+			String koujian = resultInfos[3];
 			if(TotalFee>0){//有欠费
-				String chajia = resultInfos[4];
-				String chajiayue = resultInfos[5];
-				map.put("chajia", chajia.split(":")[1]);
-				map.put("chajiayue", chajiayue.split(":")[1]);
+//				String chajia = resultInfos[4];
+//				String chajiayue = resultInfos[5];
+//				map.put("chajia", chajia.split(":")[1]);
+//				map.put("chajiayue", chajiayue.split(":")[1]);
 				String TotalFeestr = String.valueOf(TotalFee);
 				if(TotalFeestr.length()>2){
 					int fen = TotalFee%100;
