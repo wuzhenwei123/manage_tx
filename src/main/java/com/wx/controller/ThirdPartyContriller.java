@@ -38,7 +38,7 @@ public class ThirdPartyContriller extends BaseController{
 		try{
 			String openId = RequestHandler.getString(request, "token");
 			String promoterToken = RequestHandler.getString(request, "promoterToken");
-			if(StringUtils.isNotBlank(promoterToken)){
+			if(StringUtils.isNotBlank(promoterToken)&&StringUtils.isNotBlank(openId)){
 				TxPromoterUser txPromoterUser = txPromoterUserService.getTxPromoterUserByPromoterToken(promoterToken);
 				if(txPromoterUser!=null){
 					weiXinService.bindThird(openId, super.getIp(request),txPromoterUser.getUserId(),request);
