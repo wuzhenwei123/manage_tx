@@ -153,7 +153,14 @@ public class TxSellingOrderController extends BaseController
         		for(TxSellingOrder order:list){
         			JSONObject jsonDate = new JSONObject();
         			BigDecimal bg = new BigDecimal(order.getMoney());
-					BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE));
+					BigDecimal bgRate = null;
+        			if(order.getSelTime().intValue()==1){
+        				bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE_1));
+        			}else if(order.getSelTime().intValue()==3){
+        				bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE_2));
+        			}else if(order.getSelTime().intValue()==6){
+        				bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE_3));
+        			}
 					System.out.println(bg.multiply(bgRate).divide(new BigDecimal(12)));
 					int txnAmtDF = (bg.multiply(bgRate).divide(new BigDecimal(12).multiply(new BigDecimal(order.getSelTime())))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
         			fee = + txnAmtDF + fee;

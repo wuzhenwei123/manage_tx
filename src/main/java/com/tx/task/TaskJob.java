@@ -26,6 +26,8 @@ import com.tx.txCity.model.TxCity;
 import com.tx.txCity.service.TxCityService;
 import com.tx.txDfOrder.model.TxDfOrder;
 import com.tx.txDfOrder.service.TxDfOrderService;
+import com.tx.txRate.model.TxRate;
+import com.tx.txRate.service.TxRateService;
 import com.tx.txRefundFlag.model.TxRefundFlag;
 import com.tx.txRefundFlag.service.TxRefundFlagService;
 import com.tx.txRefundOrder.model.TxRefundOrder;
@@ -65,7 +67,10 @@ public class TaskJob {
 	private WeiXinService weiXinService;
 	@Autowired
 	private TxDfOrderService txDfOrderService = null;
+	@Autowired
+	private TxRateService txRateService = null;
 	
+	//提前一天计算到期金额
     public void cut(){
     	try {
     		SimpleDateFormat sf = new SimpleDateFormat("yyyyMMdd");
@@ -90,7 +95,14 @@ public class TaskJob {
         		for(TxSellingOrder order:list){
         			JSONObject jsonDate = new JSONObject();
         			BigDecimal bg = new BigDecimal(order.getMoney());
-					BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE));
+        			BigDecimal bgRate = null;
+        			if(order.getSelTime().intValue()==1){
+        				bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE_1));
+        			}else if(order.getSelTime().intValue()==3){
+        				bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE_2));
+        			}else if(order.getSelTime().intValue()==6){
+        				bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE_3));
+        			}
 					int txnAmtDF = (bg.multiply(bgRate).divide(new BigDecimal(12).multiply(new BigDecimal(order.getSelTime())))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
         			fee = txnAmtDF + fee;
         			String md5str = MD5.getMD5ofStr(order.getXwMerId()+ txnAmtDF+ order.getMoney());
@@ -262,7 +274,7 @@ public class TaskJob {
     	}
     }
     
-    
+    //申请退款
     public void cut1(){
     	try {
     		
@@ -300,7 +312,7 @@ public class TaskJob {
 		}
     }
     
-    
+    //到月退款
     public void cut2(){
     	try {
     		
@@ -344,14 +356,19 @@ public class TaskJob {
     					String merOrderTime = sf111.format(d);
     					order.setRefundCode(orderId);
     					
+    					List<TxRate> listRate = txRateService.getTxRateList(new TxRate());
+    					TxRate rate = listRate.get(0);
     					if(order.getPromoterId()!=null&&order.getTwoPromoterId()!=null){
-    						int two = (bg.multiply(new BigDecimal(0.0008))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+    						int two = (bg.multiply(rate.getTwoPromoterRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
     						order.setTwoRate(two);
+    						int one = (bg.multiply(rate.getOnePromoterRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+    						order.setOneRate(one);
     					}else if(order.getPromoterId()!=null&&order.getTwoPromoterId()==null){
-    						int one = (bg.multiply(new BigDecimal(0.0008))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+    						int one = (bg.multiply(rate.getTwoPromoterRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
     						order.setOneRate(one);
     					}
-    					
+    					int devRate = (bg.multiply(rate.getDevRate())).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
+    					order.setDevRate(devRate);
 //						order.setProfitManey(order.getMoney());
 //						order.setProfits(new BigDecimal(0));
     					txSellingOrderService.updateTxSellingOrderById(order);

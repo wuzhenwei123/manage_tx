@@ -729,7 +729,7 @@ public class TxWxUserBankNoServiceImpl implements TxWxUserBankNoService{
     		contentData.put("settType", "0");                            //账号类型
     		
     		BigDecimal bg = new BigDecimal(txnAmt);
-			BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE));
+			BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE_1));
 			int txnAmtDF = (bg.multiply(bgRate)).setScale(0, BigDecimal.ROUND_HALF_UP).intValue()+200;
     		
     		contentData.put("txnAmtDF", AcpService.encryptData((Integer.valueOf(txnAmt)-txnAmtDF)+"", DemoBase.encoding));

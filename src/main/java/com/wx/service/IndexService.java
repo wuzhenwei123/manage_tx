@@ -33,6 +33,8 @@ import com.tx.txDfRate.dao.TxDfRateDAO;
 import com.tx.txDfRate.model.TxDfRate;
 import com.tx.txPayOrder.dao.TxPayOrderDAO;
 import com.tx.txPayOrder.model.TxPayOrder;
+import com.tx.txPayRate.dao.TxPayRateDAO;
+import com.tx.txPayRate.model.TxPayRate;
 import com.tx.txSellingOrder.dao.TxSellingOrderDAO;
 import com.tx.txSellingOrder.model.TxSellingOrder;
 import com.tx.txWxOrder.dao.TxWxOrderDAO;
@@ -72,6 +74,8 @@ public class IndexService {
 	private WeiXinService weiXinService;
 	@Resource
     private TxSellingOrderDAO txSellingOrderDAO;
+	@Resource
+    private TxPayRateDAO txPayRateDAO;
 	
 	/**
 	 * 装载预付费订单信息
@@ -275,13 +279,11 @@ public class IndexService {
 			BigDecimal oneRate = new BigDecimal(0);//智能电
 			BigDecimal twoRate = new BigDecimal(0);//抄表电
 			BigDecimal devRate = new BigDecimal(0);//运营
-			BigDecimal totalRate = new BigDecimal(0);//地区总代
-			List<TxDfRate> listRate = txDfRateDAO.getTxDfRateList(new TxDfRate());
+			List<TxPayRate> listRate = txPayRateDAO.getTxPayRateList(new TxPayRate());
 			if(listRate!=null&&listRate.size()>0){
 				oneRate = listRate.get(0).getOneRate();
 				twoRate = listRate.get(0).getTwoRate();
 				devRate = listRate.get(0).getDevRate();
-				totalRate = listRate.get(0).getTotalRate();
 			}
 			hOrder.setPromoterId(wxUser.getPromoterId());
 			
@@ -296,9 +298,6 @@ public class IndexService {
 			}
 			if(devRate!=null){
 				hOrder.setDevRate((bg.multiply(devRate)).setScale(1, BigDecimal.ROUND_HALF_UP).intValue());
-			}
-			if(totalRate!=null){
-				hOrder.setTotalRate((bg.multiply(totalRate)).setScale(1, BigDecimal.ROUND_HALF_UP).intValue());
 			}
 			hOrder.setPromoterName(wxUser.getPromoterName());
 			hOrder.setTwoPromoterId(wxUser.getTwoPromoterId());

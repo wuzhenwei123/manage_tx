@@ -543,7 +543,7 @@ public class UnionPayController extends BaseController{
 				 	txWxUserBankNo.setAccNo(accNo);
 					
 					BigDecimal bg = new BigDecimal(order.getMoney());
-					BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE));
+					BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.PAY_RATE));
 					int txnAmtDF = (bg.multiply(bgRate)).setScale(0, BigDecimal.ROUND_HALF_UP).intValue()+300;
 					String orderId = new MakeImei().getCode();
 					Date d = new Date();
@@ -707,7 +707,14 @@ public class UnionPayController extends BaseController{
 				 	txWxUserBankNo.setAccNo(accNo);
 					
 					BigDecimal bg = new BigDecimal(order.getMoney());
-					BigDecimal bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE));
+					BigDecimal bgRate = null;
+        			if(order.getSelTime().intValue()==1){
+        				bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE_1));
+        			}else if(order.getSelTime().intValue()==3){
+        				bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE_2));
+        			}else if(order.getSelTime().intValue()==6){
+        				bgRate = new BigDecimal(Double.valueOf(ConfigConstants.RATE_3));
+        			}
 					
 					int txnAmtDF = (bg.multiply(bgRate).divide(new BigDecimal(12).multiply(new BigDecimal(order.getSelTime())))).setScale(0, BigDecimal.ROUND_HALF_UP).intValue();
 					

@@ -70,7 +70,9 @@ public class ConfigConstants {
 	public static String TRANS = null;
 	public static String REDIRECT_BACKURLTRANS = null;
 	public static String REDIRECT_BACKURLDF = null;
-	public static String RATE = null;
+	public static String RATE_1 = null;
+	public static String RATE_2 = null;
+	public static String RATE_3 = null;
 	public static String UPDATETRANSTOKENURL = null;
 	public static String HXT_UPDATE_URL = null;
 	public static String TRID = null;
@@ -187,7 +189,9 @@ public class ConfigConstants {
 				TRANS = (String) prop.get("trans");
 				REDIRECT_BACKURLTRANS = (String) prop.get("redirect_backUrlTrans");
 				REDIRECT_BACKURLDF = (String) prop.get("redirect_backUrlDF");
-				RATE = (String) prop.get("rate");
+				RATE_1 = (String) prop.get("rate_1");
+				RATE_2 = (String) prop.get("rate_2");
+				RATE_3 = (String) prop.get("rate_3");
 				UPDATETRANSTOKENURL = (String) prop.get("UpdateTransTokenURL");
 				HXT_UPDATE_URL = (String) prop.get("hxt_update_url");
 				TRID = (String) prop.get("trId");
