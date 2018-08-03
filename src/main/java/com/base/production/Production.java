@@ -32,8 +32,8 @@ public class Production {
 		JDBCTemplate.PASSWORD = "Mievie6004";
 		
 		String projectRoot = "E:\\gitdemo\\manage_tx";
-		String domainName = "txDfOrder";
-		String tableName = "tx_df_order";
+		String domainName = "txPromoterUser";
+		String tableName = "tx_promoter_user";
 		String packName = "com.tx";
 		String description = "@author	wzw";
 		String encoding = "UTF-8";

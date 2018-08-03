@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tx.txPromoterUser.dao.TxPromoterUserDAO">
+	<resultMap id="baseResultMap" type="com.tx.txPromoterUser.model.TxPromoterUser">
+		<id column="id" jdbcType="INTEGER" property="id" />
+		<result column="userId" jdbcType="INTEGER" property="userId" />
+		<result column="promoterToken" jdbcType="VARCHAR" property="promoterToken" />
+	</resultMap>
+
+	<!-- 查询参数 -->
+    <sql id="txPromoterUser_column_body">
+         a.id,a.userId,a.promoterToken
+    </sql>
+    <!-- 查询条件 -->
+    <sql id="txPromoterUser_select_body">
+    	<trim prefix="where" prefixOverrides="and | or">
+    		<if test="id != null"> and a.id = #{id,jdbcType=INTEGER} </if>
+    		<if test="userId != null"> and a.userId = #{userId,jdbcType=INTEGER} </if>
+    		<if test="promoterToken != null"> and a.promoterToken = #{promoterToken,jdbcType=VARCHAR} </if>
+		</trim>
+    </sql>
+    <select id="getTxPromoterUserById" parameterType="java.lang.Integer" resultMap="baseResultMap">
+        SELECT <include refid="txPromoterUser_column_body" />
+        FROM tx_promoter_user a
+		where a.id = #{id}
+    </select>
+    <select id="getTxPromoterUserByPromoterToken" parameterType="java.lang.String" resultMap="baseResultMap">
+        SELECT <include refid="txPromoterUser_column_body" />
+        FROM tx_promoter_user a
+		where a.promoterToken = #{promoterToken}
+    </select>
+    <select id="getTxPromoterUserList" parameterType="com.tx.txPromoterUser.model.TxPromoterUser" resultMap="baseResultMap">
+        SELECT <include refid="txPromoterUser_column_body" />
+        FROM tx_promoter_user a
+		<include refid="txPromoterUser_select_body" />
+    </select>
+    
+    <insert id="insertTxPromoterUser" parameterType="com.tx.txPromoterUser.model.TxPromoterUser">
+        INSERT INTO tx_promoter_user
+        <trim prefix="(" suffix=")" prefixOverrides=",">
+	        	<if test="userId != null"> ,userId </if>
+	        	<if test="promoterToken != null"> ,promoterToken </if>
+        </trim>
+        <trim prefix="values (" suffix=")" prefixOverrides=",">
+	        	<if test="userId != null"> ,#{userId,jdbcType=INTEGER} </if>
+	        	<if test="promoterToken != null"> ,#{promoterToken,jdbcType=VARCHAR} </if>
+		 </trim>
+        <selectKey keyProperty="id" resultType="int">
+			SELECT @@IDENTITY AS id 
+		</selectKey>
+    </insert>
+    <update id="updateTxPromoterUserById" parameterType="com.tx.txPromoterUser.model.TxPromoterUser">
+        UPDATE tx_promoter_user
+        <set>
+        		<if test="userId != null"> userId = #{userId,jdbcType=INTEGER}, </if>
+        		<if test="promoterToken != null"> promoterToken = #{promoterToken,jdbcType=VARCHAR}, </if>
+        </set>
+    	where id = #{id}
+    </update>
+    <delete id="deleteTxPromoterUserById">
+        delete from tx_promoter_user where id = #{id}
+    </delete>
+</mapper>

@@ -475,6 +475,51 @@ public class WeiXinController extends BaseController{
 		}
 		return  "/wx/db_login";
 	}
+	/**
+	 * 进入拓展员登录页面
+	 * 
+	 * @param response
+	 * @param request
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value = "/dbIndex1", method = RequestMethod.GET)
+	public String dbIndex1(HttpServletResponse response,HttpServletRequest request, Model model) throws Exception{
+		super.getJsticket(request);
+		String openId = RequestHandler.getString(request, "openId");
+		model.addAttribute("openId", openId);
+		try{
+			//判断是否已经验证
+			TxWxUser txWxUser = new TxWxUser();
+			txWxUser.setOpenId(openId);
+			int count = txWxUserService.getTxWxUserListCount(txWxUser);
+			if(count==0){//未绑定
+				return  "/wx/db_login";
+			}else{
+				if(count==1){
+					txWxUser = txWxUserService.getTxWxUserByOpenId(openId);
+					request.getSession().setAttribute(SessionName.ADMIN_USER, txWxUser);
+					request.getSession().setAttribute(SessionName.ADMIN_USER_ID, txWxUser.getId());
+					request.getSession().setAttribute(SessionName.ADMIN_USER_NAME, txWxUser.getNickName());
+					if(txWxUser.getState()==1){
+						if(txWxUser.getCheckState()==1){
+							return  "/wx/myInfo1";
+						}else{
+							return  "/wx/tx/regInfo";
+						}
+					}else{
+						return  "/wx/db_login";
+					}
+				}else{
+					//账号异常
+					return  "/wx/tip";
+				}
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return  "/wx/db_login";
+	}
 	
 	/**
 	 * 我的客户二维码

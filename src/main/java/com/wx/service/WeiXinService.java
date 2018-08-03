@@ -507,6 +507,37 @@ public class WeiXinService {
     		e.printStackTrace();
     	}
     }
+    
+    /**
+     * 将业务拓展员和注册的商户绑定
+     * @param openId
+     * @param ticket
+     */
+    public void bindThird(String openId,String loginIP,Integer promoterId,HttpServletRequest request){
+    	try{
+    		//判断用书是否存在
+    		TxWxUser txWxUser = new TxWxUser();
+    		txWxUser.setOpenId(openId);
+    		int count = txWxUserDAO.getTxWxUserListCount(txWxUser);
+    		if(count==0){
+    			txWxUser.setState(1);
+    			txWxUser.setPromoterId(promoterId);
+    			txWxUser.setCreateTime(new Date());
+    			txWxUserDAO.insertTxWxUser(txWxUser);
+    			request.getSession().setAttribute(SessionName.ADMIN_USER_NAME, txWxUser.getRealName());
+				request.getSession().setAttribute(SessionName.ADMIN_USER_ID, txWxUser.getId());
+				request.getSession().setAttribute(SessionName.ADMIN_USER, txWxUser);
+    		}else if(count==1){
+    			txWxUser = txWxUserDAO.getTxWxUserByOpenId(openId);
+    			request.getSession().setAttribute(SessionName.ADMIN_USER_NAME, txWxUser.getRealName());
+				request.getSession().setAttribute(SessionName.ADMIN_USER_ID, txWxUser.getId());
+				request.getSession().setAttribute(SessionName.ADMIN_USER, txWxUser);
+    		}
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    }
+    
     /**
      * 将业务拓展员和注册的商户绑定
      * @param openId
