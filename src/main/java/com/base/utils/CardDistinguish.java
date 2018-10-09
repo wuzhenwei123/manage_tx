@@ -28,7 +28,8 @@ public class CardDistinguish {
     public static void main(String args[]){
     	CardDistinguish obj = new CardDistinguish();
 //    	obj.idDistinguish("E://111111.jpg", "front");
-    	obj.idDistinguish("E://222222.jpg", "back");
+//    	obj.idDistinguish("E://222222.jpg", "back");
+    	obj.basicGeneral("E://147.jpg");
     }
     
     /**
@@ -104,6 +105,32 @@ public class CardDistinguish {
         }
         
         return json;   
+    }
+    
+    /**
+     * 图片识别
+     * @param imageUrl
+     * @return
+     */
+    public com.alibaba.fastjson.JSONObject  basicGeneral(String imageUrl) {
+    	// 传入可选参数调用接口
+    	HashMap<String, String> options = new HashMap<String, String>();
+    	com.alibaba.fastjson.JSONObject json = new com.alibaba.fastjson.JSONObject();
+    	try{
+    		JSONObject res = client.basicGeneral(imageUrl, options);
+    		
+    		String templateSign = "b1e8e972e595a505bc088e116f0f1b3a";
+    		// 参数为本地图片二进制数组
+    		byte[] file = readImageFile(imageUrl);
+    		res = client.custom(file, templateSign, options);
+//            res = client.basicAccurateGeneral(file, options);
+            System.out.println(res.toString(2));
+    	}catch(Exception e){
+    		json.put("bank_card_type", 0);
+    		e.printStackTrace();
+    	}
+    	
+    	return json;   
     }
     
     
